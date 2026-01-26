@@ -95,6 +95,37 @@ export function SettingsModal({ isOpen, onClose, settings, onSave }: SettingsMod
           </div>
         </div>
 
+        {/* Voice Selection */}
+        <div className="mb-6">
+          <label className="block text-sm font-medium mb-3 flex items-center gap-2">
+            <span>🎙️</span> Voice
+          </label>
+          <div className="grid grid-cols-3 gap-2">
+            {([
+              { id: 'nova', label: 'Nova', desc: 'Female, warm' },
+              { id: 'alloy', label: 'Alloy', desc: 'Neutral' },
+              { id: 'echo', label: 'Echo', desc: 'Male, deep' },
+              { id: 'fable', label: 'Fable', desc: 'British' },
+              { id: 'onyx', label: 'Onyx', desc: 'Male, rich' },
+              { id: 'shimmer', label: 'Shimmer', desc: 'Female, bright' },
+            ] as { id: VoiceOption; label: string; desc: string }[]).map((voice) => (
+              <button
+                key={voice.id}
+                onClick={() => setLocalSettings({ ...localSettings, voice: voice.id })}
+                className={cn(
+                  'py-2 px-3 rounded-lg text-sm font-medium transition-colors text-left',
+                  localSettings.voice === voice.id
+                    ? 'bg-[var(--accent)] text-white'
+                    : 'bg-[var(--card-hover)] text-[var(--muted)] hover:text-[var(--foreground)]'
+                )}
+              >
+                <div>{voice.label}</div>
+                <div className="text-[10px] opacity-70">{voice.desc}</div>
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* Include Links Toggle */}
         <div className="mb-6">
           <button

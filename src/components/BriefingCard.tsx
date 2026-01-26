@@ -7,6 +7,8 @@ import { cn, calculateReadingTime, shareContent } from '@/lib/utils';
 interface BriefingCardProps {
   briefing: Briefing;
   index: number;
+  onRefresh?: () => void;
+  isRefreshing?: boolean;
 }
 
 function StoryCardComponent({ story, index, isActive }: { story: StoryCard; index: number; isActive?: boolean }) {
@@ -84,7 +86,7 @@ function StoryCardComponent({ story, index, isActive }: { story: StoryCard; inde
   );
 }
 
-export function BriefingCard({ briefing, index }: BriefingCardProps) {
+export function BriefingCard({ briefing, index, onRefresh, isRefreshing }: BriefingCardProps) {
   const [expanded, setExpanded] = useState(true);
   const [copied, setCopied] = useState(false);
   const [shared, setShared] = useState(false);
