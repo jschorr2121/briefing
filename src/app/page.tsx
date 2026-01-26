@@ -52,7 +52,8 @@ export default function Home() {
     const savedTime = localStorage.getItem('briefing-time');
     const savedHistory = localStorage.getItem('briefing-history');
 
-    if (savedTopics) setTopics(JSON.parse(savedTopics));
+    // Don't restore topics - always start fresh
+    // if (savedTopics) setTopics(JSON.parse(savedTopics));
     if (savedSettings) setSettings(JSON.parse(savedSettings));
     if (savedBriefings) setBriefings(JSON.parse(savedBriefings));
     if (savedTime) setLastGenerated(new Date(savedTime));
@@ -61,7 +62,8 @@ export default function Home() {
 
   // Save state to localStorage
   useEffect(() => {
-    localStorage.setItem('briefing-topics', JSON.stringify(topics));
+    // Don't persist topics - always start fresh
+    // localStorage.setItem('briefing-topics', JSON.stringify(topics));
   }, [topics]);
 
   useEffect(() => {
