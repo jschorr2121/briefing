@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Plus, X, Clock, Mail, Trash2, Edit2, Check } from 'lucide-react';
+import { ArrowLeft, Plus, X, Clock, Mail, Trash2, Edit2, Check, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 
 interface ScheduledBrief {
@@ -14,6 +14,7 @@ interface ScheduledBrief {
   time: string;
   timezone: string;
   enabled: boolean;
+  lastSentAt?: string;
   createdAt: string;
 }
 
@@ -27,6 +28,8 @@ export default function SchedulePage() {
   const router = useRouter();
   
   const [schedules, setSchedules] = useState<ScheduledBrief[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   
@@ -44,20 +47,24 @@ export default function SchedulePage() {
   }, [status, router]);
 
   useEffect(() => {
-    // Load from localStorage
-    const saved = localStorage.getItem('briefing-schedules');
-    if (saved) {
-      setSchedules(JSON.parse(saved));
-    }
-    // Pre-fill email from session
     if (session?.user?.email) {
       setEmail(session.user.email);
+      fetchSchedules();
     }
   }, [session]);
 
-  const saveSchedules = (newSchedules: ScheduledBrief[]) => {
-    setSchedules(newSchedules);
-    localStorage.setItem('briefing-schedules', JSON.stringify(newSchedules));
+  const fetchSchedules = async () => {
+    try {
+      const res = await fetch('/api/schedules');
+      if (res.ok) {
+        const data = await res.json();
+        setSchedules(data.schedules || []);
+      }
+    } catch (error) {
+      console.error('Error fetching schedules:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleAddTopic = (topic: string) => {
@@ -72,31 +79,36 @@ export default function SchedulePage() {
     setTopics(topics.filter(t => t !== topic));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (!email || topics.length === 0) return;
 
-    const schedule: ScheduledBrief = {
-      id: editingId || `schedule-${Date.now()}`,
-      email,
-      topics,
-      frequency,
-      time,
-      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-      enabled: true,
-      createdAt: editingId ? schedules.find(s => s.id === editingId)?.createdAt || new Date().toISOString() : new Date().toISOString(),
-    };
+    setSaving(true);
+    try {
+      const body = {
+        id: editingId,
+        email,
+        topics,
+        frequency,
+        time,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      };
 
-    let newSchedules: ScheduledBrief[];
-    if (editingId) {
-      newSchedules = schedules.map(s => s.id === editingId ? schedule : s);
-    } else {
-      newSchedules = [...schedules, schedule];
+      const res = await fetch('/api/schedules', {
+        method: editingId ? 'PUT' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+
+      if (res.ok) {
+        await fetchSchedules();
+        resetForm();
+      }
+    } catch (error) {
+      console.error('Error saving schedule:', error);
+    } finally {
+      setSaving(false);
     }
-    
-    saveSchedules(newSchedules);
-    resetForm();
   };
 
   const handleEdit = (schedule: ScheduledBrief) => {
@@ -108,16 +120,38 @@ export default function SchedulePage() {
     setShowForm(true);
   };
 
-  const handleDelete = (id: string) => {
-    if (confirm('Delete this scheduled brief?')) {
-      saveSchedules(schedules.filter(s => s.id !== id));
+  const handleDelete = async (id: string) => {
+    if (!confirm('Delete this scheduled brief?')) return;
+
+    try {
+      const res = await fetch(`/api/schedules?id=${id}`, { method: 'DELETE' });
+      if (res.ok) {
+        setSchedules(schedules.filter(s => s.id !== id));
+      }
+    } catch (error) {
+      console.error('Error deleting schedule:', error);
     }
   };
 
-  const toggleEnabled = (id: string) => {
-    saveSchedules(schedules.map(s => 
-      s.id === id ? { ...s, enabled: !s.enabled } : s
-    ));
+  const toggleEnabled = async (id: string) => {
+    const schedule = schedules.find(s => s.id === id);
+    if (!schedule) return;
+
+    try {
+      const res = await fetch('/api/schedules', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, enabled: !schedule.enabled }),
+      });
+
+      if (res.ok) {
+        setSchedules(schedules.map(s => 
+          s.id === id ? { ...s, enabled: !s.enabled } : s
+        ));
+      }
+    } catch (error) {
+      console.error('Error toggling schedule:', error);
+    }
   };
 
   const resetForm = () => {
@@ -131,10 +165,10 @@ export default function SchedulePage() {
     }
   };
 
-  if (status === 'loading') {
+  if (status === 'loading' || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-[var(--accent)] border-t-transparent rounded-full animate-spin" />
+        <Loader2 className="w-8 h-8 animate-spin text-[var(--accent)]" />
       </div>
     );
   }
@@ -151,7 +185,7 @@ export default function SchedulePage() {
           </Link>
           <div>
             <h1 className="font-semibold text-lg">Scheduled Briefs</h1>
-            <p className="text-sm text-[var(--muted)]">Manage your automated email briefings</p>
+            <p className="text-sm text-[var(--muted)]">Get automated briefings in your inbox</p>
           </div>
         </div>
       </header>
@@ -282,9 +316,10 @@ export default function SchedulePage() {
               </button>
               <button 
                 type="submit" 
-                disabled={!email || topics.length === 0}
-                className="btn-primary flex-1 disabled:opacity-50"
+                disabled={!email || topics.length === 0 || saving}
+                className="btn-primary flex-1 disabled:opacity-50 flex items-center justify-center gap-2"
               >
+                {saving && <Loader2 className="w-4 h-4 animate-spin" />}
                 {editingId ? 'Save Changes' : 'Create Schedule'}
               </button>
             </div>
@@ -313,6 +348,11 @@ export default function SchedulePage() {
                          schedule.frequency === 'weekdays' ? 'Weekdays' : 'Weekly'} at {schedule.time}
                       </span>
                     </div>
+                    {schedule.lastSentAt && (
+                      <p className="text-xs text-[var(--muted)] mt-1">
+                        Last sent: {new Date(schedule.lastSentAt).toLocaleDateString()}
+                      </p>
+                    )}
                   </div>
                   <div className="flex items-center gap-1">
                     <button
