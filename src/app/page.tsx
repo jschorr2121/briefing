@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Headphones, Mail, Download, Check, Loader2, Newspaper } from 'lucide-react';
+import { Headphones, Mail, Download, Check, Loader2, Newspaper, Calendar, Settings as SettingsIcon } from 'lucide-react';
+import Link from 'next/link';
 import { AuthGuard } from '@/components/AuthGuard';
 import { TopicSelector } from '@/components/TopicSelector';
 import { BriefingCard } from '@/components/BriefingCard';
@@ -281,13 +282,31 @@ export default function Home() {
           />
         </section>
 
-        {/* Generate Button */}
-        <div className="flex justify-center gap-4 mb-12 flex-wrap">
+        {/* Actions */}
+        <div className="flex justify-center gap-3 mb-6 flex-wrap">
           <GenerateButton
             onClick={generateBriefing}
             isLoading={isLoading}
             disabled={!topics.some(t => t.enabled)}
           />
+          <Link
+            href="/schedule"
+            className="btn-secondary px-5 py-3 rounded-xl font-medium flex items-center gap-2"
+          >
+            <Calendar className="w-4 h-4" />
+            Schedule
+          </Link>
+          <button
+            onClick={() => setShowSettings(true)}
+            className="btn-secondary px-5 py-3 rounded-xl font-medium flex items-center gap-2"
+          >
+            <SettingsIcon className="w-4 h-4" />
+            Settings
+          </button>
+        </div>
+
+        {/* Secondary Actions */}
+        <div className="flex justify-center gap-3 mb-12 flex-wrap">
           {briefings.length > 0 && (
             <>
               <button
