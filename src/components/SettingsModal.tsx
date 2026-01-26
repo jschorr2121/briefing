@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import type { Settings } from '@/lib/types';
+import type { Settings, VoiceOption } from '@/lib/types';
 import { cn } from '@/lib/utils';
 
 interface SettingsModalProps {

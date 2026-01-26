@@ -28,6 +28,7 @@ const DEFAULT_SETTINGS: Settings = {
   briefingLength: 'medium',
   includeLinks: true,
   tone: 'professional',
+  voice: 'nova',
 };
 
 export default function Home() {
@@ -180,7 +181,7 @@ export default function Home() {
       const response = await fetch('/api/audio', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ briefings }),
+        body: JSON.stringify({ briefings, voice: settings.voice }),
       });
 
       if (!response.ok) {
