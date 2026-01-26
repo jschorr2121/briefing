@@ -1,9 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+interface StoryCard {
+  headline: string;
+  bullets: string[];
+  source?: string;
+}
+
 interface Briefing {
   topic: string;
   emoji: string;
   summary: string;
+  stories?: StoryCard[];
 }
 
 type VoiceOption = 'alloy' | 'echo' | 'fable' | 'onyx' | 'nova' | 'shimmer';
@@ -27,15 +34,43 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Combine briefings into a single script
+    // Combine briefings into a single script with full content
     const script = briefings.map(b => {
       // Remove markdown formatting for speech
       const cleanSummary = b.summary
         .replace(/\*\*(.*?)\*\*/g, '$1')
         .replace(/\n\n/g, '. ')
         .replace(/\n/g, ' ');
-      return `${b.topic}. ${cleanSummary}`;
-    }).join('\n\n');
+      
+      // Build the full script for this topic
+      let topicScript = `${b.topic}. ${cleanSummary}`;
+      
+      // Add each story with its bullets
+      if (b.stories && b.stories.length > 0) {
+        topicScript += '\n\nHere are the top stories:\n\n';
+        
+        b.stories.forEach((story, index) => {
+          const cleanHeadline = story.headline
+            .replace(/\*\*(.*?)\*\*/g, '$1')
+            .replace(/\n/g, ' ');
+          
+          topicScript += `Story ${index + 1}: ${cleanHeadline}.\n`;
+          
+          if (story.bullets && story.bullets.length > 0) {
+            story.bullets.forEach(bullet => {
+              const cleanBullet = bullet
+                .replace(/\*\*(.*?)\*\*/g, '$1')
+                .replace(/\n/g, ' ');
+              topicScript += `${cleanBullet}.\n`;
+            });
+          }
+          
+          topicScript += '\n';
+        });
+      }
+      
+      return topicScript;
+    }).join('\n\n---\n\n');
 
     // OpenAI TTS - voice options: alloy, echo, fable, onyx, nova, shimmer
     const voice = requestedVoice || (process.env.OPENAI_TTS_VOICE as VoiceOption) || 'nova';
