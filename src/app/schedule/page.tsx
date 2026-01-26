@@ -67,7 +67,7 @@ export default function SchedulePage() {
 
   const handleAddTopic = (topic: string) => {
     const trimmed = topic.trim();
-    if (trimmed && !topics.includes(trimmed)) {
+    if (trimmed && !topics.includes(trimmed) && topics.length < 4) {
       setTopics([...topics, trimmed]);
     }
     setTopicInput('');
@@ -229,7 +229,7 @@ export default function SchedulePage() {
 
             {/* Topics */}
             <div className="mb-4">
-              <label className="block text-sm font-medium mb-1.5">Topics</label>
+              <label className="block text-sm font-medium mb-1.5">Topics <span className="text-[var(--muted)] font-normal">({topics.length}/4 max)</span></label>
               <div className="relative mb-2">
                 <input
                   type="text"
