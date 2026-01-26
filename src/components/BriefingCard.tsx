@@ -205,11 +205,11 @@ export function BriefingCard({ briefing, index, onRefresh, isRefreshing }: Brief
       style={{ animationDelay: `${index * 100}ms` }}
     >
       {/* Header */}
-      <button
-        onClick={() => setExpanded(!expanded)}
-        className="w-full p-6 flex items-center justify-between text-left"
-      >
-        <div className="flex items-center gap-4">
+      <div className="p-6 flex items-center justify-between">
+        <button
+          onClick={() => setExpanded(!expanded)}
+          className="flex items-center gap-4 text-left flex-1"
+        >
           <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--accent)]/20 to-[var(--accent)]/5 flex items-center justify-center">
             <span className="text-2xl">{briefing.emoji}</span>
           </div>
@@ -237,19 +237,51 @@ export function BriefingCard({ briefing, index, onRefresh, isRefreshing }: Brief
               )}
             </div>
           </div>
-        </div>
-        <svg
-          className={cn(
-            'w-5 h-5 text-[var(--muted)] transition-transform duration-200',
-            expanded && 'rotate-180'
+        </button>
+        <div className="flex items-center gap-2">
+          {onRefresh && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onRefresh();
+              }}
+              disabled={isRefreshing}
+              className={cn(
+                "p-2 rounded-lg transition-colors",
+                isRefreshing 
+                  ? "text-[var(--accent)] cursor-not-allowed" 
+                  : "text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--card-hover)]"
+              )}
+              title="Refresh this topic"
+            >
+              <svg 
+                className={cn("w-4 h-4", isRefreshing && "animate-spin")} 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+            </button>
           )}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
-      </button>
+          <button
+            onClick={() => setExpanded(!expanded)}
+            className="p-2 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--card-hover)] transition-colors"
+          >
+            <svg
+              className={cn(
+                'w-5 h-5 transition-transform duration-200',
+                expanded && 'rotate-180'
+              )}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+        </div>
+      </div>
 
       {/* Content */}
       {expanded && (
