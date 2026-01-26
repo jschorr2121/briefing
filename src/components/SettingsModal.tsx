@@ -34,7 +34,7 @@ export function SettingsModal({ isOpen, onClose, settings, onSave }: SettingsMod
       />
 
       {/* Modal */}
-      <div className="relative bg-[var(--card)] rounded-2xl border border-[var(--border)] w-full max-w-md p-6 animate-fadeIn">
+      <div className="relative bg-[var(--card)] rounded-2xl border border-[var(--border)] w-full max-w-md p-6 animate-fadeIn max-h-[90vh] overflow-y-auto">
         <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
@@ -116,6 +116,23 @@ export function SettingsModal({ isOpen, onClose, settings, onSave }: SettingsMod
               />
             </div>
           </button>
+        </div>
+
+        {/* Email Delivery Section */}
+        <div className="mb-6 pt-4 border-t border-[var(--border)]">
+          <label className="block text-sm font-medium mb-3 flex items-center gap-2">
+            <span>📧</span> Email Delivery
+          </label>
+          <input
+            type="email"
+            placeholder="your@email.com"
+            value={localSettings.email || ''}
+            onChange={(e) => setLocalSettings({ ...localSettings, email: e.target.value })}
+            className="w-full px-4 py-3 rounded-lg bg-[var(--card-hover)] border border-[var(--border)] focus:border-[var(--accent)] outline-none transition-colors text-sm"
+          />
+          <p className="text-xs text-[var(--muted)] mt-2">
+            Optional: Receive your briefing via email
+          </p>
         </div>
 
         {/* Actions */}
