@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { Headphones, Mail, Download, Check, Loader2, Newspaper } from 'lucide-react';
 import { TopicSelector } from '@/components/TopicSelector';
 import { BriefingCard } from '@/components/BriefingCard';
 import { GenerateButton } from '@/components/GenerateButton';
@@ -267,13 +268,12 @@ export default function Home() {
 
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Hero Section */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            Your <span className="gradient-text">Personal</span> News Intelligence
+        <div className="text-center mb-10">
+          <h1 className="text-3xl md:text-4xl font-bold mb-3">
+            Your Daily News Brief
           </h1>
-          <p className="text-[var(--muted)] text-lg max-w-2xl mx-auto">
-            Select your topics, generate an AI-powered briefing, and stay informed
-            with what matters most to you.
+          <p className="text-[var(--muted)] max-w-xl mx-auto">
+            Select topics, generate a personalized briefing, stay informed.
           </p>
         </div>
 
@@ -308,18 +308,16 @@ export default function Home() {
               <button
                 onClick={generateAudio}
                 disabled={isGeneratingAudio}
-                className="px-6 py-4 rounded-xl font-semibold text-lg bg-[var(--card)] border border-[var(--border)] hover:border-[var(--accent)] transition-all flex items-center gap-2 disabled:opacity-50"
+                className="btn-secondary px-5 py-3 rounded-xl font-medium flex items-center gap-2 disabled:opacity-50"
               >
                 {isGeneratingAudio ? (
                   <>
-                    <div className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                    <Loader2 className="w-4 h-4 animate-spin" />
                     Generating...
                   </>
                 ) : (
                   <>
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
-                    </svg>
+                    <Headphones className="w-4 h-4" />
                     Listen
                   </>
                 )}
@@ -328,25 +326,21 @@ export default function Home() {
                 <button
                   onClick={sendEmail}
                   disabled={isSendingEmail || emailSent}
-                  className="px-6 py-4 rounded-xl font-semibold text-lg bg-[var(--card)] border border-[var(--border)] hover:border-[var(--accent)] transition-all flex items-center gap-2 disabled:opacity-50"
+                  className="btn-secondary px-5 py-3 rounded-xl font-medium flex items-center gap-2 disabled:opacity-50"
                 >
                   {emailSent ? (
                     <>
-                      <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
+                      <Check className="w-4 h-4 text-[var(--success)]" />
                       Sent!
                     </>
                   ) : isSendingEmail ? (
                     <>
-                      <div className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                      <Loader2 className="w-4 h-4 animate-spin" />
                       Sending...
                     </>
                   ) : (
                     <>
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                      </svg>
+                      <Mail className="w-4 h-4" />
                       Email
                     </>
                   )}
@@ -354,11 +348,9 @@ export default function Home() {
               )}
               <button
                 onClick={exportBriefing}
-                className="px-6 py-4 rounded-xl font-semibold text-lg bg-[var(--card)] border border-[var(--border)] hover:border-[var(--accent)] transition-all flex items-center gap-2"
+                className="btn-secondary px-5 py-3 rounded-xl font-medium flex items-center gap-2"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                </svg>
+                <Download className="w-4 h-4" />
                 Export
               </button>
             </>
@@ -374,13 +366,13 @@ export default function Home() {
         {audioUrl && (
           <div className="mb-8 p-4 rounded-xl bg-[var(--card)] border border-[var(--border)]">
             <div className="flex items-center gap-4 flex-wrap">
-              <span className="text-2xl">🎧</span>
+              <Headphones className="w-6 h-6 text-[var(--accent)]" />
               <audio
                 ref={audioRef}
                 src={audioUrl}
                 controls
                 className="flex-1 min-w-[200px] h-10"
-                style={{ colorScheme: 'dark' }}
+                style={{ colorScheme: 'light' }}
               />
               <div className="flex items-center gap-1.5">
                 <span className="text-xs text-[var(--muted)] mr-1">Speed:</span>
@@ -439,10 +431,11 @@ export default function Home() {
         {briefings.length > 0 && (
           <section className="space-y-6 animate-fadeIn">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold flex items-center gap-2">
-                <span>📰</span> Your Briefing
+              <h2 className="text-lg font-semibold flex items-center gap-2">
+                <Newspaper className="w-5 h-5 text-[var(--accent)]" />
+                Your Briefing
                 <span className="text-sm font-normal text-[var(--muted)] ml-2">
-                  ~{getTotalReadingTime(briefings)} min total
+                  ~{getTotalReadingTime(briefings)} min
                 </span>
               </h2>
               <div className="flex items-center gap-3">
