@@ -17,6 +17,7 @@ export interface StoryCard {
   bullets: string[];
   source?: string;
   url?: string;
+  date?: string; // ISO date or relative like "2 hours ago"
 }
 
 export interface Briefing {

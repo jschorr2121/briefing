@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback } from 'react';
+import { Clock, Newspaper, ExternalLink, Copy, Share2, ChevronDown, ChevronLeft, ChevronRight, RefreshCw, Check, Link } from 'lucide-react';
 import type { Briefing, StoryCard } from '@/lib/types';
 import { cn, calculateReadingTime, shareContent } from '@/lib/utils';
 
@@ -25,13 +26,21 @@ function StoryCardComponent({ story, index, isActive }: { story: StoryCard; inde
       )}
       style={{ animationDelay: `${index * 50}ms` }}
     >
-      {/* Story Number Badge */}
+      {/* Story Header */}
       <div className="flex items-start justify-between gap-3 mb-3">
-        <span className="text-xs font-bold text-[var(--accent)] bg-[var(--accent)]/10 px-2 py-0.5 rounded">
-          #{index + 1}
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-bold text-[var(--accent)] bg-[var(--accent-light)] px-2 py-0.5 rounded">
+            #{index + 1}
+          </span>
+          {story.date && (
+            <span className="text-xs text-[var(--muted)] flex items-center gap-1">
+              <Clock className="w-3 h-3" />
+              {story.date}
+            </span>
+          )}
+        </div>
         {story.source && (
-          <span className="text-xs px-2 py-0.5 rounded-full bg-[var(--card-hover)] text-[var(--muted)] font-medium truncate max-w-[180px]">
+          <span className="text-xs px-2 py-0.5 rounded-full bg-[var(--card)] text-[var(--muted)] font-medium truncate max-w-[140px]">
             {story.source}
           </span>
         )}
@@ -55,18 +64,16 @@ function StoryCardComponent({ story, index, isActive }: { story: StoryCard; inde
       </ul>
 
       {/* Actions Row */}
-      <div className="flex items-center justify-between pt-2 border-t border-[var(--border)]/50">
+      <div className="flex items-center justify-between pt-2 border-t border-[var(--border)]">
         {story.url && (
           <a
             href={story.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 text-xs text-[var(--accent)] hover:text-[var(--foreground)] transition-colors font-medium group"
+            className="inline-flex items-center gap-1.5 text-xs text-[var(--accent)] hover:text-[var(--accent-hover)] transition-colors font-medium group"
           >
             Read more
-            <svg className="w-3 h-3 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-            </svg>
+            <ExternalLink className="w-3 h-3 transition-transform group-hover:translate-x-0.5" />
           </a>
         )}
         <button
@@ -74,12 +81,10 @@ function StoryCardComponent({ story, index, isActive }: { story: StoryCard; inde
             const text = `${story.headline}\n\n${story.bullets.map(b => `• ${b}`).join('\n')}${story.url ? `\n\n${story.url}` : ''}`;
             await navigator.clipboard.writeText(text);
           }}
-          className="p-1.5 rounded-md hover:bg-[var(--card-hover)] text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+          className="p-1.5 rounded-md hover:bg-[var(--card)] text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
           title="Copy story"
         >
-          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
-          </svg>
+          <Copy className="w-3.5 h-3.5" />
         </button>
       </div>
     </div>
