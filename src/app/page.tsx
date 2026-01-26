@@ -280,19 +280,18 @@ export default function Home() {
         {/* Topic Selection */}
         <section className="mb-8">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold flex items-center gap-2">
-              <span>📋</span> Select Topics
-            </h2>
+            <h2 className="text-lg font-semibold">Topics</h2>
             <button
-              onClick={() => setShowAddTopic(true)}
-              className="text-sm px-3 py-1.5 rounded-lg bg-[var(--card)] border border-[var(--border)] hover:border-[var(--accent)] transition-colors flex items-center gap-1"
+              onClick={() => setShowSettings(true)}
+              className="text-sm px-3 py-1.5 rounded-lg bg-[var(--card)] border border-[var(--border)] hover:border-[var(--accent)] transition-colors flex items-center gap-2"
             >
-              <span>+</span> Add Custom
+              Settings
             </button>
           </div>
           <TopicSelector
             topics={topics}
             onToggle={toggleTopic}
+            onAdd={addCustomTopic}
             onRemove={removeTopic}
           />
         </section>
