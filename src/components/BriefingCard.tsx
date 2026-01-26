@@ -15,9 +15,9 @@ function StoryCardComponent({ story, index, isActive }: { story: StoryCard; inde
   return (
     <div 
       className={cn(
-        "min-w-[320px] max-w-[380px] flex-shrink-0 snap-center",
+        "min-w-[280px] sm:min-w-[320px] max-w-[340px] sm:max-w-[380px] flex-shrink-0 snap-center",
         "bg-gradient-to-br from-[var(--card)] to-[var(--card-hover)]",
-        "rounded-xl border p-5",
+        "rounded-xl border p-4 sm:p-5",
         "transition-all duration-300",
         isActive 
           ? "border-[var(--accent)]/50 shadow-lg shadow-[var(--accent)]/10 scale-[1.01]" 
