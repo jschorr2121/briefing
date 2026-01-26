@@ -17,6 +17,7 @@
     "autoprefixer": "10.4.23",
     "lucide-react": "^0.563.0",
     "next": "^14.2.28",
+    "next-auth": "^4.24.13",
     "nodemailer": "^6.10.1",
     "postcss": "8.5.6",
     "react": "^18.3.1",
