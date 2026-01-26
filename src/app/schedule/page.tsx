@@ -23,6 +23,17 @@ const SUGGESTED_TOPICS = [
   'Startups', 'Crypto', 'Climate', 'Politics', 'Entertainment'
 ];
 
+// Generate 30-minute interval time options
+const TIME_OPTIONS = Array.from({ length: 48 }, (_, i) => {
+  const hour = Math.floor(i / 2);
+  const minute = (i % 2) * 30;
+  const value = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+  const hour12 = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
+  const ampm = hour < 12 ? 'AM' : 'PM';
+  const label = `${hour12}:${minute.toString().padStart(2, '0')} ${ampm}`;
+  return { value, label };
+});
+
 export default function SchedulePage() {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -298,13 +309,16 @@ export default function SchedulePage() {
               <div>
                 <label className="block text-sm font-medium mb-1.5">Time</label>
                 <div className="relative">
-                  <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--muted)]" />
-                  <input
-                    type="time"
+                  <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--muted)] pointer-events-none" />
+                  <select
                     value={time}
                     onChange={(e) => setTime(e.target.value)}
-                    className="input pl-10"
-                  />
+                    className="input pl-10 appearance-none"
+                  >
+                    {TIME_OPTIONS.map(opt => (
+                      <option key={opt.value} value={opt.value}>{opt.label}</option>
+                    ))}
+                  </select>
                 </div>
               </div>
             </div>
