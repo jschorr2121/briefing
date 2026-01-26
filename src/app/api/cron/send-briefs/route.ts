@@ -234,7 +234,65 @@ async function generateBriefings(topics: string[]): Promise<Briefing[]> {
   return briefings;
 }
 
-function formatBriefingEmail(briefings: Briefing[], recipientEmail: string): string {
+interface HealthTip {
+  emoji: string;
+  category: string;
+  tip: string;
+}
+
+async function generateHealthTips(): Promise<HealthTip[]> {
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) return [];
+
+  try {
+    const today = new Date();
+    const dayOfWeek = today.toLocaleDateString('en-US', { weekday: 'long' });
+    
+    const response = await fetchWithRetry(
+      'https://api.openai.com/v1/chat/completions',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model: getOpenAIModel(),
+          messages: [{
+            role: 'user',
+            content: `Generate 2-3 practical health tips for today (${dayOfWeek}). Mix categories like: nutrition, exercise, sleep, mental health, hydration, posture, stretching, or habits.
+
+Keep tips actionable and specific. Format as JSON array:
+[
+  {"emoji": "🥗", "category": "Nutrition", "tip": "Add leafy greens to one meal today - they're packed with magnesium for energy."},
+  {"emoji": "🚶", "category": "Movement", "tip": "Take a 10-minute walk after lunch to boost afternoon focus."}
+]
+
+Return only valid JSON, no markdown.`
+          }],
+          max_tokens: 500,
+        }),
+      }
+    );
+
+    if (!response.ok) return [];
+
+    const data = await response.json();
+    const content = data.choices?.[0]?.message?.content || '';
+    
+    // Parse JSON
+    const jsonMatch = content.match(/\[[\s\S]*\]/);
+    if (jsonMatch) {
+      return JSON.parse(jsonMatch[0]);
+    }
+    return [];
+  } catch (error) {
+    console.error('Error generating health tips:', error);
+    return [];
+  }
+}
+
+function formatBriefingEmail(briefings: Briefing[], recipientEmail: string, healthTips?: HealthTip[]): string {
   const date = new Date().toLocaleDateString('en-US', {
     weekday: 'long',
     year: 'numeric',
@@ -293,6 +351,26 @@ function formatBriefingEmail(briefings: Briefing[], recipientEmail: string): str
     `;
   }).join('');
 
+  // Health tips section
+  const healthTipsHtml = healthTips && healthTips.length > 0 ? `
+    <div style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border-radius: 12px; padding: 24px; margin-bottom: 20px; border: 1px solid #a7f3d0;">
+      <h2 style="margin: 0 0 16px; font-size: 18px; color: #065f46; display: flex; align-items: center; gap: 8px;">
+        💪 Daily Health Tips
+      </h2>
+      ${healthTips.map(tip => `
+        <div style="background: white; border-radius: 8px; padding: 12px 16px; margin-bottom: 12px; border: 1px solid #d1fae5;">
+          <div style="display: flex; align-items: flex-start; gap: 12px;">
+            <span style="font-size: 24px;">${tip.emoji}</span>
+            <div>
+              <span style="font-size: 11px; font-weight: 600; color: #059669; text-transform: uppercase; letter-spacing: 0.5px;">${tip.category}</span>
+              <p style="margin: 4px 0 0; color: #374151; font-size: 14px; line-height: 1.5;">${tip.tip}</p>
+            </div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  ` : '';
+
   return `
     <!DOCTYPE html>
     <html>
@@ -311,6 +389,8 @@ function formatBriefingEmail(briefings: Briefing[], recipientEmail: string): str
           </p>
         </div>
         
+        ${healthTipsHtml}
+        
         ${sections}
         
         <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
@@ -326,7 +406,7 @@ function formatBriefingEmail(briefings: Briefing[], recipientEmail: string): str
   `;
 }
 
-async function sendBriefingEmail(schedule: ScheduledBrief, briefings: Briefing[]): Promise<void> {
+async function sendBriefingEmail(schedule: ScheduledBrief, briefings: Briefing[], healthTips: HealthTip[]): Promise<void> {
   const smtpUser = process.env.SMTP_USER;
   const smtpPass = process.env.SMTP_PASS;
 
@@ -351,7 +431,7 @@ async function sendBriefingEmail(schedule: ScheduledBrief, briefings: Briefing[]
     from: `"Briefing" <${smtpUser}>`,
     to: schedule.email,
     subject: `📰 Your Briefing — ${date}`,
-    html: formatBriefingEmail(briefings, schedule.email),
+    html: formatBriefingEmail(briefings, schedule.email, healthTips),
   });
 }
 
@@ -366,6 +446,10 @@ export async function GET(request: NextRequest) {
     const schedules = await getSchedules();
     const results: { id: string; status: string; error?: string }[] = [];
 
+    // Generate health tips once for all emails
+    const healthTips = await generateHealthTips();
+    console.log(`Generated ${healthTips.length} health tips for today`);
+
     for (const schedule of schedules) {
       if (!shouldSendNow(schedule)) {
         continue;
@@ -375,8 +459,8 @@ export async function GET(request: NextRequest) {
         // Generate briefings for this schedule's topics
         const briefings = await generateBriefings(schedule.topics);
         
-        // Send email
-        await sendBriefingEmail(schedule, briefings);
+        // Send email with health tips
+        await sendBriefingEmail(schedule, briefings, healthTips);
         
         // Update last sent timestamp
         schedule.lastSentAt = new Date().toISOString();
