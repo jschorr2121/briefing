@@ -1,0 +1,77 @@
+'use client';
+
+import type { Briefing } from '@/lib/types';
+import { getTotalReadingTime } from '@/lib/utils';
+
+interface BriefingStatsProps {
+  briefings: Briefing[];
+  lastGenerated: Date | null;
+}
+
+export function BriefingStats({ briefings, lastGenerated }: BriefingStatsProps) {
+  if (briefings.length === 0) return null;
+
+  const totalReadingTime = getTotalReadingTime(briefings);
+  const totalSources = briefings.reduce((acc, b) => acc + b.articles.length, 0);
+  const totalWords = briefings.reduce((acc, b) => acc + b.summary.split(/\s+/).length, 0);
+
+  return (
+    <div className="flex flex-wrap gap-4 mb-6 p-4 rounded-xl bg-[var(--card)] border border-[var(--border)]">
+      <div className="flex items-center gap-2">
+        <div className="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center">
+          <svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <div>
+          <div className="text-sm font-medium">{totalReadingTime} min</div>
+          <div className="text-xs text-[var(--muted)]">Read time</div>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-2">
+        <div className="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center">
+          <svg className="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+          </svg>
+        </div>
+        <div>
+          <div className="text-sm font-medium">{briefings.length}</div>
+          <div className="text-xs text-[var(--muted)]">Topics</div>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-2">
+        <div className="w-8 h-8 rounded-lg bg-green-500/20 flex items-center justify-center">
+          <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+          </svg>
+        </div>
+        <div>
+          <div className="text-sm font-medium">{totalSources}</div>
+          <div className="text-xs text-[var(--muted)]">Sources</div>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-2">
+        <div className="w-8 h-8 rounded-lg bg-orange-500/20 flex items-center justify-center">
+          <svg className="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+        </div>
+        <div>
+          <div className="text-sm font-medium">{totalWords.toLocaleString()}</div>
+          <div className="text-xs text-[var(--muted)]">Words</div>
+        </div>
+      </div>
+
+      {lastGenerated && (
+        <div className="flex items-center gap-2 ml-auto">
+          <div className="text-xs text-[var(--muted)]">
+            Generated {lastGenerated.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

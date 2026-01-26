@@ -1,3 +1,0 @@
-module.exports=[27572,a=>{"use strict";var b=a.i(74127);function c({children:a}){return(0,b.jsx)("html",{lang:"en",children:(0,b.jsx)("body",{className:"antialiased min-h-screen",children:a})})}a.s(["default",()=>c,"metadata",0,{title:"Briefing - Your Personal News Intelligence",description:"AI-powered personalized news briefings tailored to your interests"}])}];
-
-//# sourceMappingURL=src_app_layout_tsx_cc8184fa._.js.map
