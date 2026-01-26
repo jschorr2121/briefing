@@ -14,11 +14,11 @@ export function GenerateButton({ onClick, isLoading, disabled }: GenerateButtonP
       onClick={onClick}
       disabled={disabled || isLoading}
       className={cn(
-        'px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-200',
-        'flex items-center gap-3',
+        'px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300',
+        'flex items-center gap-3 relative overflow-hidden',
         disabled
           ? 'bg-[var(--card)] text-[var(--muted)] cursor-not-allowed'
-          : 'bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:shadow-lg hover:shadow-blue-500/25 hover:scale-105'
+          : 'bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white hover:shadow-xl hover:shadow-purple-500/30 hover:scale-[1.02] active:scale-[0.98]'
       )}
     >
       {isLoading ? (

@@ -443,22 +443,63 @@ export default function Home() {
         {/* Loading State */}
         {isLoading && (
           <div className="space-y-6">
-            <h2 className="text-xl font-semibold flex items-center gap-2">
-              <span>📰</span> Generating Your Briefing...
-            </h2>
-            {topics.filter(t => t.enabled).map((topic) => (
+            <div className="flex items-center gap-3 mb-2">
+              <h2 className="text-xl font-semibold flex items-center gap-2">
+                <span>📰</span> Generating Your Briefing
+              </h2>
+              <div className="flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full bg-[var(--accent)] animate-pulse" style={{ animationDelay: '0ms' }} />
+                <span className="w-2 h-2 rounded-full bg-[var(--accent)] animate-pulse" style={{ animationDelay: '150ms' }} />
+                <span className="w-2 h-2 rounded-full bg-[var(--accent)] animate-pulse" style={{ animationDelay: '300ms' }} />
+              </div>
+            </div>
+            <p className="text-sm text-[var(--muted)] mb-4">Searching the web and analyzing the latest news...</p>
+            {topics.filter(t => t.enabled).map((topic, index) => (
               <div
                 key={topic.id}
-                className="bg-[var(--card)] rounded-xl p-6 border border-[var(--border)]"
+                className="bg-[var(--card)] rounded-2xl p-6 border border-[var(--border)] overflow-hidden"
+                style={{ animationDelay: `${index * 100}ms` }}
               >
-                <div className="flex items-center gap-3 mb-4">
-                  <span className="text-2xl">{topic.emoji}</span>
-                  <div className="h-6 w-32 bg-[var(--border)] rounded animate-pulse" />
+                {/* Header skeleton */}
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--accent)]/20 to-[var(--accent)]/5 flex items-center justify-center">
+                    <span className="text-2xl">{topic.emoji}</span>
+                  </div>
+                  <div>
+                    <div className="h-6 w-32 bg-[var(--border)] rounded animate-shimmer mb-2" />
+                    <div className="h-3 w-24 bg-[var(--border)] rounded animate-shimmer" style={{ animationDelay: '100ms' }} />
+                  </div>
                 </div>
-                <div className="space-y-3">
-                  <div className="h-4 w-full bg-[var(--border)] rounded animate-pulse" />
-                  <div className="h-4 w-5/6 bg-[var(--border)] rounded animate-pulse" />
-                  <div className="h-4 w-4/6 bg-[var(--border)] rounded animate-pulse" />
+                
+                {/* Summary skeleton */}
+                <div className="space-y-2 mb-6">
+                  <div className="h-4 w-full bg-[var(--border)] rounded animate-shimmer" />
+                  <div className="h-4 w-5/6 bg-[var(--border)] rounded animate-shimmer" style={{ animationDelay: '50ms' }} />
+                  <div className="h-4 w-4/6 bg-[var(--border)] rounded animate-shimmer" style={{ animationDelay: '100ms' }} />
+                </div>
+                
+                {/* Story cards skeleton */}
+                <div className="flex gap-4 overflow-hidden">
+                  {[0, 1, 2].map((i) => (
+                    <div
+                      key={i}
+                      className="min-w-[320px] flex-shrink-0 bg-gradient-to-br from-[var(--card)] to-[var(--card-hover)] rounded-xl border border-[var(--border)] p-5"
+                    >
+                      <div className="flex items-start justify-between gap-3 mb-3">
+                        <div className="h-5 w-8 bg-[var(--border)] rounded animate-shimmer" />
+                        <div className="h-5 w-24 bg-[var(--border)] rounded animate-shimmer" />
+                      </div>
+                      <div className="h-5 w-full bg-[var(--border)] rounded animate-shimmer mb-4" />
+                      <div className="space-y-2.5">
+                        {[0, 1, 2].map((j) => (
+                          <div key={j} className="flex items-start gap-2.5">
+                            <div className="w-1.5 h-1.5 rounded-full bg-[var(--border)] mt-1.5" />
+                            <div className="h-4 flex-1 bg-[var(--border)] rounded animate-shimmer" style={{ animationDelay: `${j * 50}ms` }} />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             ))}
