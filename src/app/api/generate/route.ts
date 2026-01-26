@@ -25,6 +25,7 @@ interface StoryCard {
   bullets: string[];
   source?: string;
   url?: string;
+  date?: string;
 }
 
 interface Briefing {
@@ -95,7 +96,9 @@ After searching, create a news briefing with:
 For each story, provide:
 - A clear headline (max 15 words)
 - ${settings.briefingLength === 'short' ? '2-3' : settings.briefingLength === 'medium' ? '3-4' : '4-5'} bullet points that fully explain the story
-- The source name and URL
+- The source name
+- The SPECIFIC article URL (not the homepage - must be the direct link to the article)
+- The publication date (format: "Jan 26, 2026")
 
 Tone: ${toneGuide[settings.tone]}
 
@@ -107,7 +110,8 @@ Format your response as JSON:
       "headline": "Story headline",
       "bullets": ["Key point 1", "Key point 2", "Key point 3"],
       "source": "Source Name",
-      "url": "https://..."
+      "url": "https://example.com/actual-article-path",
+      "date": "Jan 26, 2026"
     }
   ]
 }
