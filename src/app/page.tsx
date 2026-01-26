@@ -45,6 +45,8 @@ export default function Home() {
   const [isSendingEmail, setIsSendingEmail] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
   const [history, setHistory] = useState<BriefingHistory[]>([]);
+  const [refreshingTopic, setRefreshingTopic] = useState<string | null>(null);
+  const [playbackSpeed, setPlaybackSpeed] = useState(1);
   const audioRef = useRef<HTMLAudioElement>(null);
 
   // Load saved state from localStorage
@@ -372,15 +374,36 @@ export default function Home() {
         {/* Audio Player */}
         {audioUrl && (
           <div className="mb-8 p-4 rounded-xl bg-[var(--card)] border border-[var(--border)]">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 flex-wrap">
               <span className="text-2xl">🎧</span>
               <audio
                 ref={audioRef}
                 src={audioUrl}
                 controls
-                className="flex-1 h-10"
+                className="flex-1 min-w-[200px] h-10"
                 style={{ colorScheme: 'dark' }}
               />
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs text-[var(--muted)] mr-1">Speed:</span>
+                {[0.75, 1, 1.25, 1.5, 2].map((speed) => (
+                  <button
+                    key={speed}
+                    onClick={() => {
+                      if (audioRef.current) {
+                        audioRef.current.playbackRate = speed;
+                        setPlaybackSpeed(speed);
+                      }
+                    }}
+                    className={`px-2 py-1 text-xs rounded transition-colors ${
+                      playbackSpeed === speed 
+                        ? 'bg-[var(--accent)] text-white' 
+                        : 'bg-[var(--card-hover)] hover:bg-[var(--accent)]/50'
+                    }`}
+                  >
+                    {speed}x
+                  </button>
+                ))}
+              </div>
               <a
                 href={audioUrl}
                 download={`briefing-${new Date().toISOString().split('T')[0]}.mp3`}
