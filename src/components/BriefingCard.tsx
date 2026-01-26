@@ -52,20 +52,34 @@ function StoryCardComponent({ story, index, isActive }: { story: StoryCard; inde
         ))}
       </ul>
 
-      {/* Read More Link */}
-      {story.url && (
-        <a
-          href={story.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 text-xs text-[var(--accent)] hover:text-[var(--foreground)] transition-colors font-medium group"
+      {/* Actions Row */}
+      <div className="flex items-center justify-between pt-2 border-t border-[var(--border)]/50">
+        {story.url && (
+          <a
+            href={story.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 text-xs text-[var(--accent)] hover:text-[var(--foreground)] transition-colors font-medium group"
+          >
+            Read more
+            <svg className="w-3 h-3 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
+          </a>
+        )}
+        <button
+          onClick={async () => {
+            const text = `${story.headline}\n\n${story.bullets.map(b => `• ${b}`).join('\n')}${story.url ? `\n\n${story.url}` : ''}`;
+            await navigator.clipboard.writeText(text);
+          }}
+          className="p-1.5 rounded-md hover:bg-[var(--card-hover)] text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+          title="Copy story"
         >
-          Read full story
-          <svg className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
           </svg>
-        </a>
-      )}
+        </button>
+      </div>
     </div>
   );
 }

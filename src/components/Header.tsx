@@ -9,10 +9,10 @@ interface HeaderProps {
 
 export function Header({ onSettingsClick, lastGenerated }: HeaderProps) {
   return (
-    <header className="sticky top-0 z-50 backdrop-blur-lg bg-[var(--background)]/80 border-b border-[var(--border)]">
+    <header className="sticky top-0 z-50 backdrop-blur-xl bg-[var(--background)]/85 border-b border-[var(--border)]">
       <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center shadow-lg shadow-purple-500/20">
             <span className="text-xl">📰</span>
           </div>
           <div>
