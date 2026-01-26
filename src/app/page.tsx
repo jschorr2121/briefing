@@ -16,15 +16,7 @@ import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import type { Topic, Briefing, Settings, BriefingHistory } from '@/lib/types';
 import { generateId, getTotalReadingTime } from '@/lib/utils';
 
-const DEFAULT_TOPICS: Topic[] = [
-  { id: 'ai', name: 'AI & Tech', emoji: '🤖', enabled: true },
-  { id: 'finance', name: 'Finance', emoji: '📈', enabled: true },
-  { id: 'world', name: 'World News', emoji: '🌍', enabled: true },
-  { id: 'sports', name: 'Sports', emoji: '🏀', enabled: false },
-  { id: 'science', name: 'Science', emoji: '🔬', enabled: false },
-  { id: 'startups', name: 'Startups', emoji: '🚀', enabled: true },
-  { id: 'jets', name: 'NY Jets', emoji: '🏈', enabled: false },
-];
+const DEFAULT_TOPICS: Topic[] = [];
 
 const DEFAULT_SETTINGS: Settings = {
   briefingLength: 'medium',
@@ -281,15 +273,6 @@ export default function Home() {
 
         {/* Topic Selection */}
         <section className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold">Topics</h2>
-            <button
-              onClick={() => setShowSettings(true)}
-              className="text-sm px-3 py-1.5 rounded-lg bg-[var(--card)] border border-[var(--border)] hover:border-[var(--accent)] transition-colors flex items-center gap-2"
-            >
-              Settings
-            </button>
-          </div>
           <TopicSelector
             topics={topics}
             onToggle={toggleTopic}
