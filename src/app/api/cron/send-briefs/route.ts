@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createTransport } from 'nodemailer';
 import { getSchedules, saveSchedule, shouldSendNow, type ScheduledBrief } from '@/lib/schedules';
+import { getGenerationModel, getOpenAIModel } from '@/lib/models';
 
 // Verify cron secret to prevent unauthorized access
 const CRON_SECRET = process.env.CRON_SECRET;
@@ -102,7 +103,7 @@ Only return valid JSON, no markdown code blocks.`;
           'Authorization': `Bearer ${apiKey}`,
         },
         body: JSON.stringify({
-          model: 'gpt-4o',
+          model: getOpenAIModel(),
           tools: [
             { 
               type: 'web_search',
