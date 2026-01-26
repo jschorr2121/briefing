@@ -22,6 +22,8 @@ export function TopicSelector({ topics, onToggle, onRemove }: TopicSelectorProps
           <div key={topic.id} className="relative group">
             <button
               onClick={() => onToggle(topic.id)}
+              aria-pressed={topic.enabled}
+              aria-label={`${topic.name} ${topic.enabled ? '(selected)' : '(not selected)'}`}
               className={cn(
                 'px-4 py-2.5 rounded-full border transition-all duration-200',
                 'flex items-center gap-2 text-sm font-medium',

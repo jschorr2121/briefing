@@ -13,6 +13,7 @@ export function GenerateButton({ onClick, isLoading, disabled }: GenerateButtonP
     <button
       onClick={onClick}
       disabled={disabled || isLoading}
+      aria-label={isLoading ? "Generating briefing..." : "Generate briefing (Ctrl+G)"}
       className={cn(
         'px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300',
         'flex items-center gap-3 relative overflow-hidden',
