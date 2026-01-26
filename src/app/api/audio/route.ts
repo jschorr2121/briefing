@@ -90,7 +90,7 @@ async function generateGoogleTTS(script: string): Promise<ArrayBuffer> {
         input: { text: script },
         voice: {
           languageCode: 'en-US',
-          name: 'en-US-Neural2-J', // Male news anchor voice
+          name: 'en-US-Standard-J', // Male voice (cheaper)
           ssmlGender: 'MALE'
         },
         audioConfig: {
