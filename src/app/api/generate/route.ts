@@ -250,13 +250,22 @@ async function fetchFromPerplexity(
 
   // Extract citations if available
   const articles: Article[] = [];
-  if (data.citations) {
+  if (data.citations && Array.isArray(data.citations)) {
     for (const citation of data.citations) {
-      articles.push({
-        title: citation.title || 'News Article',
-        source: new URL(citation.url).hostname.replace('www.', ''),
-        url: citation.url,
-      });
+      try {
+        // Citations can be strings (URLs) or objects with url property
+        const url = typeof citation === 'string' ? citation : citation?.url;
+        if (url && url.startsWith('http')) {
+          articles.push({
+            title: typeof citation === 'object' ? (citation.title || 'News Article') : 'News Article',
+            source: new URL(url).hostname.replace('www.', ''),
+            url: url,
+          });
+        }
+      } catch (e) {
+        // Skip invalid URLs
+        console.log('Skipping invalid citation:', citation);
+      }
     }
   }
 
