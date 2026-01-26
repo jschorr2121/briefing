@@ -23,11 +23,12 @@ export function TopicSelector({ topics, onToggle, onRemove }: TopicSelectorProps
             <button
               onClick={() => onToggle(topic.id)}
               className={cn(
-                'px-4 py-2.5 rounded-full border transition-all duration-300',
+                'px-4 py-2.5 rounded-full border transition-all duration-200',
                 'flex items-center gap-2 text-sm font-medium',
+                'active:scale-95',
                 topic.enabled
-                  ? 'bg-gradient-to-r from-indigo-500 to-purple-500 border-transparent text-white shadow-md shadow-indigo-500/20'
-                  : 'bg-[var(--card)] border-[var(--border)] text-[var(--foreground)] hover:border-[var(--accent)]/50 hover:bg-[var(--card-hover)]'
+                  ? 'bg-gradient-to-r from-indigo-500 to-purple-500 border-transparent text-white shadow-md shadow-indigo-500/20 scale-[1.02]'
+                  : 'bg-[var(--card)] border-[var(--border)] text-[var(--foreground)] hover:border-[var(--accent)]/50 hover:bg-[var(--card-hover)] hover:scale-[1.02]'
               )}
             >
               <span>{topic.emoji}</span>
