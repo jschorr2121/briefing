@@ -51,6 +51,7 @@ export function GenerateButton({ onClick, isLoading, disabled }: GenerateButtonP
             />
           </svg>
           <span>Generate Briefing</span>
+          <kbd className="hidden sm:inline-block ml-1 px-1.5 py-0.5 text-xs rounded bg-white/20 font-mono">⌘G</kbd>
         </>
       )}
     </button>
