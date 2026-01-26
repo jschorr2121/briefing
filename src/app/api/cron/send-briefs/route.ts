@@ -219,9 +219,11 @@ Only return valid JSON, no markdown code blocks.`;
 }
 
 async function generateBriefings(topics: string[]): Promise<Briefing[]> {
+  // Cap at 4 topics max
+  const cappedTopics = topics.slice(0, 4);
   const briefings: Briefing[] = [];
 
-  for (const topic of topics) {
+  for (const topic of cappedTopics) {
     const briefing = await generateBriefingWithOpenAI(topic);
     briefings.push(briefing);
     // Small delay between topics to avoid rate limits
