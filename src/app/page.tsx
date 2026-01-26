@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Headphones, Mail, Download, Check, Loader2, Newspaper } from 'lucide-react';
+import { AuthGuard } from '@/components/AuthGuard';
 import { TopicSelector } from '@/components/TopicSelector';
 import { BriefingCard } from '@/components/BriefingCard';
 import { GenerateButton } from '@/components/GenerateButton';
@@ -260,11 +261,12 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen pb-20">
-      <Header
-        onSettingsClick={() => setShowSettings(true)}
-        lastGenerated={lastGenerated}
-      />
+    <AuthGuard>
+      <main className="min-h-screen pb-20">
+        <Header
+          onSettingsClick={() => setShowSettings(true)}
+          lastGenerated={lastGenerated}
+        />
 
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Hero Section */}
@@ -551,8 +553,9 @@ export default function Home() {
         onAdd={addCustomTopic}
       />
 
-      {/* Keyboard Shortcuts */}
-      <KeyboardHints />
-    </main>
+        {/* Keyboard Shortcuts */}
+        <KeyboardHints />
+      </main>
+    </AuthGuard>
   );
 }
