@@ -9,12 +9,8 @@ const handler = NextAuth({
     }),
   ],
   callbacks: {
-    async signIn({ user }) {
-      // Optional: Restrict to specific email addresses
-      const allowedEmails = process.env.ALLOWED_EMAILS?.split(',') || [];
-      if (allowedEmails.length > 0 && !allowedEmails.includes(user.email || '')) {
-        return false;
-      }
+    async signIn() {
+      // All emails allowed
       return true;
     },
   },
