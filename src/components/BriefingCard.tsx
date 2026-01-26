@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import type { Briefing, StoryCard } from '@/lib/types';
 import { cn, calculateReadingTime, shareContent } from '@/lib/utils';
 
@@ -9,34 +9,41 @@ interface BriefingCardProps {
   index: number;
 }
 
-function StoryCardComponent({ story, index }: { story: StoryCard; index: number }) {
+function StoryCardComponent({ story, index, isActive }: { story: StoryCard; index: number; isActive?: boolean }) {
   return (
     <div 
       className={cn(
         "min-w-[320px] max-w-[380px] flex-shrink-0 snap-center",
         "bg-gradient-to-br from-[var(--card)] to-[var(--card-hover)]",
-        "rounded-xl border border-[var(--border)] p-5",
-        "hover:border-[var(--accent)]/60 hover:shadow-lg hover:shadow-[var(--accent)]/5",
-        "transition-all duration-300"
+        "rounded-xl border p-5",
+        "transition-all duration-300",
+        isActive 
+          ? "border-[var(--accent)]/50 shadow-lg shadow-[var(--accent)]/10 scale-[1.01]" 
+          : "border-[var(--border)] hover:border-[var(--accent)]/40"
       )}
       style={{ animationDelay: `${index * 50}ms` }}
     >
+      {/* Story Number Badge */}
+      <div className="flex items-start justify-between gap-3 mb-3">
+        <span className="text-xs font-bold text-[var(--accent)] bg-[var(--accent)]/10 px-2 py-0.5 rounded">
+          #{index + 1}
+        </span>
+        {story.source && (
+          <span className="text-xs px-2 py-0.5 rounded-full bg-[var(--card-hover)] text-[var(--muted)] font-medium truncate max-w-[180px]">
+            {story.source}
+          </span>
+        )}
+      </div>
+
       {/* Story Header */}
       <div className="mb-4">
         <h4 className="font-semibold text-[var(--foreground)] leading-tight text-[15px]">
           {story.headline}
         </h4>
-        {story.source && (
-          <div className="flex items-center gap-2 mt-2">
-            <span className="text-xs px-2 py-0.5 rounded-full bg-[var(--accent)]/10 text-[var(--accent)] font-medium">
-              {story.source}
-            </span>
-          </div>
-        )}
       </div>
 
       {/* Bullet Points */}
-      <ul className="space-y-2.5">
+      <ul className="space-y-2.5 mb-4">
         {story.bullets.map((bullet, i) => (
           <li key={i} className="flex items-start gap-2.5 text-sm text-[var(--muted)]">
             <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] mt-1.5 flex-shrink-0" />
@@ -51,10 +58,10 @@ function StoryCardComponent({ story, index }: { story: StoryCard; index: number 
           href={story.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-4 inline-flex items-center gap-1.5 text-xs text-[var(--accent)] hover:text-[var(--accent)]/80 transition-colors font-medium"
+          className="inline-flex items-center gap-1.5 text-xs text-[var(--accent)] hover:text-[var(--foreground)] transition-colors font-medium group"
         >
           Read full story
-          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
           </svg>
         </a>
@@ -67,10 +74,42 @@ export function BriefingCard({ briefing, index }: BriefingCardProps) {
   const [expanded, setExpanded] = useState(true);
   const [copied, setCopied] = useState(false);
   const [shared, setShared] = useState(false);
+  const [activeStoryIndex, setActiveStoryIndex] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const readingTime = calculateReadingTime(briefing.summary);
   const hasStories = briefing.stories && briefing.stories.length > 0;
+  const totalStories = briefing.stories?.length || 0;
+
+  // Track scroll position to update active story indicator
+  const handleScroll = useCallback(() => {
+    if (!scrollRef.current || !hasStories) return;
+    const container = scrollRef.current;
+    const scrollLeft = container.scrollLeft;
+    const cardWidth = 340; // min-w-[320px] + gap
+    const newIndex = Math.round(scrollLeft / cardWidth);
+    setActiveStoryIndex(Math.min(Math.max(0, newIndex), totalStories - 1));
+  }, [hasStories, totalStories]);
+
+  // Set up scroll listener
+  useEffect(() => {
+    const container = scrollRef.current;
+    if (!container) return;
+    container.addEventListener('scroll', handleScroll, { passive: true });
+    return () => container.removeEventListener('scroll', handleScroll);
+  }, [handleScroll]);
+
+  // Keyboard navigation
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (!hasStories) return;
+    if (e.key === 'ArrowLeft') {
+      scrollCards('left');
+      e.preventDefault();
+    } else if (e.key === 'ArrowRight') {
+      scrollCards('right');
+      e.preventDefault();
+    }
+  }, [hasStories]);
 
   const copyToClipboard = async () => {
     let textToCopy = `${briefing.emoji} ${briefing.topic}\n\n${briefing.summary}`;
@@ -101,7 +140,7 @@ export function BriefingCard({ briefing, index }: BriefingCardProps) {
     }
   };
 
-  const scrollCards = (direction: 'left' | 'right') => {
+  const scrollCards = useCallback((direction: 'left' | 'right') => {
     if (scrollRef.current) {
       const scrollAmount = 340;
       scrollRef.current.scrollBy({
@@ -109,7 +148,17 @@ export function BriefingCard({ briefing, index }: BriefingCardProps) {
         behavior: 'smooth'
       });
     }
-  };
+  }, []);
+
+  const scrollToStory = useCallback((storyIndex: number) => {
+    if (scrollRef.current) {
+      const scrollAmount = 340 * storyIndex;
+      scrollRef.current.scrollTo({
+        left: scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+  }, []);
 
   // Convert markdown-style bold to HTML
   const formatSummary = (text: string) => {
@@ -194,11 +243,32 @@ export function BriefingCard({ briefing, index }: BriefingCardProps) {
 
           {/* Story Cards - Horizontal Scroll */}
           {hasStories && (
-            <div className="relative group">
+            <div className="relative group" onKeyDown={handleKeyDown} tabIndex={0}>
+              {/* Story Counter */}
+              <div className="flex items-center justify-between px-6 mb-3">
+                <span className="text-xs text-[var(--muted)] font-medium">
+                  Story {activeStoryIndex + 1} of {totalStories}
+                </span>
+                <div className="flex items-center gap-2 text-xs text-[var(--muted)]">
+                  <span className="hidden sm:inline">Use</span>
+                  <kbd className="px-1.5 py-0.5 rounded bg-[var(--card-hover)] border border-[var(--border)] text-[10px] font-mono">←</kbd>
+                  <kbd className="px-1.5 py-0.5 rounded bg-[var(--card-hover)] border border-[var(--border)] text-[10px] font-mono">→</kbd>
+                  <span className="hidden sm:inline">to navigate</span>
+                </div>
+              </div>
+
               {/* Scroll Buttons */}
               <button
                 onClick={() => scrollCards('left')}
-                className="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-[var(--background)]/90 border border-[var(--border)] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:border-[var(--accent)]"
+                disabled={activeStoryIndex === 0}
+                className={cn(
+                  "absolute left-2 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full",
+                  "bg-[var(--background)]/95 border border-[var(--border)]",
+                  "flex items-center justify-center transition-all duration-200",
+                  activeStoryIndex === 0 
+                    ? "opacity-30 cursor-not-allowed" 
+                    : "opacity-0 group-hover:opacity-100 hover:border-[var(--accent)] hover:bg-[var(--card)]"
+                )}
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -206,7 +276,15 @@ export function BriefingCard({ briefing, index }: BriefingCardProps) {
               </button>
               <button
                 onClick={() => scrollCards('right')}
-                className="absolute right-2 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-[var(--background)]/90 border border-[var(--border)] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:border-[var(--accent)]"
+                disabled={activeStoryIndex === totalStories - 1}
+                className={cn(
+                  "absolute right-2 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full",
+                  "bg-[var(--background)]/95 border border-[var(--border)]",
+                  "flex items-center justify-center transition-all duration-200",
+                  activeStoryIndex === totalStories - 1
+                    ? "opacity-30 cursor-not-allowed"
+                    : "opacity-0 group-hover:opacity-100 hover:border-[var(--accent)] hover:bg-[var(--card)]"
+                )}
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -216,23 +294,30 @@ export function BriefingCard({ briefing, index }: BriefingCardProps) {
               {/* Cards Container */}
               <div
                 ref={scrollRef}
-                className="flex gap-4 overflow-x-auto px-6 py-2 scroll-smooth snap-x snap-mandatory scrollbar-thin scrollbar-thumb-[var(--border)] scrollbar-track-transparent"
+                className="flex gap-4 overflow-x-auto px-6 py-2 scroll-smooth snap-x snap-mandatory scrollbar-thin focus:outline-none"
                 style={{ 
                   scrollbarWidth: 'thin',
                   msOverflowStyle: 'none',
                 }}
               >
                 {briefing.stories!.map((story, i) => (
-                  <StoryCardComponent key={i} story={story} index={i} />
+                  <StoryCardComponent key={i} story={story} index={i} isActive={i === activeStoryIndex} />
                 ))}
               </div>
 
-              {/* Scroll Indicator */}
-              <div className="flex justify-center gap-1.5 mt-4">
+              {/* Interactive Scroll Indicator */}
+              <div className="flex justify-center items-center gap-2 mt-4">
                 {briefing.stories!.map((_, i) => (
-                  <div
+                  <button
                     key={i}
-                    className="w-1.5 h-1.5 rounded-full bg-[var(--border)]"
+                    onClick={() => scrollToStory(i)}
+                    className={cn(
+                      "transition-all duration-300 rounded-full",
+                      i === activeStoryIndex 
+                        ? "w-6 h-2 bg-[var(--accent)]" 
+                        : "w-2 h-2 bg-[var(--border)] hover:bg-[var(--muted)]"
+                    )}
+                    aria-label={`Go to story ${i + 1}`}
                   />
                 ))}
               </div>
