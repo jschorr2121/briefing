@@ -37,10 +37,13 @@ export interface BriefingHistory {
   topicNames: string[];
 }
 
+export type VoiceOption = 'alloy' | 'echo' | 'fable' | 'onyx' | 'nova' | 'shimmer';
+
 export interface Settings {
   briefingLength: 'short' | 'medium' | 'long';
   includeLinks: boolean;
   tone: 'casual' | 'professional' | 'technical';
+  voice: VoiceOption;
   email?: string;
   autoEmailEnabled?: boolean;
 }

@@ -89,6 +89,7 @@ export function BriefingCard({ briefing, index }: BriefingCardProps) {
   const [copied, setCopied] = useState(false);
   const [shared, setShared] = useState(false);
   const [activeStoryIndex, setActiveStoryIndex] = useState(0);
+  const [hasScrolled, setHasScrolled] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const readingTime = calculateReadingTime(briefing.summary);
@@ -103,7 +104,10 @@ export function BriefingCard({ briefing, index }: BriefingCardProps) {
     const cardWidth = 340; // min-w-[320px] + gap
     const newIndex = Math.round(scrollLeft / cardWidth);
     setActiveStoryIndex(Math.min(Math.max(0, newIndex), totalStories - 1));
-  }, [hasStories, totalStories]);
+    if (scrollLeft > 20 && !hasScrolled) {
+      setHasScrolled(true);
+    }
+  }, [hasStories, totalStories, hasScrolled]);
 
   // Set up scroll listener
   useEffect(() => {
@@ -320,20 +324,31 @@ export function BriefingCard({ briefing, index }: BriefingCardProps) {
               </div>
 
               {/* Interactive Scroll Indicator */}
-              <div className="flex justify-center items-center gap-2 mt-4">
-                {briefing.stories!.map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => scrollToStory(i)}
-                    className={cn(
-                      "transition-all duration-300 rounded-full",
-                      i === activeStoryIndex 
-                        ? "w-6 h-2 bg-[var(--accent)]" 
-                        : "w-2 h-2 bg-[var(--border)] hover:bg-[var(--muted)]"
-                    )}
-                    aria-label={`Go to story ${i + 1}`}
-                  />
-                ))}
+              <div className="flex flex-col items-center gap-2 mt-4">
+                <div className="flex items-center gap-2">
+                  {briefing.stories!.map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => scrollToStory(i)}
+                      className={cn(
+                        "transition-all duration-300 rounded-full",
+                        i === activeStoryIndex 
+                          ? "w-6 h-2 bg-[var(--accent)]" 
+                          : "w-2 h-2 bg-[var(--border)] hover:bg-[var(--muted)]"
+                      )}
+                      aria-label={`Go to story ${i + 1}`}
+                    />
+                  ))}
+                </div>
+                {/* Mobile swipe hint - shows only on mobile and only if not scrolled */}
+                {!hasScrolled && totalStories > 1 && (
+                  <div className="sm:hidden flex items-center gap-1 text-[10px] text-[var(--muted)] animate-pulse">
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    </svg>
+                    Swipe for more stories
+                  </div>
+                )}
               </div>
             </div>
           )}

@@ -6,9 +6,14 @@ interface Briefing {
   summary: string;
 }
 
+type VoiceOption = 'alloy' | 'echo' | 'fable' | 'onyx' | 'nova' | 'shimmer';
+
 export async function POST(request: NextRequest) {
   try {
-    const { briefings } = await request.json() as { briefings: Briefing[] };
+    const { briefings, voice: requestedVoice } = await request.json() as { 
+      briefings: Briefing[]; 
+      voice?: VoiceOption;
+    };
 
     if (!briefings || briefings.length === 0) {
       return NextResponse.json({ error: 'No briefings provided' }, { status: 400 });
@@ -33,7 +38,7 @@ export async function POST(request: NextRequest) {
     }).join('\n\n');
 
     // OpenAI TTS - voice options: alloy, echo, fable, onyx, nova, shimmer
-    const voice = process.env.OPENAI_TTS_VOICE || 'nova';
+    const voice = requestedVoice || (process.env.OPENAI_TTS_VOICE as VoiceOption) || 'nova';
 
     const response = await fetch('https://api.openai.com/v1/audio/speech', {
       method: 'POST',
