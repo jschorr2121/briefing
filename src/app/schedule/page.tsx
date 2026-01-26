@@ -23,16 +23,12 @@ const SUGGESTED_TOPICS = [
   'Startups', 'Crypto', 'Climate', 'Politics', 'Entertainment'
 ];
 
-// Generate 30-minute interval time options
-const TIME_OPTIONS = Array.from({ length: 48 }, (_, i) => {
-  const hour = Math.floor(i / 2);
-  const minute = (i % 2) * 30;
-  const value = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
-  const hour12 = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
-  const ampm = hour < 12 ? 'AM' : 'PM';
-  const label = `${hour12}:${minute.toString().padStart(2, '0')} ${ampm}`;
-  return { value, label };
-});
+// Time options (Vercel Hobby only allows daily cron, so we simplify to morning delivery)
+const TIME_OPTIONS = [
+  { value: '07:00', label: '7:00 AM' },
+  { value: '08:00', label: '8:00 AM' },
+  { value: '09:00', label: '9:00 AM' },
+];
 
 export default function SchedulePage() {
   const { data: session, status } = useSession();
