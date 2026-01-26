@@ -3,14 +3,14 @@
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Plus, X, Clock, Mail, Trash2, Edit2, Check, Loader2 } from 'lucide-react';
+import { ArrowLeft, Plus, X, Clock, Mail, Trash2, Edit2, Check, Loader2, Info } from 'lucide-react';
 import Link from 'next/link';
 
 interface ScheduledBrief {
   id: string;
   email: string;
   topics: string[];
-  frequency: 'daily' | 'weekdays' | 'weekly';
+  frequency: 'daily';
   time: string;
   timezone: string;
   enabled: boolean;
@@ -21,13 +21,6 @@ interface ScheduledBrief {
 const SUGGESTED_TOPICS = [
   'AI & Tech', 'Finance', 'World News', 'Sports', 'Science', 
   'Startups', 'Crypto', 'Climate', 'Politics', 'Entertainment'
-];
-
-// Time options (Vercel Hobby only allows daily cron, so we simplify to morning delivery)
-const TIME_OPTIONS = [
-  { value: '07:00', label: '7:00 AM' },
-  { value: '08:00', label: '8:00 AM' },
-  { value: '09:00', label: '9:00 AM' },
 ];
 
 export default function SchedulePage() {
@@ -44,8 +37,6 @@ export default function SchedulePage() {
   const [email, setEmail] = useState('');
   const [topics, setTopics] = useState<string[]>([]);
   const [topicInput, setTopicInput] = useState('');
-  const [frequency, setFrequency] = useState<'daily' | 'weekdays' | 'weekly'>('daily');
-  const [time, setTime] = useState('08:00');
   
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -96,9 +87,9 @@ export default function SchedulePage() {
         id: editingId,
         email,
         topics,
-        frequency,
-        time,
-        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        frequency: 'daily',
+        time: '08:00',
+        timezone: 'America/New_York',
       };
 
       const res = await fetch('/api/schedules', {
@@ -122,8 +113,6 @@ export default function SchedulePage() {
     setEditingId(schedule.id);
     setEmail(schedule.email);
     setTopics(schedule.topics);
-    setFrequency(schedule.frequency);
-    setTime(schedule.time);
     setShowForm(true);
   };
 
@@ -165,8 +154,6 @@ export default function SchedulePage() {
     setShowForm(false);
     setEditingId(null);
     setTopics([]);
-    setFrequency('daily');
-    setTime('08:00');
     if (session?.user?.email) {
       setEmail(session.user.email);
     }
@@ -198,6 +185,15 @@ export default function SchedulePage() {
       </header>
 
       <main className="max-w-2xl mx-auto px-4 py-8">
+        {/* Info Banner */}
+        <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-xl flex items-start gap-3">
+          <Info className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+          <div className="text-sm text-blue-800">
+            <p className="font-medium">Daily briefings at 8:00 AM ET</p>
+            <p className="text-blue-600 mt-0.5">All scheduled briefings are sent every morning. Choose your topics below.</p>
+          </div>
+        </div>
+
         {/* Add New Button */}
         {!showForm && (
           <button
@@ -205,14 +201,15 @@ export default function SchedulePage() {
             className="w-full mb-6 p-4 border-2 border-dashed border-[var(--border)] rounded-xl hover:border-[var(--accent)] hover:bg-[var(--card)] transition-all flex items-center justify-center gap-2 text-[var(--muted)] hover:text-[var(--accent)]"
           >
             <Plus className="w-5 h-5" />
-            <span className="font-medium">Create Scheduled Brief</span>
+            <span className="font-medium">Create Daily Brief</span>
           </button>
         )}
 
         {/* Form */}
         {showForm && (
           <form onSubmit={handleSubmit} className="mb-8 p-6 bg-[var(--card)] border border-[var(--border)] rounded-xl">
-            <h2 className="font-semibold mb-4">{editingId ? 'Edit' : 'New'} Scheduled Brief</h2>
+            <h2 className="font-semibold mb-1">{editingId ? 'Edit' : 'New'} Daily Brief</h2>
+            <p className="text-sm text-[var(--muted)] mb-4">You'll receive this briefing every day at 8:00 AM ET</p>
             
             {/* Email */}
             <div className="mb-4">
@@ -288,37 +285,6 @@ export default function SchedulePage() {
               )}
             </div>
 
-            {/* Frequency & Time */}
-            <div className="grid grid-cols-2 gap-4 mb-4">
-              <div>
-                <label className="block text-sm font-medium mb-1.5">Frequency</label>
-                <select
-                  value={frequency}
-                  onChange={(e) => setFrequency(e.target.value as any)}
-                  className="input"
-                >
-                  <option value="daily">Daily</option>
-                  <option value="weekdays">Weekdays</option>
-                  <option value="weekly">Weekly (Monday)</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1.5">Time</label>
-                <div className="relative">
-                  <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--muted)] pointer-events-none" />
-                  <select
-                    value={time}
-                    onChange={(e) => setTime(e.target.value)}
-                    className="input pl-10 appearance-none"
-                  >
-                    {TIME_OPTIONS.map(opt => (
-                      <option key={opt.value} value={opt.value}>{opt.label}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-            </div>
-
             {/* Actions */}
             <div className="flex gap-3 pt-4 border-t border-[var(--border)]">
               <button type="button" onClick={resetForm} className="btn-secondary flex-1">
@@ -330,7 +296,7 @@ export default function SchedulePage() {
                 className="btn-primary flex-1 disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {saving && <Loader2 className="w-4 h-4 animate-spin" />}
-                {editingId ? 'Save Changes' : 'Create Schedule'}
+                {editingId ? 'Save Changes' : 'Create Daily Brief'}
               </button>
             </div>
           </form>
@@ -339,7 +305,7 @@ export default function SchedulePage() {
         {/* Existing Schedules */}
         {schedules.length > 0 ? (
           <div className="space-y-4">
-            <h2 className="font-semibold text-sm text-[var(--muted)] uppercase tracking-wide">Your Schedules</h2>
+            <h2 className="font-semibold text-sm text-[var(--muted)] uppercase tracking-wide">Your Daily Briefs</h2>
             {schedules.map(schedule => (
               <div 
                 key={schedule.id} 
@@ -353,10 +319,7 @@ export default function SchedulePage() {
                     </div>
                     <div className="flex items-center gap-2 text-sm text-[var(--muted)]">
                       <Clock className="w-3.5 h-3.5" />
-                      <span>
-                        {schedule.frequency === 'daily' ? 'Every day' : 
-                         schedule.frequency === 'weekdays' ? 'Weekdays' : 'Weekly'} at {schedule.time}
-                      </span>
+                      <span>Every day at 8:00 AM ET</span>
                     </div>
                     {schedule.lastSentAt && (
                       <p className="text-xs text-[var(--muted)] mt-1">
@@ -399,8 +362,8 @@ export default function SchedulePage() {
         ) : !showForm && (
           <div className="text-center py-12 text-[var(--muted)]">
             <Clock className="w-12 h-12 mx-auto mb-3 opacity-30" />
-            <p>No scheduled briefs yet</p>
-            <p className="text-sm">Create one to get automated briefings in your inbox</p>
+            <p>No daily briefs yet</p>
+            <p className="text-sm">Create one to get briefings in your inbox every morning at 8 AM ET</p>
           </div>
         )}
       </main>
