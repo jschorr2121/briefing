@@ -1,5 +1,5 @@
-// Schedule storage using Vercel KV or fallback to in-memory
-// In production, use Vercel KV: npm install @vercel/kv
+// Schedule storage using Upstash Redis
+import { Redis } from '@upstash/redis';
 
 export interface ScheduledBrief {
   id: string;
@@ -15,14 +15,22 @@ export interface ScheduledBrief {
   updatedAt: string;
 }
 
-// In-memory store for development (replace with Vercel KV in production)
-let scheduleStore: Map<string, ScheduledBrief> = new Map();
+// Initialize Redis client (uses UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN env vars)
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL!,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+});
+
+const SCHEDULES_KEY = 'briefing:schedules';
 
 export async function getSchedules(): Promise<ScheduledBrief[]> {
-  // TODO: Replace with Vercel KV
-  // import { kv } from '@vercel/kv';
-  // const schedules = await kv.get<ScheduledBrief[]>('schedules') || [];
-  return Array.from(scheduleStore.values());
+  try {
+    const schedules = await redis.get<ScheduledBrief[]>(SCHEDULES_KEY);
+    return schedules || [];
+  } catch (error) {
+    console.error('Error fetching schedules from Redis:', error);
+    return [];
+  }
 }
 
 export async function getSchedulesByUser(userId: string): Promise<ScheduledBrief[]> {
@@ -31,18 +39,37 @@ export async function getSchedulesByUser(userId: string): Promise<ScheduledBrief
 }
 
 export async function getScheduleById(id: string): Promise<ScheduledBrief | null> {
-  return scheduleStore.get(id) || null;
+  const all = await getSchedules();
+  return all.find(s => s.id === id) || null;
 }
 
 export async function saveSchedule(schedule: ScheduledBrief): Promise<void> {
-  scheduleStore.set(schedule.id, schedule);
-  // TODO: Replace with Vercel KV
-  // await kv.set('schedules', Array.from(scheduleStore.values()));
+  try {
+    const schedules = await getSchedules();
+    const existingIndex = schedules.findIndex(s => s.id === schedule.id);
+    
+    if (existingIndex >= 0) {
+      schedules[existingIndex] = schedule;
+    } else {
+      schedules.push(schedule);
+    }
+    
+    await redis.set(SCHEDULES_KEY, schedules);
+  } catch (error) {
+    console.error('Error saving schedule to Redis:', error);
+    throw error;
+  }
 }
 
 export async function deleteSchedule(id: string): Promise<void> {
-  scheduleStore.delete(id);
-  // TODO: Replace with Vercel KV
+  try {
+    const schedules = await getSchedules();
+    const filtered = schedules.filter(s => s.id !== id);
+    await redis.set(SCHEDULES_KEY, filtered);
+  } catch (error) {
+    console.error('Error deleting schedule from Redis:', error);
+    throw error;
+  }
 }
 
 export function shouldSendNow(schedule: ScheduledBrief): boolean {

@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createTransport } from 'nodemailer';
-import Anthropic from '@anthropic-ai/sdk';
 import { getSchedules, saveSchedule, shouldSendNow, type ScheduledBrief } from '@/lib/schedules';
 
 // Verify cron secret to prevent unauthorized access
@@ -12,67 +11,221 @@ interface Article {
   source: string;
 }
 
+interface StoryCard {
+  headline: string;
+  bullets: string[];
+  source?: string;
+  url?: string;
+}
+
 interface Briefing {
   topic: string;
   summary: string;
+  stories: StoryCard[];
   articles: Article[];
 }
 
-async function generateBriefing(topics: string[]): Promise<Briefing[]> {
-  const anthropic = new Anthropic({
-    apiKey: process.env.ANTHROPIC_API_KEY,
-  });
+// Simple delay helper
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-  const briefings: Briefing[] = [];
-
-  for (const topic of topics) {
+// Fetch with retry and exponential backoff
+async function fetchWithRetry(
+  url: string,
+  options: RequestInit,
+  maxRetries = 3
+): Promise<Response> {
+  let lastError: Error | null = null;
+  
+  for (let i = 0; i < maxRetries; i++) {
     try {
-      const message = await anthropic.messages.create({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1024,
-        messages: [
-          {
-            role: 'user',
-            content: `You are a news briefing assistant. Generate a concise news briefing about "${topic}" with the latest developments. 
+      const response = await fetch(url, options);
+      
+      if (response.status === 429) {
+        const retryAfter = response.headers.get('Retry-After');
+        const waitTime = retryAfter ? parseInt(retryAfter) * 1000 : Math.pow(2, i) * 1000;
+        console.log(`Rate limited, waiting ${waitTime}ms before retry...`);
+        await delay(Math.min(waitTime, 10000));
+        continue;
+      }
+      
+      return response;
+    } catch (error) {
+      lastError = error as Error;
+      if (i < maxRetries - 1) {
+        await delay(Math.pow(2, i) * 1000);
+      }
+    }
+  }
+  
+  throw lastError || new Error('Max retries exceeded');
+}
+
+async function generateBriefingWithOpenAI(topic: string): Promise<Briefing> {
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) {
+    throw new Error('OPENAI_API_KEY not configured');
+  }
+
+  const prompt = `Search for the latest news about: ${topic}
+
+After searching, create a news briefing with:
+1. A brief 2-3 sentence overview summary
+2. 3-4 individual story cards
+
+For each story, provide:
+- A clear headline (max 15 words)
+- 2-3 bullet points explaining the key details
+- The source name and URL
 
 Format your response as JSON:
 {
-  "summary": "A 2-3 paragraph summary of the most important recent news about this topic. Use **bold** for key points.",
-  "articles": [
-    {"title": "Article title", "source": "Source name", "url": "https://example.com"}
+  "summary": "Brief overview...",
+  "stories": [
+    {
+      "headline": "Story headline",
+      "bullets": ["Key point 1", "Key point 2"],
+      "source": "Source Name",
+      "url": "https://..."
+    }
   ]
 }
 
-Focus on the most significant recent developments. Keep the summary informative but concise.`,
-          },
-        ],
-      });
+Only return valid JSON, no markdown code blocks.`;
 
-      const content = message.content[0];
-      if (content.type === 'text') {
-        try {
-          const parsed = JSON.parse(content.text);
-          briefings.push({
-            topic,
-            summary: parsed.summary,
-            articles: parsed.articles || [],
-          });
-        } catch {
-          briefings.push({
-            topic,
-            summary: content.text,
-            articles: [],
-          });
+  try {
+    const response = await fetchWithRetry(
+      'https://api.openai.com/v1/responses',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model: 'gpt-4o',
+          tools: [
+            { 
+              type: 'web_search',
+              user_location: {
+                type: 'approximate',
+                country: 'US'
+              }
+            }
+          ],
+          tool_choice: 'auto',
+          input: prompt,
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('OpenAI Responses API error:', response.status, errorText);
+      throw new Error(`OpenAI API error: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    // Extract the output text
+    let outputText = data.output_text || '';
+    
+    if (!outputText && data.output) {
+      for (const item of data.output) {
+        if (item.type === 'message' && item.content) {
+          for (const content of item.content) {
+            if (content.type === 'output_text' || content.type === 'text') {
+              outputText = content.text;
+              break;
+            }
+          }
         }
       }
-    } catch (error) {
-      console.error(`Error generating briefing for ${topic}:`, error);
-      briefings.push({
-        topic,
-        summary: `Unable to generate briefing for ${topic} at this time.`,
-        articles: [],
-      });
     }
+
+    if (!outputText) {
+      throw new Error('No output from OpenAI');
+    }
+
+    // Extract citations from annotations
+    const articles: Article[] = [];
+    if (data.output) {
+      for (const item of data.output) {
+        if (item.type === 'message' && item.content) {
+          for (const content of item.content) {
+            if (content.annotations) {
+              for (const annotation of content.annotations) {
+                if (annotation.type === 'url_citation') {
+                  articles.push({
+                    title: annotation.title || 'News Article',
+                    source: new URL(annotation.url).hostname.replace('www.', ''),
+                    url: annotation.url,
+                  });
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    // Parse the JSON response
+    let parsed: { summary: string; stories: StoryCard[] };
+    try {
+      let cleanText = outputText
+        .replace(/```json\s*/gi, '')
+        .replace(/```\s*/g, '')
+        .trim();
+      
+      const jsonStart = cleanText.indexOf('{');
+      const jsonEnd = cleanText.lastIndexOf('}');
+      
+      if (jsonStart !== -1 && jsonEnd > jsonStart) {
+        const jsonStr = cleanText.substring(jsonStart, jsonEnd + 1);
+        parsed = JSON.parse(jsonStr);
+      } else {
+        throw new Error('No JSON found in response');
+      }
+    } catch (parseError) {
+      console.error('Failed to parse OpenAI response as JSON:', parseError);
+      parsed = {
+        summary: outputText.substring(0, 500).replace(/[{}"]/g, ''),
+        stories: []
+      };
+    }
+
+    // Deduplicate articles
+    const seen = new Set<string>();
+    const uniqueArticles = articles.filter(a => {
+      if (seen.has(a.url)) return false;
+      seen.add(a.url);
+      return true;
+    });
+
+    return {
+      topic,
+      summary: parsed.summary || outputText.substring(0, 300),
+      stories: parsed.stories || [],
+      articles: uniqueArticles.slice(0, 5),
+    };
+  } catch (error) {
+    console.error(`Error generating briefing for ${topic}:`, error);
+    return {
+      topic,
+      summary: `Unable to generate briefing for ${topic} at this time.`,
+      stories: [],
+      articles: [],
+    };
+  }
+}
+
+async function generateBriefings(topics: string[]): Promise<Briefing[]> {
+  const briefings: Briefing[] = [];
+
+  for (const topic of topics) {
+    const briefing = await generateBriefingWithOpenAI(topic);
+    briefings.push(briefing);
+    // Small delay between topics to avoid rate limits
+    await delay(500);
   }
 
   return briefings;
@@ -87,12 +240,30 @@ function formatBriefingEmail(briefings: Briefing[], recipientEmail: string): str
   });
 
   const sections = briefings.map(b => {
-    const articlesHtml = b.articles.length > 0 ? `
+    // Format story cards
+    const storiesHtml = b.stories.length > 0 ? b.stories.map(story => `
+      <div style="margin-bottom: 20px; padding: 16px; background: #ffffff; border-radius: 8px; border: 1px solid #e5e7eb;">
+        <h3 style="margin: 0 0 12px; font-size: 16px; color: #1f2937;">
+          ${story.headline}
+        </h3>
+        <ul style="margin: 0; padding-left: 20px; color: #374151;">
+          ${story.bullets.map(bullet => `<li style="margin: 4px 0; line-height: 1.5;">${bullet}</li>`).join('')}
+        </ul>
+        ${story.source && story.url ? `
+          <a href="${story.url}" style="display: inline-block; margin-top: 12px; color: #2563eb; text-decoration: none; font-size: 13px;">
+            ${story.source} →
+          </a>
+        ` : ''}
+      </div>
+    `).join('') : '';
+
+    // Format additional sources
+    const sourcesHtml = b.articles.length > 0 ? `
       <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #e5e7eb;">
-        <p style="font-size: 12px; color: #6b7280; margin: 0 0 8px;">Sources:</p>
-        ${b.articles.map(a => `
+        <p style="font-size: 12px; color: #6b7280; margin: 0 0 8px;">More sources:</p>
+        ${b.articles.slice(0, 3).map(a => `
           <a href="${a.url}" style="color: #2563eb; text-decoration: none; font-size: 13px; display: block; margin: 4px 0;">
-            ${a.source}: ${a.title}
+            ${a.source}: ${a.title.substring(0, 60)}${a.title.length > 60 ? '...' : ''}
           </a>
         `).join('')}
       </div>
@@ -108,12 +279,13 @@ function formatBriefingEmail(briefings: Briefing[], recipientEmail: string): str
         <h2 style="margin: 0 0 16px; font-size: 20px; color: #1f2937;">
           ${b.topic}
         </h2>
-        <div style="color: #374151;">
+        <div style="color: #374151; margin-bottom: 16px;">
           <p style="margin: 0 0 12px; line-height: 1.6;">
             ${formattedSummary}
           </p>
         </div>
-        ${articlesHtml}
+        ${storiesHtml}
+        ${sourcesHtml}
       </div>
     `;
   }).join('');
@@ -129,7 +301,7 @@ function formatBriefingEmail(briefings: Briefing[], recipientEmail: string): str
       <div style="max-width: 600px; margin: 0 auto; padding: 40px 20px;">
         <div style="text-align: center; margin-bottom: 40px;">
           <h1 style="margin: 0; font-size: 28px; color: #1f2937;">
-            Your Daily Briefing
+            📰 Your Daily Briefing
           </h1>
           <p style="margin: 8px 0 0; color: #6b7280; font-size: 14px;">
             ${date}
@@ -198,7 +370,7 @@ export async function GET(request: NextRequest) {
 
       try {
         // Generate briefings for this schedule's topics
-        const briefings = await generateBriefing(schedule.topics);
+        const briefings = await generateBriefings(schedule.topics);
         
         // Send email
         await sendBriefingEmail(schedule, briefings);
