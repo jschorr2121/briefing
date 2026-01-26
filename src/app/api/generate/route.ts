@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getGenerationModel, getOpenAIModel } from '@/lib/models';
 
 interface Topic {
   id: string;
@@ -33,7 +34,7 @@ interface Briefing {
   stories: StoryCard[];
   articles: Article[];
   generatedAt: string;
-  searchProvider: 'openai' | 'brave';
+  model: string;
 }
 
 // Search queries for each topic
@@ -48,68 +49,42 @@ const TOPIC_QUERIES: Record<string, string[]> = {
   basketball: ['NBA basketball news today', 'basketball highlights scores'],
 };
 
-// Simple delay helper
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-// Fetch with retry and exponential backoff
-async function fetchWithRetry(
-  url: string,
-  options: RequestInit,
-  maxRetries = 3
-): Promise<Response> {
+async function fetchWithRetry(url: string, options: RequestInit, maxRetries = 3): Promise<Response> {
   let lastError: Error | null = null;
-  
   for (let i = 0; i < maxRetries; i++) {
     try {
       const response = await fetch(url, options);
-      
-      // If rate limited, wait and retry
       if (response.status === 429) {
         const retryAfter = response.headers.get('Retry-After');
         const waitTime = retryAfter ? parseInt(retryAfter) * 1000 : Math.pow(2, i) * 1000;
-        console.log(`Rate limited, waiting ${waitTime}ms before retry...`);
         await delay(Math.min(waitTime, 10000));
         continue;
       }
-      
       return response;
     } catch (error) {
       lastError = error as Error;
-      if (i < maxRetries - 1) {
-        await delay(Math.pow(2, i) * 1000);
-      }
+      if (i < maxRetries - 1) await delay(Math.pow(2, i) * 1000);
     }
   }
-  
   throw lastError || new Error('Max retries exceeded');
 }
 
-// OpenAI Web Search using Responses API
-async function fetchFromOpenAISearch(
-  topic: string,
-  queries: string[],
-  settings: Settings
-): Promise<{ summary: string; stories: StoryCard[]; articles: Article[] }> {
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) {
-    console.log('No OpenAI API key found');
-    throw new Error('OpenAI API key not configured');
-  }
-
+function buildPrompt(topic: string, queries: string[], settings: Settings): string {
   const lengthGuide = {
     short: '3 stories with 2-3 bullets each',
     medium: '4-5 stories with 3-4 bullets each',
     long: '5-6 stories with 4-5 bullets each'
   };
-
   const toneGuide = {
     casual: 'conversational and engaging, like a smart friend',
     professional: 'clear and informative, like a quality newsletter',
     technical: 'detailed and precise, with technical context'
   };
-
   const searchQuery = queries.join(' OR ');
-  const prompt = `Search for the latest news about: ${topic}
+  
+  return `Search for the latest news about: ${topic}
 
 Search queries to consider: ${searchQuery}
 
@@ -119,7 +94,7 @@ After searching, create a news briefing with:
 
 For each story, provide:
 - A clear headline (max 15 words)
-- ${settings.briefingLength === 'short' ? '2-3' : settings.briefingLength === 'medium' ? '3-4' : '4-5'} bullet points that fully explain the story (who, what, when, why, significance)
+- ${settings.briefingLength === 'short' ? '2-3' : settings.briefingLength === 'medium' ? '3-4' : '4-5'} bullet points that fully explain the story
 - The source name and URL
 
 Tone: ${toneGuide[settings.tone]}
@@ -138,341 +113,185 @@ Format your response as JSON:
 }
 
 Only return valid JSON, no markdown code blocks.`;
-
-  try {
-    // Using OpenAI Responses API with web_search tool
-    const response = await fetchWithRetry(
-      'https://api.openai.com/v1/responses',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`,
-        },
-        body: JSON.stringify({
-          model: 'gpt-4o',
-          tools: [
-            { 
-              type: 'web_search',
-              user_location: {
-                type: 'approximate',
-                country: 'US'
-              }
-            }
-          ],
-          tool_choice: 'auto',
-          input: prompt,
-        }),
-      }
-    );
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('OpenAI Responses API error:', response.status, errorText);
-      throw new Error(`OpenAI API error: ${response.status}`);
-    }
-
-    const data = await response.json();
-    console.log('OpenAI response structure:', JSON.stringify(data, null, 2).substring(0, 500));
-
-    // Extract the output text
-    let outputText = data.output_text || '';
-    
-    // Also check for message content in output array
-    if (!outputText && data.output) {
-      for (const item of data.output) {
-        if (item.type === 'message' && item.content) {
-          for (const content of item.content) {
-            if (content.type === 'output_text' || content.type === 'text') {
-              outputText = content.text;
-              break;
-            }
-          }
-        }
-      }
-    }
-
-    if (!outputText) {
-      console.error('No output text in OpenAI response');
-      throw new Error('No output from OpenAI');
-    }
-
-    // Extract citations from annotations
-    const articles: Article[] = [];
-    if (data.output) {
-      for (const item of data.output) {
-        if (item.type === 'message' && item.content) {
-          for (const content of item.content) {
-            if (content.annotations) {
-              for (const annotation of content.annotations) {
-                if (annotation.type === 'url_citation') {
-                  articles.push({
-                    title: annotation.title || 'News Article',
-                    source: new URL(annotation.url).hostname.replace('www.', ''),
-                    url: annotation.url,
-                  });
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-
-    // Parse the JSON response
-    let parsed: { summary: string; stories: StoryCard[] };
-    try {
-      // Clean up the output text - remove markdown code blocks if present
-      let cleanText = outputText
-        .replace(/```json\s*/gi, '')
-        .replace(/```\s*/g, '')
-        .trim();
-      
-      console.log('Cleaned output text (first 500 chars):', cleanText.substring(0, 500));
-      
-      // Try to extract JSON from the response - handle nested braces properly
-      const jsonStart = cleanText.indexOf('{');
-      const jsonEnd = cleanText.lastIndexOf('}');
-      
-      if (jsonStart !== -1 && jsonEnd > jsonStart) {
-        const jsonStr = cleanText.substring(jsonStart, jsonEnd + 1);
-        parsed = JSON.parse(jsonStr);
-        console.log('Successfully parsed JSON, stories count:', parsed.stories?.length || 0);
-      } else {
-        throw new Error('No JSON found in response');
-      }
-    } catch (parseError) {
-      console.error('Failed to parse OpenAI response as JSON:', parseError);
-      console.error('Raw output text:', outputText.substring(0, 1000));
-      // Fallback: create a simple structure from the text
-      parsed = {
-        summary: outputText.substring(0, 500).replace(/[{}"]/g, ''),
-        stories: []
-      };
-    }
-
-    // Deduplicate articles
-    const seen = new Set<string>();
-    const uniqueArticles = articles.filter(a => {
-      if (seen.has(a.url)) return false;
-      seen.add(a.url);
-      return true;
-    });
-
-    return {
-      summary: parsed.summary || outputText.substring(0, 300),
-      stories: parsed.stories || [],
-      articles: uniqueArticles.slice(0, 8),
-    };
-  } catch (error) {
-    console.error('OpenAI web search error:', error);
-    throw error;
-  }
 }
 
-// Fallback: Brave Search
-async function fetchFromBraveSearch(query: string): Promise<Article[]> {
-  const apiKey = process.env.BRAVE_API_KEY;
-  if (!apiKey) {
-    console.log('No Brave API key found');
-    return [];
+function parseJSONResponse(text: string): { summary: string; stories: StoryCard[] } {
+  let cleanText = text.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
+  const jsonStart = cleanText.indexOf('{');
+  const jsonEnd = cleanText.lastIndexOf('}');
+  if (jsonStart !== -1 && jsonEnd > jsonStart) {
+    return JSON.parse(cleanText.substring(jsonStart, jsonEnd + 1));
   }
-
-  try {
-    const response = await fetchWithRetry(
-      `https://api.search.brave.com/res/v1/web/search?q=${encodeURIComponent(query)}&count=8&freshness=pd`,
-      {
-        headers: {
-          'Accept': 'application/json',
-          'X-Subscription-Token': apiKey,
-        },
-      }
-    );
-
-    if (!response.ok) {
-      console.error('Brave search failed:', response.status);
-      return [];
-    }
-
-    const data = await response.json();
-    return (data.web?.results || []).slice(0, 8).map((result: {
-      title: string;
-      url: string;
-      description?: string;
-    }) => ({
-      title: result.title,
-      source: new URL(result.url).hostname.replace('www.', ''),
-      url: result.url,
-      snippet: result.description,
-    }));
-  } catch (error) {
-    console.error('Brave search error:', error);
-    return [];
-  }
+  return { summary: text.substring(0, 500), stories: [] };
 }
 
-// Fallback summary generation with Anthropic
-async function generateFallbackSummary(
-  articles: Article[],
+// OpenAI Web Search (gpt-4o or gpt-4o-mini)
+async function fetchFromOpenAI(
   topic: string,
+  queries: string[],
   settings: Settings
-): Promise<{ summary: string; stories: StoryCard[] }> {
-  const anthropicKey = process.env.ANTHROPIC_API_KEY;
+): Promise<{ summary: string; stories: StoryCard[]; articles: Article[] }> {
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) throw new Error('OpenAI API key not configured');
+
+  const model = getOpenAIModel();
+  console.log(`Using OpenAI model: ${model}`);
   
-  if (!anthropicKey || articles.length === 0) {
-    // Super fallback: just format articles
-    if (articles.length === 0) {
-      return {
-        summary: `No recent news found for ${topic}. Check back later for updates.`,
-        stories: []
-      };
-    }
+  const prompt = buildPrompt(topic, queries, settings);
 
-    const stories: StoryCard[] = articles.slice(0, 4).map(a => ({
-      headline: a.title.replace(/\s*\|.*$/, '').trim(),
-      bullets: a.snippet ? [a.snippet] : ['Click through to read more'],
-      source: a.source,
-      url: a.url,
-    }));
+  const response = await fetchWithRetry('https://api.openai.com/v1/responses', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      model,
+      tools: [{ type: 'web_search', user_location: { type: 'approximate', country: 'US' } }],
+      tool_choice: 'auto',
+      input: prompt,
+    }),
+  });
 
-    return {
-      summary: `Here are the latest stories about ${topic}.`,
-      stories
-    };
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error('OpenAI API error:', response.status, errorText);
+    throw new Error(`OpenAI API error: ${response.status}`);
   }
 
-  const lengthGuide = {
-    short: '3 stories with 2-3 bullets each',
-    medium: '4-5 stories with 3-4 bullets each',
-    long: '5-6 stories with 4-5 bullets each'
-  };
-
-  const toneGuide = {
-    casual: 'conversational and friendly',
-    professional: 'clear and informative',
-    technical: 'detailed and precise'
-  };
-
-  const articleContext = articles.slice(0, 8).map((a, i) => 
-    `${i + 1}. "${a.title}" (${a.source})${a.snippet ? `\n   ${a.snippet}` : ''}\n   URL: ${a.url}`
-  ).join('\n\n');
-
-  const prompt = `Create a news briefing about ${topic} from these articles:
-
-${articleContext}
-
-Return JSON with:
-1. A brief 2-3 sentence overview summary
-2. Individual story cards: ${lengthGuide[settings.briefingLength]}
-
-Each story needs:
-- headline (max 15 words)
-- bullets array (complete explanation of the story)
-- source name
-- url
-
-Tone: ${toneGuide[settings.tone]}
-
-Format:
-{
-  "summary": "...",
-  "stories": [
-    {"headline": "...", "bullets": ["...", "..."], "source": "...", "url": "..."}
-  ]
-}
-
-Return only valid JSON.`;
-
-  try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': anthropicKey,
-        'anthropic-version': '2023-06-01',
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 2048,
-        messages: [{
-          role: 'user',
-          content: prompt
-        }]
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error('Anthropic API error');
+  const data = await response.json();
+  let outputText = data.output_text || '';
+  
+  if (!outputText && data.output) {
+    for (const item of data.output) {
+      if (item.type === 'message' && item.content) {
+        for (const content of item.content) {
+          if (content.type === 'output_text' || content.type === 'text') {
+            outputText = content.text;
+            break;
+          }
+        }
+      }
     }
-
-    const data = await response.json();
-    const text = data.content[0]?.text || '';
-    
-    const jsonMatch = text.match(/\{[\s\S]*\}/);
-    if (jsonMatch) {
-      return JSON.parse(jsonMatch[0]);
-    }
-    
-    throw new Error('No JSON in response');
-  } catch (error) {
-    console.error('Anthropic fallback error:', error);
-    // Ultimate fallback
-    const stories: StoryCard[] = articles.slice(0, 4).map(a => ({
-      headline: a.title.replace(/\s*\|.*$/, '').trim(),
-      bullets: a.snippet ? [a.snippet] : ['Click through to read more'],
-      source: a.source,
-      url: a.url,
-    }));
-
-    return {
-      summary: `Here are the latest stories about ${topic}.`,
-      stories
-    };
   }
+
+  if (!outputText) throw new Error('No output from OpenAI');
+
+  // Extract citations
+  const articles: Article[] = [];
+  if (data.output) {
+    for (const item of data.output) {
+      if (item.type === 'message' && item.content) {
+        for (const content of item.content) {
+          if (content.annotations) {
+            for (const annotation of content.annotations) {
+              if (annotation.type === 'url_citation') {
+                articles.push({
+                  title: annotation.title || 'News Article',
+                  source: new URL(annotation.url).hostname.replace('www.', ''),
+                  url: annotation.url,
+                });
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  const parsed = parseJSONResponse(outputText);
+  const seen = new Set<string>();
+  const uniqueArticles = articles.filter(a => {
+    if (seen.has(a.url)) return false;
+    seen.add(a.url);
+    return true;
+  });
+
+  return {
+    summary: parsed.summary || outputText.substring(0, 300),
+    stories: parsed.stories || [],
+    articles: uniqueArticles.slice(0, 8),
+  };
 }
 
-async function generateBriefingForTopic(
-  topic: Topic,
+// Perplexity Search
+async function fetchFromPerplexity(
+  topic: string,
+  queries: string[],
   settings: Settings
-): Promise<Briefing> {
+): Promise<{ summary: string; stories: StoryCard[]; articles: Article[] }> {
+  const apiKey = process.env.PERPLEXITY_API_KEY;
+  if (!apiKey) throw new Error('Perplexity API key not configured');
+
+  const prompt = buildPrompt(topic, queries, settings);
+
+  const response = await fetchWithRetry('https://api.perplexity.ai/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      model: 'llama-3.1-sonar-small-128k-online',
+      messages: [{ role: 'user', content: prompt }],
+    }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error('Perplexity API error:', response.status, errorText);
+    throw new Error(`Perplexity API error: ${response.status}`);
+  }
+
+  const data = await response.json();
+  const outputText = data.choices?.[0]?.message?.content || '';
+  
+  if (!outputText) throw new Error('No output from Perplexity');
+
+  // Extract citations if available
+  const articles: Article[] = [];
+  if (data.citations) {
+    for (const citation of data.citations) {
+      articles.push({
+        title: citation.title || 'News Article',
+        source: new URL(citation.url).hostname.replace('www.', ''),
+        url: citation.url,
+      });
+    }
+  }
+
+  const parsed = parseJSONResponse(outputText);
+
+  return {
+    summary: parsed.summary || outputText.substring(0, 300),
+    stories: parsed.stories || [],
+    articles: articles.slice(0, 8),
+  };
+}
+
+async function generateBriefingForTopic(topic: Topic, settings: Settings): Promise<Briefing> {
   const queries = TOPIC_QUERIES[topic.id] || [`${topic.name} news today`];
+  const model = getGenerationModel();
   
   let summary: string;
   let stories: StoryCard[] = [];
   let articles: Article[] = [];
-  let searchProvider: 'openai' | 'brave' = 'openai';
 
-  // Try OpenAI web search first
+  console.log(`Generating briefing for ${topic.name} using ${model}...`);
+
   try {
-    console.log(`Trying OpenAI web search for ${topic.name}...`);
-    const result = await fetchFromOpenAISearch(topic.name, queries, settings);
+    let result;
+    if (model === 'perplexity') {
+      result = await fetchFromPerplexity(topic.name, queries, settings);
+    } else {
+      result = await fetchFromOpenAI(topic.name, queries, settings);
+    }
     summary = result.summary;
     stories = result.stories;
     articles = result.articles;
-    searchProvider = 'openai';
-    console.log(`OpenAI search succeeded for ${topic.name}, got ${stories.length} stories`);
   } catch (error) {
-    console.log(`OpenAI search failed for ${topic.name}, falling back to Brave:`, error);
-    
-    // Fallback to Brave Search + Anthropic
-    searchProvider = 'brave';
-    for (const query of queries) {
-      const results = await fetchFromBraveSearch(query);
-      articles.push(...results);
-      if (articles.length >= 8) break;
-    }
-
-    // Deduplicate
-    const seen = new Set<string>();
-    articles = articles.filter(a => {
-      if (seen.has(a.url)) return false;
-      seen.add(a.url);
-      return true;
-    });
-
-    const fallbackResult = await generateFallbackSummary(articles, topic.name, settings);
-    summary = fallbackResult.summary;
-    stories = fallbackResult.stories;
+    console.error(`Error generating briefing for ${topic.name}:`, error);
+    summary = `Unable to generate briefing for ${topic.name} at this time.`;
   }
 
   return {
@@ -482,16 +301,13 @@ async function generateBriefingForTopic(
     stories,
     articles: settings.includeLinks ? articles.slice(0, 5) : [],
     generatedAt: new Date().toISOString(),
-    searchProvider,
+    model,
   };
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const { topics, settings } = await request.json() as {
-      topics: Topic[];
-      settings: Settings;
-    };
+    const { topics, settings } = await request.json() as { topics: Topic[]; settings: Settings };
 
     if (!topics || !Array.isArray(topics) || topics.length === 0) {
       return NextResponse.json({ error: 'No topics provided' }, { status: 400 });
@@ -499,22 +315,17 @@ export async function POST(request: NextRequest) {
 
     // Cap at 4 topics max
     const cappedTopics = topics.slice(0, 4);
-
-    // Generate briefings sequentially to avoid rate limits
     const briefings: Briefing[] = [];
+    
     for (const topic of cappedTopics) {
       const briefing = await generateBriefingForTopic(topic, settings);
       briefings.push(briefing);
-      // Small delay between topics
       await delay(500);
     }
 
-    return NextResponse.json({ briefings });
+    return NextResponse.json({ briefings, model: getGenerationModel() });
   } catch (error) {
     console.error('Generate error:', error);
-    return NextResponse.json(
-      { error: 'Failed to generate briefing' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to generate briefing' }, { status: 500 });
   }
 }
