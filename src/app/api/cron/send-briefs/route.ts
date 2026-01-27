@@ -444,6 +444,8 @@ export async function GET(request: NextRequest) {
     }
 
     const schedules = await getSchedules();
+    console.log(`Found ${schedules.length} total schedules in Redis`);
+    
     const results: { id: string; status: string; error?: string }[] = [];
 
     // Generate health tips once for all emails
@@ -451,9 +453,14 @@ export async function GET(request: NextRequest) {
     console.log(`Generated ${healthTips.length} health tips for today`);
 
     for (const schedule of schedules) {
+      console.log(`Checking schedule ${schedule.id}: enabled=${schedule.enabled}, email=${schedule.email}, frequency=${schedule.frequency}, lastSentAt=${schedule.lastSentAt}`);
+      
       if (!shouldSendNow(schedule)) {
+        console.log(`Skipping ${schedule.id} - shouldSendNow returned false`);
         continue;
       }
+      
+      console.log(`Processing ${schedule.id} - will send to ${schedule.email}`);
 
       try {
         // Generate briefings for this schedule's topics
