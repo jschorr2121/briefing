@@ -39,6 +39,8 @@ export default function Home() {
   const [isGeneratingAudio, setIsGeneratingAudio] = useState(false);
   const [isSendingEmail, setIsSendingEmail] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [emailInput, setEmailInput] = useState('');
   const [history, setHistory] = useState<BriefingHistory[]>([]);
   const [refreshingTopic, setRefreshingTopic] = useState<string | null>(null);
   const [playbackSpeed, setPlaybackSpeed] = useState(1);
@@ -199,15 +201,15 @@ export default function Home() {
     }
   };
 
-  const sendEmail = async () => {
-    if (briefings.length === 0 || !settings.email || isSendingEmail) return;
+  const sendEmail = async (email: string) => {
+    if (briefings.length === 0 || !email || isSendingEmail) return;
 
     setIsSendingEmail(true);
     try {
       const response = await fetch('/api/email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ briefings, email: settings.email }),
+        body: JSON.stringify({ briefings, email }),
       });
 
       if (!response.ok) {
@@ -216,6 +218,8 @@ export default function Home() {
       }
 
       setEmailSent(true);
+      setShowEmailModal(false);
+      setEmailInput('');
     } catch (err) {
       console.error('Email error:', err);
       setError(err instanceof Error ? err.message : 'Failed to send email');
@@ -328,30 +332,23 @@ export default function Home() {
                   </>
                 )}
               </button>
-              {settings.email && (
-                <button
-                  onClick={sendEmail}
-                  disabled={isSendingEmail || emailSent}
-                  className="btn-secondary px-5 py-3 rounded-xl font-medium flex items-center gap-2 disabled:opacity-50"
-                >
-                  {emailSent ? (
-                    <>
-                      <Check className="w-4 h-4 text-[var(--success)]" />
-                      Sent!
-                    </>
-                  ) : isSendingEmail ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      Sending...
-                    </>
-                  ) : (
-                    <>
-                      <Mail className="w-4 h-4" />
-                      Email
-                    </>
-                  )}
-                </button>
-              )}
+              <button
+                onClick={() => setShowEmailModal(true)}
+                disabled={emailSent}
+                className="btn-secondary px-5 py-3 rounded-xl font-medium flex items-center gap-2 disabled:opacity-50"
+              >
+                {emailSent ? (
+                  <>
+                    <Check className="w-4 h-4 text-[var(--success)]" />
+                    Sent!
+                  </>
+                ) : (
+                  <>
+                    <Mail className="w-4 h-4" />
+                    Email
+                  </>
+                )}
+              </button>
               <button
                 onClick={exportBriefing}
                 className="btn-secondary px-5 py-3 rounded-xl font-medium flex items-center gap-2"
@@ -556,6 +553,56 @@ export default function Home() {
         onClose={() => setShowAddTopic(false)}
         onAdd={addCustomTopic}
       />
+
+      {/* Email Modal */}
+      {showEmailModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-[var(--card)] rounded-2xl p-6 w-full max-w-md border border-[var(--border)]">
+            <h2 className="text-xl font-semibold mb-4">📧 Email Briefing</h2>
+            <p className="text-[var(--muted)] text-sm mb-4">
+              Enter your email to receive this briefing in your inbox.
+            </p>
+            <input
+              type="email"
+              value={emailInput}
+              onChange={(e) => setEmailInput(e.target.value)}
+              placeholder="your@email.com"
+              className="w-full px-4 py-3 rounded-xl bg-[var(--background)] border border-[var(--border)] focus:border-[var(--accent)] focus:outline-none mb-4"
+              autoFocus
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && emailInput.includes('@')) {
+                  sendEmail(emailInput);
+                }
+              }}
+            />
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  setShowEmailModal(false);
+                  setEmailInput('');
+                }}
+                className="flex-1 px-4 py-3 rounded-xl bg-[var(--card-hover)] hover:bg-[var(--border)] transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => sendEmail(emailInput)}
+                disabled={!emailInput.includes('@') || isSendingEmail}
+                className="flex-1 px-4 py-3 rounded-xl bg-[var(--accent)] text-white font-medium disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                {isSendingEmail ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  'Send'
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
         {/* Keyboard Shortcuts */}
         <KeyboardHints />
