@@ -358,21 +358,6 @@ function formatBriefingEmail(briefings: Briefing[], recipientEmail: string, heal
     `;
   }).join('');
 
-  // Health tips section - dark theme
-  const healthTipsHtml = healthTips && healthTips.length > 0 ? `
-    <div style="background: rgba(16,185,129,0.1); border-radius: 12px; padding: 24px; margin-bottom: 20px; border: 1px solid rgba(16,185,129,0.2);">
-      <h2 style="margin: 0 0 16px; font-size: 16px; color: #34d399; font-weight: 600;">
-        Daily Health Tips
-      </h2>
-      ${healthTips.map(tip => `
-        <div style="background: rgba(255,255,255,0.03); border-radius: 8px; padding: 12px 16px; margin-bottom: 12px; border: 1px solid rgba(16,185,129,0.15);">
-          <span style="font-size: 11px; font-weight: 600; color: #34d399; text-transform: uppercase; letter-spacing: 0.5px;">${tip.category}</span>
-          <p style="margin: 4px 0 0; color: #d1d5db; font-size: 13px; line-height: 1.5;">${tip.tip}</p>
-        </div>
-      `).join('')}
-    </div>
-  ` : '';
-
   return `
     <!DOCTYPE html>
     <html>
@@ -390,8 +375,6 @@ function formatBriefingEmail(briefings: Briefing[], recipientEmail: string, heal
             ${date}
           </p>
         </div>
-        
-        ${healthTipsHtml}
         
         ${sections}
         
