@@ -1,58 +1,50 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// Simple test endpoint to verify cron is working
-// GET /api/cron/test?email=your@email.com&topic=AI
+const CRON_SECRET = process.env.CRON_SECRET;
+const BASE_URL = process.env.NEXTAUTH_URL || 'https://briefing-five.vercel.app';
+
 export async function GET(request: NextRequest) {
-  const searchParams = request.nextUrl.searchParams;
-  const email = searchParams.get('email');
-  const topic = searchParams.get('topic') || 'AI News';
-
-  if (!email) {
-    return NextResponse.json({ 
-      error: 'Missing email parameter',
-      usage: '/api/cron/test?email=your@email.com&topic=AI%20News'
-    }, { status: 400 });
-  }
-
   try {
-    // Call the generate endpoint
-    const baseUrl = process.env.NEXTAUTH_URL || 'https://briefing-eight.vercel.app';
-    
-    const generateRes = await fetch(`${baseUrl}/api/generate`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ topics: [topic] }),
-    });
-
-    if (!generateRes.ok) {
-      const error = await generateRes.text();
-      return NextResponse.json({ error: 'Failed to generate', details: error }, { status: 500 });
+    // Verify cron secret
+    const authHeader = request.headers.get('authorization');
+    if (CRON_SECRET && authHeader !== `Bearer ${CRON_SECRET}`) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const briefings = await generateRes.json();
+    const results: { step: string; status: string; data?: unknown; error?: string }[] = [];
 
-    // Send email
-    const emailRes = await fetch(`${baseUrl}/api/email`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ briefings, email }),
-    });
+    // Step 1: Generate briefings
+    console.log('Step 1: Generating briefings...');
+    try {
+      const generateRes = await fetch(`${BASE_URL}/api/cron/generate-briefs`, {
+        headers: { 'Authorization': `Bearer ${CRON_SECRET}` },
+      });
+      const generateData = await generateRes.json();
+      results.push({ step: 'generate', status: generateRes.ok ? 'success' : 'error', data: generateData });
+      console.log('Generate result:', generateData);
+    } catch (error) {
+      results.push({ step: 'generate', status: 'error', error: error instanceof Error ? error.message : 'Unknown' });
+    }
 
-    if (!emailRes.ok) {
-      const error = await emailRes.text();
-      return NextResponse.json({ error: 'Failed to send email', details: error }, { status: 500 });
+    // Step 2: Send briefings
+    console.log('Step 2: Sending briefings...');
+    try {
+      const sendRes = await fetch(`${BASE_URL}/api/cron/send-briefs`, {
+        headers: { 'Authorization': `Bearer ${CRON_SECRET}` },
+      });
+      const sendData = await sendRes.json();
+      results.push({ step: 'send', status: sendRes.ok ? 'success' : 'error', data: sendData });
+      console.log('Send result:', sendData);
+    } catch (error) {
+      results.push({ step: 'send', status: 'error', error: error instanceof Error ? error.message : 'Unknown' });
     }
 
     return NextResponse.json({ 
-      success: true, 
-      message: `Test briefing sent to ${email}`,
-      topic,
-      briefingCount: briefings.length
+      message: 'Test complete - generated and sent briefings',
+      results 
     });
   } catch (error) {
-    console.error('Test cron error:', error);
-    return NextResponse.json({ 
-      error: error instanceof Error ? error.message : 'Unknown error' 
-    }, { status: 500 });
+    console.error('Test error:', error);
+    return NextResponse.json({ error: 'Test failed' }, { status: 500 });
   }
 }
