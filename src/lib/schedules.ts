@@ -93,10 +93,12 @@ export function shouldSendNow(schedule: ScheduledBrief): boolean {
     return false;
   }
   
-  // Check if already sent today
+  // Check if already sent today (in user's timezone)
   if (schedule.lastSentAt) {
     const lastSent = new Date(schedule.lastSentAt);
-    const lastSentDate = lastSent.toDateString();
+    // Convert lastSent to user's timezone for proper date comparison
+    const lastSentUserTime = new Date(lastSent.toLocaleString('en-US', { timeZone: schedule.timezone }));
+    const lastSentDate = lastSentUserTime.toDateString();
     const todayDate = userTime.toDateString();
     if (lastSentDate === todayDate) return false;
   }
