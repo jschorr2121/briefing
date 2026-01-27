@@ -76,21 +76,52 @@ async function generateOpenAITTS(script: string, voice: VoiceOption): Promise<Ar
   return response.arrayBuffer();
 }
 
-async function generateGoogleTTS(script: string): Promise<ArrayBuffer> {
-  const apiKey = process.env.GOOGLE_TTS_API_KEY;
-  if (!apiKey) throw new Error('Google TTS API key not configured');
+// Split text into chunks under maxBytes, trying to break at sentence boundaries
+function chunkText(text: string, maxBytes: number = 4500): string[] {
+  const chunks: string[] = [];
+  const sentences = text.split(/(?<=[.!?])\s+/);
+  let currentChunk = '';
 
-  // Google Cloud Text-to-Speech API
+  for (const sentence of sentences) {
+    const testChunk = currentChunk ? `${currentChunk} ${sentence}` : sentence;
+    if (new TextEncoder().encode(testChunk).length > maxBytes) {
+      if (currentChunk) {
+        chunks.push(currentChunk);
+        currentChunk = sentence;
+      } else {
+        // Single sentence too long, split by words
+        const words = sentence.split(' ');
+        let wordChunk = '';
+        for (const word of words) {
+          const testWord = wordChunk ? `${wordChunk} ${word}` : word;
+          if (new TextEncoder().encode(testWord).length > maxBytes) {
+            if (wordChunk) chunks.push(wordChunk);
+            wordChunk = word;
+          } else {
+            wordChunk = testWord;
+          }
+        }
+        if (wordChunk) currentChunk = wordChunk;
+      }
+    } else {
+      currentChunk = testChunk;
+    }
+  }
+  if (currentChunk) chunks.push(currentChunk);
+  return chunks;
+}
+
+async function generateGoogleTTSChunk(text: string, apiKey: string): Promise<Uint8Array> {
   const response = await fetch(
     `https://texttospeech.googleapis.com/v1/text:synthesize?key=${apiKey}`,
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        input: { text: script },
+        input: { text },
         voice: {
           languageCode: 'en-US',
-          name: 'en-US-Standard-J', // Male voice (cheaper)
+          name: 'en-US-Standard-J',
           ssmlGender: 'MALE'
         },
         audioConfig: {
@@ -109,16 +140,40 @@ async function generateGoogleTTS(script: string): Promise<ArrayBuffer> {
   }
 
   const data = await response.json();
-  
-  // Google returns base64-encoded audio
   const audioContent = data.audioContent;
   const binaryString = atob(audioContent);
   const bytes = new Uint8Array(binaryString.length);
   for (let i = 0; i < binaryString.length; i++) {
     bytes[i] = binaryString.charCodeAt(i);
   }
-  
-  return bytes.buffer;
+  return bytes;
+}
+
+async function generateGoogleTTS(script: string): Promise<ArrayBuffer> {
+  const apiKey = process.env.GOOGLE_TTS_API_KEY;
+  if (!apiKey) throw new Error('Google TTS API key not configured');
+
+  const chunks = chunkText(script);
+  console.log(`Splitting into ${chunks.length} chunks for Google TTS`);
+
+  // Generate audio for each chunk
+  const audioChunks: Uint8Array[] = [];
+  for (let i = 0; i < chunks.length; i++) {
+    console.log(`Processing chunk ${i + 1}/${chunks.length} (${chunks[i].length} chars)`);
+    const audioData = await generateGoogleTTSChunk(chunks[i], apiKey);
+    audioChunks.push(audioData);
+  }
+
+  // Concatenate all audio chunks
+  const totalLength = audioChunks.reduce((sum, chunk) => sum + chunk.length, 0);
+  const combined = new Uint8Array(totalLength);
+  let offset = 0;
+  for (const chunk of audioChunks) {
+    combined.set(chunk, offset);
+    offset += chunk.length;
+  }
+
+  return combined.buffer;
 }
 
 export async function POST(request: NextRequest) {

@@ -34,7 +34,7 @@ export default function Home() {
   const [showAddTopic, setShowAddTopic] = useState(false);
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
   const [lastGenerated, setLastGenerated] = useState<Date | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<{ message: string; type: 'briefing' | 'audio' | 'email' } | null>(null);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [isGeneratingAudio, setIsGeneratingAudio] = useState(false);
   const [isSendingEmail, setIsSendingEmail] = useState(false);
@@ -168,7 +168,7 @@ export default function Home() {
       addToHistory(data.briefings);
     } catch (err) {
       console.error('Error generating briefing:', err);
-      setError('Failed to generate briefing. Please try again.');
+      setError({ message: 'Failed to generate briefing. Please try again.', type: 'briefing' });
     } finally {
       setIsLoading(false);
     }
@@ -195,7 +195,7 @@ export default function Home() {
       setAudioUrl(url);
     } catch (err) {
       console.error('Audio generation error:', err);
-      setError(err instanceof Error ? err.message : 'Failed to generate audio');
+      setError({ message: err instanceof Error ? err.message : 'Failed to generate audio', type: 'audio' });
     } finally {
       setIsGeneratingAudio(false);
     }
@@ -222,7 +222,7 @@ export default function Home() {
       setEmailInput('');
     } catch (err) {
       console.error('Email error:', err);
-      setError(err instanceof Error ? err.message : 'Failed to send email');
+      setError({ message: err instanceof Error ? err.message : 'Failed to send email', type: 'email' });
     } finally {
       setIsSendingEmail(false);
     }
@@ -416,15 +416,30 @@ export default function Home() {
               <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <span>{error}</span>
+              <span>{error.message}</span>
               <button
                 onClick={() => {
+                  const errorType = error.type;
                   setError(null);
-                  generateBriefing();
+                  if (errorType === 'audio') {
+                    generateAudio();
+                  } else if (errorType === 'email') {
+                    setShowEmailModal(true);
+                  } else {
+                    generateBriefing();
+                  }
                 }}
                 className="ml-2 px-3 py-1 text-sm rounded-lg bg-red-500/20 hover:bg-red-500/30 transition-colors"
               >
                 Retry
+              </button>
+              <button
+                onClick={() => setError(null)}
+                className="p-1 rounded hover:bg-red-500/20 transition-colors"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
               </button>
             </div>
           </div>
