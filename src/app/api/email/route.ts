@@ -30,17 +30,17 @@ function formatBriefingAsHTML(briefings: Briefing[]): string {
     const storiesHtml = b.stories && b.stories.length > 0 ? b.stories.map((story, i) => `
       <div style="margin-bottom: 16px; padding: 16px; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
         <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-          <span style="font-size: 11px; font-weight: 600; color: #888; background: rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 4px;">#${i + 1}</span>
-          ${story.date ? `<span style="font-size: 11px; color: #666;">${story.date}</span>` : ''}
+          <span style="font-size: 11px; font-weight: 600; color: #60a5fa; background: rgba(96,165,250,0.15); padding: 2px 8px; border-radius: 4px;">#${i + 1}</span>
+          ${story.date ? `<span style="font-size: 11px; color: #888;">${story.date}</span>` : ''}
         </div>
-        <h3 style="margin: 0 0 10px; font-size: 15px; color: #fff; font-weight: 600;">
+        <h3 style="margin: 0 0 10px; font-size: 15px; color: #93c5fd; font-weight: 600;">
           ${story.headline}
         </h3>
-        <ul style="margin: 0; padding-left: 16px; color: #aaa;">
+        <ul style="margin: 0; padding-left: 16px; color: #d1d5db;">
           ${story.bullets.map(bullet => `<li style="margin: 6px 0; line-height: 1.5; font-size: 13px;">${bullet}</li>`).join('')}
         </ul>
         ${story.source && story.url ? `
-          <a href="${story.url}" style="display: inline-block; margin-top: 12px; color: #888; text-decoration: none; font-size: 12px;">
+          <a href="${story.url}" style="display: inline-block; margin-top: 12px; color: #60a5fa; text-decoration: none; font-size: 12px;">
             ${story.source} →
           </a>
         ` : ''}
@@ -50,28 +50,28 @@ function formatBriefingAsHTML(briefings: Briefing[]): string {
     // Additional sources
     const articlesHtml = b.articles.length > 0 && (!b.stories || b.stories.length === 0) ? `
       <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.1);">
-        <p style="font-size: 11px; color: #666; margin: 0 0 8px; text-transform: uppercase; letter-spacing: 0.5px;">Sources</p>
+        <p style="font-size: 11px; color: #60a5fa; margin: 0 0 8px; text-transform: uppercase; letter-spacing: 0.5px;">Sources</p>
         ${b.articles.slice(0, 3).map(a => `
-          <a href="${a.url}" style="color: #888; text-decoration: none; font-size: 12px; display: block; margin: 4px 0;">
+          <a href="${a.url}" style="color: #93c5fd; text-decoration: none; font-size: 12px; display: block; margin: 4px 0;">
             ${a.source}: ${a.title.substring(0, 50)}${a.title.length > 50 ? '...' : ''}
           </a>
         `).join('')}
       </div>
     ` : '';
 
-    // Convert markdown bold to HTML
+    // Convert markdown bold to HTML with blue color
     const formattedSummary = b.summary
-      .replace(/\*\*(.*?)\*\*/g, '<strong style="color: #fff;">$1</strong>')
+      .replace(/\*\*(.*?)\*\*/g, '<strong style="color: #93c5fd;">$1</strong>')
       .replace(/\n\n/g, '</p><p style="margin: 0 0 10px; line-height: 1.6;">')
       .replace(/\n/g, '<br>');
 
     return `
       <div style="background: rgba(255,255,255,0.02); border-radius: 12px; padding: 24px; margin-bottom: 16px; border: 1px solid rgba(255,255,255,0.08);">
-        <h2 style="margin: 0 0 16px; font-size: 18px; color: #fff; font-weight: 600;">
+        <h2 style="margin: 0 0 16px; font-size: 18px; color: #60a5fa; font-weight: 600;">
           ${b.topic}
         </h2>
-        <p style="font-size: 11px; color: #666; margin: 0 0 10px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 500;">Highlights</p>
-        <div style="color: #aaa; font-size: 14px;">
+        <p style="font-size: 11px; color: #60a5fa; margin: 0 0 10px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 500;">Highlights</p>
+        <div style="color: #d1d5db; font-size: 14px;">
           <p style="margin: 0 0 10px; line-height: 1.6;">
             ${formattedSummary}
           </p>
