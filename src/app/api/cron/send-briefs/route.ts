@@ -1,10 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createTransport } from 'nodemailer';
+import { Redis } from '@upstash/redis';
 import { getSchedules, shouldSendNow, type ScheduledBrief } from '@/lib/schedules';
-import { getGenerationModel, getOpenAIModel } from '@/lib/models';
+import { getOpenAIModel } from '@/lib/models';
 
-// Verify cron secret to prevent unauthorized access
 const CRON_SECRET = process.env.CRON_SECRET;
+
+const redis = new Redis({
+  url: process.env.KV_REST_API_URL!,
+  token: process.env.KV_REST_API_TOKEN!,
+});
 
 interface Article {
   title: string;
@@ -25,6 +30,20 @@ interface Briefing {
   summary: string;
   stories: StoryCard[];
   articles: Article[];
+}
+
+interface HealthTip {
+  emoji: string;
+  category: string;
+  tip: string;
+}
+
+interface CachedBriefing {
+  email: string;
+  topics: string[];
+  briefings: Briefing[];
+  healthTips: HealthTip[];
+  generatedAt: string;
 }
 
 // Simple delay helper
@@ -127,8 +146,6 @@ Only return valid JSON, no markdown code blocks.`;
     }
 
     const data = await response.json();
-
-    // Extract the output text
     let outputText = data.output_text || '';
     
     if (!outputText && data.output) {
@@ -148,7 +165,6 @@ Only return valid JSON, no markdown code blocks.`;
       throw new Error('No output from OpenAI');
     }
 
-    // Extract citations from annotations
     const articles: Article[] = [];
     if (data.output) {
       for (const item of data.output) {
@@ -170,32 +186,21 @@ Only return valid JSON, no markdown code blocks.`;
       }
     }
 
-    // Parse the JSON response
     let parsed: { summary: string; stories: StoryCard[] };
     try {
-      let cleanText = outputText
-        .replace(/```json\s*/gi, '')
-        .replace(/```\s*/g, '')
-        .trim();
-      
+      let cleanText = outputText.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
       const jsonStart = cleanText.indexOf('{');
       const jsonEnd = cleanText.lastIndexOf('}');
       
       if (jsonStart !== -1 && jsonEnd > jsonStart) {
-        const jsonStr = cleanText.substring(jsonStart, jsonEnd + 1);
-        parsed = JSON.parse(jsonStr);
+        parsed = JSON.parse(cleanText.substring(jsonStart, jsonEnd + 1));
       } else {
-        throw new Error('No JSON found in response');
+        throw new Error('No JSON found');
       }
-    } catch (parseError) {
-      console.error('Failed to parse OpenAI response as JSON:', parseError);
-      parsed = {
-        summary: outputText.substring(0, 500).replace(/[{}"]/g, ''),
-        stories: []
-      };
+    } catch {
+      parsed = { summary: outputText.substring(0, 500).replace(/[{}"]/g, ''), stories: [] };
     }
 
-    // Deduplicate articles
     const seen = new Set<string>();
     const uniqueArticles = articles.filter(a => {
       if (seen.has(a.url)) return false;
@@ -211,34 +216,18 @@ Only return valid JSON, no markdown code blocks.`;
     };
   } catch (error) {
     console.error(`Error generating briefing for ${topic}:`, error);
-    return {
-      topic,
-      summary: `Unable to generate briefing for ${topic} at this time.`,
-      stories: [],
-      articles: [],
-    };
+    return { topic, summary: `Unable to generate briefing for ${topic}.`, stories: [], articles: [] };
   }
 }
 
 async function generateBriefings(topics: string[]): Promise<Briefing[]> {
-  // Cap at 4 topics max
   const cappedTopics = topics.slice(0, 4);
   const briefings: Briefing[] = [];
-
   for (const topic of cappedTopics) {
-    const briefing = await generateBriefingWithOpenAI(topic);
-    briefings.push(briefing);
-    // Small delay between topics to avoid rate limits
+    briefings.push(await generateBriefingWithOpenAI(topic));
     await delay(500);
   }
-
   return briefings;
-}
-
-interface HealthTip {
-  emoji: string;
-  category: string;
-  tip: string;
 }
 
 async function generateHealthTips(): Promise<HealthTip[]> {
@@ -277,15 +266,10 @@ Return only valid JSON, no markdown.`
     );
 
     if (!response.ok) return [];
-
     const data = await response.json();
     const content = data.choices?.[0]?.message?.content || '';
-    
-    // Parse JSON
     const jsonMatch = content.match(/\[[\s\S]*\]/);
-    if (jsonMatch) {
-      return JSON.parse(jsonMatch[0]);
-    }
+    if (jsonMatch) return JSON.parse(jsonMatch[0]);
     return [];
   } catch (error) {
     console.error('Error generating health tips:', error);
@@ -302,7 +286,6 @@ function formatBriefingEmail(briefings: Briefing[], recipientEmail: string, heal
   });
 
   const sections = briefings.map(b => {
-    // Format story cards - dark theme with blue accents (matching email route)
     const storiesHtml = b.stories && b.stories.length > 0 ? b.stories.map((story, i) => `
       <div style="margin-bottom: 16px; padding: 16px; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
         <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
@@ -323,7 +306,6 @@ function formatBriefingEmail(briefings: Briefing[], recipientEmail: string, heal
       </div>
     `).join('') : '';
 
-    // Format additional sources
     const sourcesHtml = b.articles.length > 0 && (!b.stories || b.stories.length === 0) ? `
       <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.1);">
         <p style="font-size: 11px; color: #60a5fa; margin: 0 0 8px; text-transform: uppercase; letter-spacing: 0.5px;">Sources</p>
@@ -335,7 +317,6 @@ function formatBriefingEmail(briefings: Briefing[], recipientEmail: string, heal
       </div>
     ` : '';
 
-    // Convert markdown bold to HTML with blue color
     const formattedSummary = b.summary
       .replace(/\*\*(.*?)\*\*/g, '<strong style="color: #93c5fd;">$1</strong>')
       .replace(/\n\n/g, '</p><p style="margin: 0 0 10px; line-height: 1.6;">')
@@ -391,7 +372,7 @@ function formatBriefingEmail(briefings: Briefing[], recipientEmail: string, heal
   `;
 }
 
-async function sendBriefingEmail(schedule: ScheduledBrief, briefings: Briefing[], healthTips: HealthTip[]): Promise<void> {
+async function sendBriefingEmail(email: string, briefings: Briefing[], healthTips: HealthTip[]): Promise<void> {
   const smtpUser = process.env.SMTP_USER;
   const smtpPass = process.env.SMTP_PASS;
 
@@ -401,23 +382,22 @@ async function sendBriefingEmail(schedule: ScheduledBrief, briefings: Briefing[]
 
   const transporter = createTransport({
     service: 'gmail',
-    auth: {
-      user: smtpUser,
-      pass: smtpPass,
-    },
+    auth: { user: smtpUser, pass: smtpPass },
   });
 
-  const date = new Date().toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-  });
+  const date = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 
   await transporter.sendMail({
     from: `"Briefing" <${smtpUser}>`,
-    to: schedule.email,
+    to: email,
     subject: `📰 Your Briefing — ${date}`,
-    html: formatBriefingEmail(briefings, schedule.email, healthTips),
+    html: formatBriefingEmail(briefings, email, healthTips),
   });
+}
+
+function getCacheKey(date?: string): string {
+  const d = date || new Date().toISOString().split('T')[0];
+  return `briefings:cache:${d}`;
 }
 
 export async function GET(request: NextRequest) {
@@ -428,39 +408,60 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const schedules = await getSchedules();
-    console.log(`Found ${schedules.length} total schedules in Redis`);
+    // Check for cached briefings first
+    const cacheKey = getCacheKey();
+    const cached = await redis.get<CachedBriefing[]>(cacheKey);
     
-    const results: { id: string; status: string; error?: string }[] = [];
-
-    // Generate health tips once for all emails
-    const healthTips = await generateHealthTips();
-    console.log(`Generated ${healthTips.length} health tips for today`);
-
-    for (const schedule of schedules) {
-      const shouldSend = shouldSendNow(schedule);
-      console.log(`Schedule ${schedule.id} (${schedule.email}): shouldSend=${shouldSend}`);
+    const results: { email: string; status: string; error?: string; source: string }[] = [];
+    
+    if (cached && cached.length > 0) {
+      // Use cached briefings - send all at once!
+      console.log(`Found ${cached.length} cached briefings, sending...`);
       
-      if (!shouldSend) continue;
+      for (const item of cached) {
+        try {
+          await sendBriefingEmail(item.email, item.briefings, item.healthTips);
+          results.push({ email: item.email, status: 'sent', source: 'cache' });
+          console.log(`Sent cached briefing to ${item.email}`);
+        } catch (error) {
+          console.error(`Error sending to ${item.email}:`, error);
+          results.push({ 
+            email: item.email, 
+            status: 'error', 
+            error: error instanceof Error ? error.message : 'Unknown error',
+            source: 'cache'
+          });
+        }
+      }
+      
+      // Clean up cache after sending
+      await redis.del(cacheKey);
+      console.log(`Deleted cache key ${cacheKey}`);
+      
+    } else {
+      // No cache - generate on the fly (fallback for manual triggers or missed generation)
+      console.log('No cached briefings found, generating on the fly...');
+      
+      const schedules = await getSchedules();
+      const healthTips = await generateHealthTips();
 
-      try {
-        console.log(`Processing ${schedule.id} - generating briefings for ${schedule.email}`);
-        
-        // Generate briefings for this schedule's topics
-        const briefings = await generateBriefings(schedule.topics);
-        
-        // Send email with health tips
-        await sendBriefingEmail(schedule, briefings, healthTips);
-        
-        console.log(`Sent briefing to ${schedule.email}`);
-        results.push({ id: schedule.id, status: 'sent' });
-      } catch (error) {
-        console.error(`Error sending to ${schedule.email}:`, error);
-        results.push({ 
-          id: schedule.id, 
-          status: 'error', 
-          error: error instanceof Error ? error.message : 'Unknown error' 
-        });
+      for (const schedule of schedules) {
+        if (!shouldSendNow(schedule)) continue;
+
+        try {
+          const briefings = await generateBriefings(schedule.topics);
+          await sendBriefingEmail(schedule.email, briefings, healthTips);
+          results.push({ email: schedule.email, status: 'sent', source: 'generated' });
+          console.log(`Sent generated briefing to ${schedule.email}`);
+        } catch (error) {
+          console.error(`Error sending to ${schedule.email}:`, error);
+          results.push({ 
+            email: schedule.email, 
+            status: 'error', 
+            error: error instanceof Error ? error.message : 'Unknown error',
+            source: 'generated'
+          });
+        }
       }
     }
 
@@ -469,7 +470,7 @@ export async function GET(request: NextRequest) {
       results 
     });
   } catch (error) {
-    console.error('Cron error:', error);
-    return NextResponse.json({ error: 'Cron job failed' }, { status: 500 });
+    console.error('Send briefs error:', error);
+    return NextResponse.json({ error: 'Send failed' }, { status: 500 });
   }
 }
