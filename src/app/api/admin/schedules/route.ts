@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
         topics: s.topics,
         time: s.time,
         enabled: s.enabled,
-        lastSent: s.lastSent,
+        lastSentAt: s.lastSentAt,
       })),
     });
   } catch (error) {
