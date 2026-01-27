@@ -292,42 +292,6 @@ Return only valid JSON, no markdown.`
   }
 }
 
-// Jake's daily sayings
-const DAILY_SAYINGS = [
-  "Feel like a brown shoe in a black tuxedo store",
-  "I'm Kim-Hung-Un right now",
-  "The carrot is always in front of the donkey",
-  "Why you hanging from a 4 foot ledge?",
-  "Do fat dogs like slow cars?",
-  "Don't mistake a long pee for a quick poop",
-  "Don't get wet socks on a rainy day",
-  "The biggest pancake is not the best pancake",
-  "Icing it",
-  "Podium",
-  "Buying a new bike won't make u pedal faster",
-  "Don't wash the sand off before you've left the beach",
-  "You can only save your lunch for so long",
-  "You just shit your pants in the bathroom",
-  "That tracks",
-  "Dipping",
-  "Shoes is on feet",
-  "I'm outro",
-  "I'm off this",
-  "I'm dips",
-  "Ima migrate",
-  "Ima pivot",
-  "Shitting enough bricks to build the fuckin pyramids",
-  "Who took the jam out of your donut?",
-  "What's goodfellas",
-];
-
-function getDailySaying(): string {
-  // Use date as seed for consistent daily saying
-  const today = new Date();
-  const dayOfYear = Math.floor((today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / 86400000);
-  return DAILY_SAYINGS[dayOfYear % DAILY_SAYINGS.length];
-}
-
 function formatBriefingEmail(briefings: Briefing[], recipientEmail: string, healthTips?: HealthTip[]): string {
   const date = new Date().toLocaleDateString('en-US', {
     weekday: 'long',
@@ -422,9 +386,6 @@ function formatBriefingEmail(briefings: Briefing[], recipientEmail: string, heal
           </h1>
           <p style="margin: 8px 0 0; color: #6b7280; font-size: 14px;">
             ${date}
-          </p>
-          <p style="margin: 16px 0 0; padding: 12px 20px; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 8px; color: #92400e; font-size: 14px; font-style: italic; display: inline-block;">
-            "${getDailySaying()}"
           </p>
         </div>
         
