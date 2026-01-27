@@ -185,18 +185,27 @@ export function BriefingCard({ briefing, index, onRefresh, isRefreshing }: Brief
     }
   }, []);
 
-  // Convert markdown-style bold to HTML
-  const formatSummary = (text: string) => {
-    return text.split('\n\n').map((paragraph, i) => (
-      <p key={i} className="mb-2 last:mb-0">
-        {paragraph.split(/\*\*(.*?)\*\*/g).map((part, j) =>
-          j % 2 === 1 ? (
-            <strong key={j} className="text-[var(--foreground)]">{part}</strong>
-          ) : (
-            part
-          )
-        )}
-      </p>
+  // Convert summary text to bullet points
+  const formatSummaryAsBullets = (text: string) => {
+    // Split by sentences (period followed by space or newline)
+    const sentences = text
+      .split(/(?<=[.!?])\s+/)
+      .map(s => s.trim())
+      .filter(s => s.length > 10); // Filter out very short fragments
+    
+    return sentences.map((sentence, i) => (
+      <li key={i} className="flex items-start gap-2.5 text-sm text-[var(--muted)]">
+        <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] mt-1.5 flex-shrink-0" />
+        <span className="leading-relaxed">
+          {sentence.split(/\*\*(.*?)\*\*/g).map((part, j) =>
+            j % 2 === 1 ? (
+              <strong key={j} className="text-[var(--foreground)]">{part}</strong>
+            ) : (
+              part
+            )
+          )}
+        </span>
+      </li>
     ));
   };
 
@@ -291,11 +300,14 @@ export function BriefingCard({ briefing, index, onRefresh, isRefreshing }: Brief
       {/* Content */}
       {expanded && (
         <div className="pb-6">
-          {/* Summary */}
+          {/* Highlights */}
           <div className="px-6 mb-6">
-            <div className="text-[var(--muted)] leading-relaxed text-sm">
-              {formatSummary(briefing.summary)}
-            </div>
+            <h4 className="text-xs font-semibold text-[var(--foreground)] uppercase tracking-wide mb-3">
+              Highlights
+            </h4>
+            <ul className="space-y-2">
+              {formatSummaryAsBullets(briefing.summary)}
+            </ul>
           </div>
 
           {/* Story Cards - Horizontal Scroll */}

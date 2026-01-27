@@ -433,25 +433,17 @@ export default function Home() {
         {/* Briefings */}
         {briefings.length > 0 && (
           <section className="space-y-6 animate-fadeIn">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold flex items-center gap-2">
+            <div className="flex items-center gap-3">
+              <h2 className="text-lg font-semibold flex items-center gap-2 whitespace-nowrap">
                 <Newspaper className="w-5 h-5 text-[var(--accent)]" />
-                Your Briefing
-                <span className="text-sm font-normal text-[var(--muted)] ml-2">
-                  ~{getTotalReadingTime(briefings)} min
-                </span>
+                Your News Briefing
               </h2>
-              <div className="flex items-center gap-3">
-                <span className="text-sm text-[var(--muted)]">
-                  {briefings.length} topic{briefings.length !== 1 ? 's' : ''}
-                </span>
-                <HistoryPanel
-                  history={history}
-                  onLoad={loadFromHistory}
-                  onDelete={deleteFromHistory}
-                  onClear={clearHistory}
-                />
-              </div>
+              <HistoryPanel
+                history={history}
+                onLoad={loadFromHistory}
+                onDelete={deleteFromHistory}
+                onClear={clearHistory}
+              />
             </div>
             {briefings.map((briefing, index) => (
               <BriefingCard key={briefing.topic} briefing={briefing} index={index} />

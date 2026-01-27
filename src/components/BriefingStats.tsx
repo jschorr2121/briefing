@@ -12,9 +12,7 @@ export function BriefingStats({ briefings, lastGenerated }: BriefingStatsProps) 
   if (briefings.length === 0) return null;
 
   const totalReadingTime = getTotalReadingTime(briefings);
-  const totalSources = briefings.reduce((acc, b) => acc + b.articles.length, 0);
   const totalStories = briefings.reduce((acc, b) => acc + (b.stories?.length || 0), 0);
-  const totalWords = briefings.reduce((acc, b) => acc + b.summary.split(/\s+/).length, 0);
 
   return (
     <div className="flex flex-wrap gap-4 mb-6 p-4 rounded-xl bg-[var(--card)] border border-[var(--border)]">
@@ -51,18 +49,6 @@ export function BriefingStats({ briefings, lastGenerated }: BriefingStatsProps) 
         <div>
           <div className="text-sm font-medium">{totalStories}</div>
           <div className="text-xs text-[var(--muted)]">Stories</div>
-        </div>
-      </div>
-
-      <div className="flex items-center gap-2">
-        <div className="w-8 h-8 rounded-lg bg-orange-500/20 flex items-center justify-center">
-          <svg className="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-          </svg>
-        </div>
-        <div>
-          <div className="text-sm font-medium">{totalSources}</div>
-          <div className="text-xs text-[var(--muted)]">Sources</div>
         </div>
       </div>
 

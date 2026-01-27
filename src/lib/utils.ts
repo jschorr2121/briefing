@@ -65,6 +65,21 @@ export async function shareContent(title: string, text: string, url?: string): P
 }
 
 // Get total reading time for multiple briefings
-export function getTotalReadingTime(briefings: { summary: string }[]): number {
-  return briefings.reduce((total, b) => total + calculateReadingTime(b.summary), 0);
+export function getTotalReadingTime(briefings: { summary: string; stories?: { bullets: string[] }[] }[]): number {
+  return briefings.reduce((total, b) => {
+    // Count summary words
+    let words = b.summary.trim().split(/\s+/).length;
+    
+    // Count story bullet words
+    if (b.stories) {
+      for (const story of b.stories) {
+        for (const bullet of story.bullets) {
+          words += bullet.trim().split(/\s+/).length;
+        }
+      }
+    }
+    
+    const minutes = Math.ceil(words / 200); // 200 words per minute
+    return total + Math.max(1, minutes);
+  }, 0);
 }
