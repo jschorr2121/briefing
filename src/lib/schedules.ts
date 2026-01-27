@@ -77,30 +77,19 @@ export function shouldSendNow(schedule: ScheduledBrief): boolean {
   
   const now = new Date();
   
-  // Convert to user's timezone
+  // Convert to user's timezone for day-of-week check
   const userTime = new Date(now.toLocaleString('en-US', { timeZone: schedule.timezone }));
   const currentDay = userTime.getDay(); // 0 = Sunday
   
   // NOTE: Vercel Hobby only allows 1 daily cron (runs at 8 AM ET).
-  // We ignore the user's selected time and just send when cron runs.
-  // Time selection removed from UI - all briefs go out at 8 AM ET.
+  // Cron runs once per day, so no need to track lastSentAt.
   
-  // Check frequency
+  // Check frequency (day of week)
   if (schedule.frequency === 'weekdays' && (currentDay === 0 || currentDay === 6)) {
     return false;
   }
   if (schedule.frequency === 'weekly' && currentDay !== 1) { // Monday only
     return false;
-  }
-  
-  // Check if already sent today (in user's timezone)
-  if (schedule.lastSentAt) {
-    const lastSent = new Date(schedule.lastSentAt);
-    // Convert lastSent to user's timezone for proper date comparison
-    const lastSentUserTime = new Date(lastSent.toLocaleString('en-US', { timeZone: schedule.timezone }));
-    const lastSentDate = lastSentUserTime.toDateString();
-    const todayDate = userTime.toDateString();
-    if (lastSentDate === todayDate) return false;
   }
   
   return true;
