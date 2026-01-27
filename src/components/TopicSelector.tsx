@@ -73,7 +73,7 @@ export function TopicSelector({ topics, onAdd, onRemove }: TopicSelectorProps) {
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Add any topics you'd like in your briefing (Be as specific or vague as you'd like)..."
+          placeholder="Add any topics you'd like in your briefing..."
           className="input w-full pr-12"
         />
         <button
