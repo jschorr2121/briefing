@@ -431,47 +431,38 @@ export async function GET(request: NextRequest) {
     const schedules = await getSchedules();
     console.log(`Found ${schedules.length} total schedules in Redis`);
     
-    // Filter to only schedules that should send now
-    const schedulesToSend = schedules.filter(schedule => {
-      const shouldSend = shouldSendNow(schedule);
-      console.log(`Schedule ${schedule.id} (${schedule.email}): shouldSend=${shouldSend}`);
-      return shouldSend;
-    });
-    
-    console.log(`${schedulesToSend.length} schedules to process`);
-    
-    if (schedulesToSend.length === 0) {
-      return NextResponse.json({ processed: 0, results: [] });
-    }
+    const results: { id: string; status: string; error?: string }[] = [];
 
     // Generate health tips once for all emails
     const healthTips = await generateHealthTips();
     console.log(`Generated ${healthTips.length} health tips for today`);
 
-    // Process all schedules in parallel for speed
-    const results = await Promise.all(
-      schedulesToSend.map(async (schedule) => {
-        try {
-          console.log(`Processing ${schedule.id} - generating briefings for ${schedule.email}`);
-          
-          // Generate briefings for this schedule's topics
-          const briefings = await generateBriefings(schedule.topics);
-          
-          // Send email with health tips
-          await sendBriefingEmail(schedule, briefings, healthTips);
-          
-          console.log(`Sent briefing to ${schedule.email}`);
-          return { id: schedule.id, status: 'sent' };
-        } catch (error) {
-          console.error(`Error sending to ${schedule.email}:`, error);
-          return { 
-            id: schedule.id, 
-            status: 'error', 
-            error: error instanceof Error ? error.message : 'Unknown error' 
-          };
-        }
-      })
-    );
+    for (const schedule of schedules) {
+      const shouldSend = shouldSendNow(schedule);
+      console.log(`Schedule ${schedule.id} (${schedule.email}): shouldSend=${shouldSend}`);
+      
+      if (!shouldSend) continue;
+
+      try {
+        console.log(`Processing ${schedule.id} - generating briefings for ${schedule.email}`);
+        
+        // Generate briefings for this schedule's topics
+        const briefings = await generateBriefings(schedule.topics);
+        
+        // Send email with health tips
+        await sendBriefingEmail(schedule, briefings, healthTips);
+        
+        console.log(`Sent briefing to ${schedule.email}`);
+        results.push({ id: schedule.id, status: 'sent' });
+      } catch (error) {
+        console.error(`Error sending to ${schedule.email}:`, error);
+        results.push({ 
+          id: schedule.id, 
+          status: 'error', 
+          error: error instanceof Error ? error.message : 'Unknown error' 
+        });
+      }
+    }
 
     return NextResponse.json({ 
       processed: results.length,
