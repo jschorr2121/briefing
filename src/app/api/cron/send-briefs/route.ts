@@ -17,7 +17,6 @@ interface StoryCard {
   bullets: string[];
   source?: string;
   url?: string;
-  date?: string;
 }
 
 interface Briefing {
@@ -302,21 +301,17 @@ function formatBriefingEmail(briefings: Briefing[], recipientEmail: string, heal
   });
 
   const sections = briefings.map(b => {
-    // Format story cards with dark theme + blue accents
-    const storiesHtml = b.stories.length > 0 ? b.stories.map((story, i) => `
-      <div style="margin-bottom: 16px; padding: 16px; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
-        <div style="margin-bottom: 8px;">
-          <span style="font-size: 11px; font-weight: 600; color: #60a5fa; background: rgba(96,165,250,0.15); padding: 2px 8px; border-radius: 4px;">#${i + 1}</span>
-          ${story.date ? `<span style="font-size: 11px; color: #888; margin-left: 8px;">${story.date}</span>` : ''}
-        </div>
-        <h3 style="margin: 0 0 10px; font-size: 15px; color: #93c5fd; font-weight: 600;">
+    // Format story cards
+    const storiesHtml = b.stories.length > 0 ? b.stories.map(story => `
+      <div style="margin-bottom: 20px; padding: 16px; background: #ffffff; border-radius: 8px; border: 1px solid #e5e7eb;">
+        <h3 style="margin: 0 0 12px; font-size: 16px; color: #1f2937;">
           ${story.headline}
         </h3>
-        <ul style="margin: 0; padding-left: 16px; color: #d1d5db;">
-          ${story.bullets.map(bullet => `<li style="margin: 6px 0; line-height: 1.5; font-size: 13px;">${bullet}</li>`).join('')}
+        <ul style="margin: 0; padding-left: 20px; color: #374151;">
+          ${story.bullets.map(bullet => `<li style="margin: 4px 0; line-height: 1.5;">${bullet}</li>`).join('')}
         </ul>
         ${story.source && story.url ? `
-          <a href="${story.url}" style="display: inline-block; margin-top: 12px; color: #60a5fa; text-decoration: none; font-size: 12px;">
+          <a href="${story.url}" style="display: inline-block; margin-top: 12px; color: #2563eb; text-decoration: none; font-size: 13px;">
             ${story.source} →
           </a>
         ` : ''}
@@ -324,30 +319,29 @@ function formatBriefingEmail(briefings: Briefing[], recipientEmail: string, heal
     `).join('') : '';
 
     // Format additional sources
-    const sourcesHtml = b.articles.length > 0 && b.stories.length === 0 ? `
-      <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.1);">
-        <p style="font-size: 11px; color: #60a5fa; margin: 0 0 8px; text-transform: uppercase; letter-spacing: 0.5px;">Sources</p>
+    const sourcesHtml = b.articles.length > 0 ? `
+      <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #e5e7eb;">
+        <p style="font-size: 12px; color: #6b7280; margin: 0 0 8px;">More sources:</p>
         ${b.articles.slice(0, 3).map(a => `
-          <a href="${a.url}" style="color: #93c5fd; text-decoration: none; font-size: 12px; display: block; margin: 4px 0;">
-            ${a.source}: ${a.title.substring(0, 50)}${a.title.length > 50 ? '...' : ''}
+          <a href="${a.url}" style="color: #2563eb; text-decoration: none; font-size: 13px; display: block; margin: 4px 0;">
+            ${a.source}: ${a.title.substring(0, 60)}${a.title.length > 60 ? '...' : ''}
           </a>
         `).join('')}
       </div>
     ` : '';
 
     const formattedSummary = b.summary
-      .replace(/\*\*(.*?)\*\*/g, '<strong style="color: #93c5fd;">$1</strong>')
-      .replace(/\n\n/g, '</p><p style="margin: 0 0 10px; line-height: 1.6;">')
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\n\n/g, '</p><p style="margin: 0 0 12px; line-height: 1.6;">')
       .replace(/\n/g, '<br>');
 
     return `
-      <div style="background: rgba(255,255,255,0.02); border-radius: 12px; padding: 24px; margin-bottom: 16px; border: 1px solid rgba(255,255,255,0.08);">
-        <h2 style="margin: 0 0 16px; font-size: 18px; color: #60a5fa; font-weight: 600;">
+      <div style="background: #f9fafb; border-radius: 12px; padding: 24px; margin-bottom: 20px; border: 1px solid #e5e7eb;">
+        <h2 style="margin: 0 0 16px; font-size: 20px; color: #1f2937;">
           ${b.topic}
         </h2>
-        <p style="font-size: 11px; color: #60a5fa; margin: 0 0 10px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 500;">Highlights</p>
-        <div style="color: #d1d5db; font-size: 14px;">
-          <p style="margin: 0 0 10px; line-height: 1.6;">
+        <div style="color: #374151; margin-bottom: 16px;">
+          <p style="margin: 0 0 12px; line-height: 1.6;">
             ${formattedSummary}
           </p>
         </div>
@@ -357,16 +351,21 @@ function formatBriefingEmail(briefings: Briefing[], recipientEmail: string, heal
     `;
   }).join('');
 
-  // Health tips section - dark theme
+  // Health tips section
   const healthTipsHtml = healthTips && healthTips.length > 0 ? `
-    <div style="background: rgba(16,185,129,0.1); border-radius: 12px; padding: 24px; margin-bottom: 20px; border: 1px solid rgba(16,185,129,0.2);">
-      <h2 style="margin: 0 0 16px; font-size: 16px; color: #34d399; font-weight: 600;">
-        Daily Health Tips
+    <div style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border-radius: 12px; padding: 24px; margin-bottom: 20px; border: 1px solid #a7f3d0;">
+      <h2 style="margin: 0 0 16px; font-size: 18px; color: #065f46; display: flex; align-items: center; gap: 8px;">
+        💪 Daily Health Tips
       </h2>
       ${healthTips.map(tip => `
-        <div style="background: rgba(255,255,255,0.03); border-radius: 8px; padding: 12px 16px; margin-bottom: 12px; border: 1px solid rgba(16,185,129,0.15);">
-          <span style="font-size: 11px; font-weight: 600; color: #34d399; text-transform: uppercase; letter-spacing: 0.5px;">${tip.category}</span>
-          <p style="margin: 4px 0 0; color: #d1d5db; font-size: 13px; line-height: 1.5;">${tip.tip}</p>
+        <div style="background: white; border-radius: 8px; padding: 12px 16px; margin-bottom: 12px; border: 1px solid #d1fae5;">
+          <div style="display: flex; align-items: flex-start; gap: 12px;">
+            <span style="font-size: 24px;">${tip.emoji}</span>
+            <div>
+              <span style="font-size: 11px; font-weight: 600; color: #059669; text-transform: uppercase; letter-spacing: 0.5px;">${tip.category}</span>
+              <p style="margin: 4px 0 0; color: #374151; font-size: 14px; line-height: 1.5;">${tip.tip}</p>
+            </div>
+          </div>
         </div>
       `).join('')}
     </div>
@@ -379,13 +378,13 @@ function formatBriefingEmail(briefings: Briefing[], recipientEmail: string, heal
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1">
     </head>
-    <body style="margin: 0; padding: 0; background: #0a0a0a; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #fff;">
+    <body style="margin: 0; padding: 0; background: #ffffff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
       <div style="max-width: 600px; margin: 0 auto; padding: 40px 20px;">
-        <div style="text-align: center; margin-bottom: 32px;">
-          <h1 style="margin: 0; font-size: 24px; color: #fff; font-weight: 600;">
-            Your News Briefing
+        <div style="text-align: center; margin-bottom: 40px;">
+          <h1 style="margin: 0; font-size: 28px; color: #1f2937;">
+            📰 Your Daily Briefing
           </h1>
-          <p style="margin: 8px 0 0; color: #666; font-size: 13px;">
+          <p style="margin: 8px 0 0; color: #6b7280; font-size: 14px;">
             ${date}
           </p>
         </div>
@@ -394,11 +393,11 @@ function formatBriefingEmail(briefings: Briefing[], recipientEmail: string, heal
         
         ${sections}
         
-        <div style="text-align: center; margin-top: 32px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.08);">
-          <p style="color: #444; font-size: 11px; margin: 0;">
-            You're receiving this because you scheduled a briefing.
+        <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+          <p style="color: #9ca3af; font-size: 12px; margin: 0;">
+            You're receiving this because you scheduled a briefing at Briefing.
             <br>
-            <a href="${process.env.NEXTAUTH_URL || 'https://briefing-five.vercel.app'}/schedule" style="color: #60a5fa;">Manage your schedules</a>
+            <a href="${process.env.NEXTAUTH_URL}/schedule" style="color: #2563eb;">Manage your schedules</a>
           </p>
         </div>
       </div>
