@@ -235,7 +235,7 @@ export default function Home() {
     markdown += `*Generated: ${lastGenerated?.toLocaleString()}*\n\n---\n\n`;
 
     for (const briefing of briefings) {
-      markdown += `## ${briefing.emoji} ${briefing.topic}\n\n`;
+      markdown += `## ${briefing.topic}\n\n`;
       markdown += `${briefing.summary}\n\n`;
 
       if (briefing.articles.length > 0) {
@@ -456,7 +456,7 @@ export default function Home() {
           <div className="space-y-6">
             <div className="flex items-center gap-3 mb-2">
               <h2 className="text-xl font-semibold flex items-center gap-2">
-                <span>📰</span> Generating Your Briefing
+                <Newspaper className="w-5 h-5" /> Generating Your Briefing
               </h2>
               <div className="flex items-center gap-1">
                 <span className="w-2 h-2 rounded-full bg-[var(--accent)] animate-pulse" style={{ animationDelay: '0ms' }} />
@@ -473,8 +473,8 @@ export default function Home() {
               >
                 {/* Header skeleton */}
                 <div className="flex items-center gap-4 mb-6">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--accent)]/20 to-[var(--accent)]/5 flex items-center justify-center">
-                    <span className="text-2xl">{topic.emoji}</span>
+                  <div className="w-10 h-10 rounded-lg bg-[var(--card-hover)] flex items-center justify-center">
+                    <Newspaper className="w-5 h-5 text-[var(--muted)]" />
                   </div>
                   <div>
                     <div className="h-6 w-32 bg-[var(--border)] rounded animate-shimmer mb-2" />
@@ -521,7 +521,7 @@ export default function Home() {
         {!isLoading && briefings.length === 0 && (
           <div className="text-center py-12">
             <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-[var(--card)] flex items-center justify-center">
-              <span className="text-4xl">📰</span>
+              <Newspaper className="w-10 h-10 text-[var(--muted)]" />
             </div>
             <h3 className="text-xl font-semibold mb-2">Ready to get informed?</h3>
             <p className="text-[var(--muted)] max-w-md mx-auto">
@@ -550,7 +550,9 @@ export default function Home() {
       {showEmailModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-[var(--card)] rounded-2xl p-6 w-full max-w-md border border-[var(--border)]">
-            <h2 className="text-xl font-semibold mb-4">📧 Email Briefing</h2>
+            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+              <Mail className="w-5 h-5" /> Email Briefing
+            </h2>
             <p className="text-[var(--muted)] text-sm mb-4">
               Enter your email to receive this briefing in your inbox.
             </p>

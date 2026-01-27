@@ -27,17 +27,20 @@ function formatBriefingAsHTML(briefings: Briefing[]): string {
 
   const sections = briefings.map(b => {
     // Format story cards with full details
-    const storiesHtml = b.stories && b.stories.length > 0 ? b.stories.map(story => `
-      <div style="margin-bottom: 20px; padding: 16px; background: #252525; border-radius: 8px; border: 1px solid #333;">
-        <h3 style="margin: 0 0 12px; font-size: 16px; color: #fff;">
+    const storiesHtml = b.stories && b.stories.length > 0 ? b.stories.map((story, i) => `
+      <div style="margin-bottom: 16px; padding: 16px; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+          <span style="font-size: 11px; font-weight: 600; color: #888; background: rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 4px;">#${i + 1}</span>
+          ${story.date ? `<span style="font-size: 11px; color: #666;">${story.date}</span>` : ''}
+        </div>
+        <h3 style="margin: 0 0 10px; font-size: 15px; color: #fff; font-weight: 600;">
           ${story.headline}
         </h3>
-        ${story.date ? `<p style="margin: 0 0 8px; font-size: 12px; color: #888;">📅 ${story.date}</p>` : ''}
-        <ul style="margin: 0; padding-left: 20px; color: #ccc;">
-          ${story.bullets.map(bullet => `<li style="margin: 4px 0; line-height: 1.5;">${bullet}</li>`).join('')}
+        <ul style="margin: 0; padding-left: 16px; color: #aaa;">
+          ${story.bullets.map(bullet => `<li style="margin: 6px 0; line-height: 1.5; font-size: 13px;">${bullet}</li>`).join('')}
         </ul>
         ${story.source && story.url ? `
-          <a href="${story.url}" style="display: inline-block; margin-top: 12px; color: #6C63FF; text-decoration: none; font-size: 13px;">
+          <a href="${story.url}" style="display: inline-block; margin-top: 12px; color: #888; text-decoration: none; font-size: 12px;">
             ${story.source} →
           </a>
         ` : ''}
@@ -45,12 +48,12 @@ function formatBriefingAsHTML(briefings: Briefing[]): string {
     `).join('') : '';
 
     // Additional sources
-    const articlesHtml = b.articles.length > 0 ? `
-      <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #333;">
-        <p style="font-size: 12px; color: #888; margin: 0 0 8px;">More sources:</p>
+    const articlesHtml = b.articles.length > 0 && (!b.stories || b.stories.length === 0) ? `
+      <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.1);">
+        <p style="font-size: 11px; color: #666; margin: 0 0 8px; text-transform: uppercase; letter-spacing: 0.5px;">Sources</p>
         ${b.articles.slice(0, 3).map(a => `
-          <a href="${a.url}" style="color: #6C63FF; text-decoration: none; font-size: 13px; display: block; margin: 4px 0;">
-            ${a.source}: ${a.title.substring(0, 60)}${a.title.length > 60 ? '...' : ''}
+          <a href="${a.url}" style="color: #888; text-decoration: none; font-size: 12px; display: block; margin: 4px 0;">
+            ${a.source}: ${a.title.substring(0, 50)}${a.title.length > 50 ? '...' : ''}
           </a>
         `).join('')}
       </div>
@@ -58,17 +61,18 @@ function formatBriefingAsHTML(briefings: Briefing[]): string {
 
     // Convert markdown bold to HTML
     const formattedSummary = b.summary
-      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-      .replace(/\n\n/g, '</p><p style="margin: 0 0 12px; line-height: 1.6;">')
+      .replace(/\*\*(.*?)\*\*/g, '<strong style="color: #fff;">$1</strong>')
+      .replace(/\n\n/g, '</p><p style="margin: 0 0 10px; line-height: 1.6;">')
       .replace(/\n/g, '<br>');
 
     return `
-      <div style="background: #1a1a1a; border-radius: 12px; padding: 24px; margin-bottom: 20px; border: 1px solid #333;">
-        <h2 style="margin: 0 0 16px; font-size: 20px; color: #fff;">
-          ${b.emoji} ${b.topic}
+      <div style="background: rgba(255,255,255,0.02); border-radius: 12px; padding: 24px; margin-bottom: 16px; border: 1px solid rgba(255,255,255,0.08);">
+        <h2 style="margin: 0 0 16px; font-size: 18px; color: #fff; font-weight: 600;">
+          ${b.topic}
         </h2>
-        <div style="color: #ccc; margin-bottom: 16px;">
-          <p style="margin: 0 0 12px; line-height: 1.6;">
+        <p style="font-size: 11px; color: #666; margin: 0 0 10px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 500;">Highlights</p>
+        <div style="color: #aaa; font-size: 14px;">
+          <p style="margin: 0 0 10px; line-height: 1.6;">
             ${formattedSummary}
           </p>
         </div>
@@ -87,20 +91,20 @@ function formatBriefingAsHTML(briefings: Briefing[]): string {
     </head>
     <body style="margin: 0; padding: 0; background: #0a0a0a; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #fff;">
       <div style="max-width: 600px; margin: 0 auto; padding: 40px 20px;">
-        <div style="text-align: center; margin-bottom: 40px;">
-          <h1 style="margin: 0; font-size: 32px; color: #fff;">
-            📰 <span style="background: linear-gradient(135deg, #6C63FF, #F857A6); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Your Briefing</span>
+        <div style="text-align: center; margin-bottom: 32px;">
+          <h1 style="margin: 0; font-size: 24px; color: #fff; font-weight: 600;">
+            Your News Briefing
           </h1>
-          <p style="margin: 8px 0 0; color: #888; font-size: 14px;">
+          <p style="margin: 8px 0 0; color: #666; font-size: 13px;">
             ${date}
           </p>
         </div>
         
         ${sections}
         
-        <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #333;">
-          <p style="color: #666; font-size: 12px; margin: 0;">
-            Generated by Briefing • Your Personal News Intelligence
+        <div style="text-align: center; margin-top: 32px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.08);">
+          <p style="color: #444; font-size: 11px; margin: 0;">
+            Generated by Briefing
           </p>
         </div>
       </div>
@@ -150,7 +154,7 @@ export async function POST(request: NextRequest) {
     await transporter.sendMail({
       from: `"Briefing" <${smtpUser}>`,
       to: email,
-      subject: `📰 Your Briefing — ${date}`,
+      subject: `Your Briefing — ${date}`,
       html: formatBriefingAsHTML(briefings),
     });
 
