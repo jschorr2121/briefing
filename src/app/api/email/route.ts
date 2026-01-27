@@ -1,10 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createTransport } from 'nodemailer';
 
+interface StoryCard {
+  headline: string;
+  bullets: string[];
+  source?: string;
+  url?: string;
+  date?: string;
+}
+
 interface Briefing {
   topic: string;
   emoji: string;
   summary: string;
+  stories?: StoryCard[];
   articles: Array<{ title: string; url: string; source: string }>;
 }
 
@@ -17,12 +26,31 @@ function formatBriefingAsHTML(briefings: Briefing[]): string {
   });
 
   const sections = briefings.map(b => {
+    // Format story cards with full details
+    const storiesHtml = b.stories && b.stories.length > 0 ? b.stories.map(story => `
+      <div style="margin-bottom: 20px; padding: 16px; background: #252525; border-radius: 8px; border: 1px solid #333;">
+        <h3 style="margin: 0 0 12px; font-size: 16px; color: #fff;">
+          ${story.headline}
+        </h3>
+        ${story.date ? `<p style="margin: 0 0 8px; font-size: 12px; color: #888;">📅 ${story.date}</p>` : ''}
+        <ul style="margin: 0; padding-left: 20px; color: #ccc;">
+          ${story.bullets.map(bullet => `<li style="margin: 4px 0; line-height: 1.5;">${bullet}</li>`).join('')}
+        </ul>
+        ${story.source && story.url ? `
+          <a href="${story.url}" style="display: inline-block; margin-top: 12px; color: #6C63FF; text-decoration: none; font-size: 13px;">
+            ${story.source} →
+          </a>
+        ` : ''}
+      </div>
+    `).join('') : '';
+
+    // Additional sources
     const articlesHtml = b.articles.length > 0 ? `
       <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #333;">
-        <p style="font-size: 12px; color: #888; margin: 0 0 8px;">Sources:</p>
-        ${b.articles.map(a => `
+        <p style="font-size: 12px; color: #888; margin: 0 0 8px;">More sources:</p>
+        ${b.articles.slice(0, 3).map(a => `
           <a href="${a.url}" style="color: #6C63FF; text-decoration: none; font-size: 13px; display: block; margin: 4px 0;">
-            ${a.source}: ${a.title}
+            ${a.source}: ${a.title.substring(0, 60)}${a.title.length > 60 ? '...' : ''}
           </a>
         `).join('')}
       </div>
@@ -36,14 +64,15 @@ function formatBriefingAsHTML(briefings: Briefing[]): string {
 
     return `
       <div style="background: #1a1a1a; border-radius: 12px; padding: 24px; margin-bottom: 20px; border: 1px solid #333;">
-        <h2 style="margin: 0 0 16px; font-size: 20px;">
+        <h2 style="margin: 0 0 16px; font-size: 20px; color: #fff;">
           ${b.emoji} ${b.topic}
         </h2>
-        <div style="color: #ccc;">
+        <div style="color: #ccc; margin-bottom: 16px;">
           <p style="margin: 0 0 12px; line-height: 1.6;">
             ${formattedSummary}
           </p>
         </div>
+        ${storiesHtml}
         ${articlesHtml}
       </div>
     `;
@@ -56,7 +85,7 @@ function formatBriefingAsHTML(briefings: Briefing[]): string {
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1">
     </head>
-    <body style="margin: 0; padding: 0; background: #0a0a0a; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+    <body style="margin: 0; padding: 0; background: #0a0a0a; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #fff;">
       <div style="max-width: 600px; margin: 0 auto; padding: 40px 20px;">
         <div style="text-align: center; margin-bottom: 40px;">
           <h1 style="margin: 0; font-size: 32px; color: #fff;">
