@@ -3,6 +3,9 @@ import { NextRequest, NextResponse } from 'next/server';
 const CRON_SECRET = process.env.CRON_SECRET;
 const BASE_URL = process.env.NEXTAUTH_URL || 'https://briefing-five.vercel.app';
 
+// Test only sends to this email
+const TEST_EMAIL = 'jacobschorr99@gmail.com';
+
 export async function GET(request: NextRequest) {
   try {
     // Verify cron secret
@@ -13,10 +16,10 @@ export async function GET(request: NextRequest) {
 
     const results: { step: string; status: string; data?: unknown; error?: string }[] = [];
 
-    // Step 1: Generate briefings
-    console.log('Step 1: Generating briefings...');
+    // Step 1: Generate briefings (only for test email)
+    console.log(`Step 1: Generating briefings for ${TEST_EMAIL}...`);
     try {
-      const generateRes = await fetch(`${BASE_URL}/api/cron/generate-briefs`, {
+      const generateRes = await fetch(`${BASE_URL}/api/cron/generate-briefs?testEmail=${encodeURIComponent(TEST_EMAIL)}`, {
         headers: { 'Authorization': `Bearer ${CRON_SECRET}` },
       });
       const generateData = await generateRes.json();
@@ -40,7 +43,7 @@ export async function GET(request: NextRequest) {
     }
 
     return NextResponse.json({ 
-      message: 'Test complete - generated and sent briefings',
+      message: `Test complete - generated and sent briefing to ${TEST_EMAIL} only`,
       results 
     });
   } catch (error) {
