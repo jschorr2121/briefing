@@ -137,7 +137,7 @@ export function BriefingCard({ briefing, index, onRefresh, isRefreshing }: Brief
   }, [hasStories]);
 
   const copyToClipboard = async () => {
-    let textToCopy = `${briefing.emoji} ${briefing.topic}\n\n${briefing.summary}`;
+    let textToCopy = `${briefing.topic}\n\n${briefing.summary}`;
     if (hasStories) {
       textToCopy += '\n\n';
       briefing.stories!.forEach((story, i) => {
@@ -154,7 +154,7 @@ export function BriefingCard({ briefing, index, onRefresh, isRefreshing }: Brief
   };
 
   const handleShare = async () => {
-    let shareText = `${briefing.emoji} ${briefing.topic}\n\n${briefing.summary}`;
+    let shareText = `${briefing.topic}\n\n${briefing.summary}`;
     const success = await shareContent(
       `Briefing: ${briefing.topic}`,
       shareText
@@ -185,27 +185,18 @@ export function BriefingCard({ briefing, index, onRefresh, isRefreshing }: Brief
     }
   }, []);
 
-  // Convert summary text to bullet points
-  const formatSummaryAsBullets = (text: string) => {
-    // Split by sentences (period followed by space or newline)
-    const sentences = text
-      .split(/(?<=[.!?])\s+/)
-      .map(s => s.trim())
-      .filter(s => s.length > 10); // Filter out very short fragments
-    
-    return sentences.map((sentence, i) => (
-      <li key={i} className="flex items-start gap-2.5 text-sm text-[var(--muted)]">
-        <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] mt-1.5 flex-shrink-0" />
-        <span className="leading-relaxed">
-          {sentence.split(/\*\*(.*?)\*\*/g).map((part, j) =>
-            j % 2 === 1 ? (
-              <strong key={j} className="text-[var(--foreground)]">{part}</strong>
-            ) : (
-              part
-            )
-          )}
-        </span>
-      </li>
+  // Convert markdown-style bold to HTML
+  const formatSummary = (text: string) => {
+    return text.split('\n\n').map((paragraph, i) => (
+      <p key={i} className="mb-2 last:mb-0">
+        {paragraph.split(/\*\*(.*?)\*\*/g).map((part, j) =>
+          j % 2 === 1 ? (
+            <strong key={j} className="text-[var(--foreground)]">{part}</strong>
+          ) : (
+            part
+          )
+        )}
+      </p>
     ));
   };
 
@@ -224,8 +215,8 @@ export function BriefingCard({ briefing, index, onRefresh, isRefreshing }: Brief
           onClick={() => setExpanded(!expanded)}
           className="flex items-center gap-4 text-left flex-1"
         >
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--accent)]/20 to-[var(--accent)]/5 flex items-center justify-center">
-            <span className="text-2xl">{briefing.emoji}</span>
+          <div className="w-10 h-10 rounded-lg bg-[var(--card-hover)] flex items-center justify-center">
+            <Newspaper className="w-5 h-5 text-[var(--muted)]" />
           </div>
           <div>
             <h3 className="text-xl font-semibold">{briefing.topic}</h3>
@@ -302,12 +293,12 @@ export function BriefingCard({ briefing, index, onRefresh, isRefreshing }: Brief
         <div className="pb-6">
           {/* Highlights */}
           <div className="px-6 mb-6">
-            <h4 className="text-xs font-semibold text-[var(--foreground)] uppercase tracking-wide mb-3">
+            <h4 className="text-xs font-semibold text-[var(--muted)] uppercase tracking-wide mb-3">
               Highlights
             </h4>
-            <ul className="space-y-2">
-              {formatSummaryAsBullets(briefing.summary)}
-            </ul>
+            <div className="text-[var(--muted)] leading-relaxed text-sm">
+              {formatSummary(briefing.summary)}
+            </div>
           </div>
 
           {/* Story Cards - Horizontal Scroll */}
