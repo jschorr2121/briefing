@@ -318,15 +318,24 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // Check for test mode (single email)
+    const testEmail = request.nextUrl.searchParams.get('testEmail');
+    
     const schedules = await getSchedules();
     console.log(`Found ${schedules.length} total schedules`);
     
     // Filter to schedules that should send today
-    const schedulesToGenerate = schedules.filter(schedule => {
+    let schedulesToGenerate = schedules.filter(schedule => {
       const shouldSend = shouldSendNow(schedule);
       console.log(`Schedule ${schedule.id} (${schedule.email}): shouldGenerate=${shouldSend}`);
       return shouldSend;
     });
+    
+    // If test mode, filter to only the test email
+    if (testEmail) {
+      schedulesToGenerate = schedulesToGenerate.filter(s => s.email === testEmail);
+      console.log(`Test mode: filtered to ${testEmail} only`);
+    }
     
     console.log(`${schedulesToGenerate.length} schedules to generate briefings for`);
     
