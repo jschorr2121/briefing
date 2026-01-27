@@ -108,7 +108,7 @@ For each story, provide:
 - ${settings.briefingLength === 'short' ? '2-3' : settings.briefingLength === 'medium' ? '3-4' : '4-5'} bullet points that fully explain the story
 - The source name
 - The SPECIFIC article URL (not the homepage - must be the direct link to the article)
-- The publication date (format: "Jan 26, 2026")
+- The publication date (format: "Jan 26, 2026") - REQUIRED for every story, always include this
 
 Tone: ${toneGuide[settings.tone]}
 

@@ -31,7 +31,7 @@ function formatBriefingAsHTML(briefings: Briefing[]): string {
       <div style="margin-bottom: 16px; padding: 16px; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
         <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
           <span style="font-size: 11px; font-weight: 600; color: #60a5fa; background: rgba(96,165,250,0.15); padding: 2px 8px; border-radius: 4px;">#${i + 1}</span>
-          ${story.date ? `<span style="font-size: 11px; color: #888;">${story.date}</span>` : ''}
+          ${story.date ? `<span style="font-size: 11px; color: #60a5fa; font-weight: 500;">📅 ${story.date}</span>` : ''}
         </div>
         <h3 style="margin: 0 0 10px; font-size: 15px; color: #93c5fd; font-weight: 600;">
           ${story.headline}
