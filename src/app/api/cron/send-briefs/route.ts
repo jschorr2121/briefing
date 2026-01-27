@@ -17,6 +17,7 @@ interface StoryCard {
   bullets: string[];
   source?: string;
   url?: string;
+  date?: string;
 }
 
 interface Briefing {
