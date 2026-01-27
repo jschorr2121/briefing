@@ -85,9 +85,19 @@ function buildPrompt(topic: string, queries: string[], settings: Settings): stri
   };
   const searchQuery = queries.join(' OR ');
   
+  // Get date from 7 days ago for recency filter
+  const weekAgo = new Date();
+  weekAgo.setDate(weekAgo.getDate() - 7);
+  const weekAgoStr = weekAgo.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  
   return `Search for the latest news about: ${topic}
 
 Search queries to consider: ${searchQuery}
+
+IMPORTANT GUIDELINES:
+- Only include news from the past 7 days (after ${weekAgoStr}). Prioritize the most recent stories.
+- Do NOT use or cite Wikipedia. Only use news sources, official publications, and reputable journalism outlets.
+- Prefer primary sources (news outlets, official announcements) over aggregators or encyclopedias.
 
 After searching, create a news briefing with:
 1. A brief 2-3 sentence overview summary of the topic area
