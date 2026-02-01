@@ -101,8 +101,20 @@ export interface UsageCheck {
   tier: 'free' | 'pro';
 }
 
+// Whitelisted emails that get unlimited usage regardless of tier
+const UNLIMITED_EMAILS = [
+  'jacobschorr99@gmail.com',
+];
+
 export async function checkAndIncrementUsage(email: string): Promise<UsageCheck> {
   const sub = await getUserSubscription(email);
+
+  // Whitelisted users: unlimited
+  if (UNLIMITED_EMAILS.includes(email.toLowerCase())) {
+    sub.briefingsToday += 1;
+    await saveUserSubscription(sub);
+    return { allowed: true, used: sub.briefingsToday, limit: Infinity, tier: 'pro' };
+  }
 
   // Pro users: unlimited
   if (sub.tier === 'pro' && sub.subscriptionStatus === 'active') {
@@ -125,7 +137,7 @@ export async function checkAndIncrementUsage(email: string): Promise<UsageCheck>
 export async function getUsageStatus(email: string): Promise<UsageCheck> {
   const sub = await getUserSubscription(email);
 
-  if (sub.tier === 'pro' && sub.subscriptionStatus === 'active') {
+  if (UNLIMITED_EMAILS.includes(email.toLowerCase()) || (sub.tier === 'pro' && sub.subscriptionStatus === 'active')) {
     return { allowed: true, used: sub.briefingsToday, limit: Infinity, tier: 'pro' };
   }
 
