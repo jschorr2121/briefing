@@ -27,7 +27,7 @@ export function TierBadge({ tier, compact = false }: TierBadgeProps) {
 
   return (
     <Link
-      href="/account"
+      href="/pricing"
       className={`inline-flex items-center gap-1 rounded-full font-bold transition-all hover:border-[var(--accent)] hover:text-[var(--accent)] ${
         compact
           ? 'px-2 py-0.5 text-[10px]'
