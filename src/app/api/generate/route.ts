@@ -231,7 +231,7 @@ async function fetchFromPerplexity(
   const apiKey = process.env.PERPLEXITY_API_KEY;
   if (!apiKey) throw new Error('Perplexity API key not configured');
 
-  const prompt = buildPrompt(topic, queries, settings);
+  const userMessage = buildUserMessage(topic, queries, settings);
 
   const response = await fetchWithRetry('https://api.perplexity.ai/chat/completions', {
     method: 'POST',
@@ -241,7 +241,10 @@ async function fetchFromPerplexity(
     },
     body: JSON.stringify({
       model: 'sonar',
-      messages: [{ role: 'user', content: prompt }],
+      messages: [
+        { role: 'system', content: SYSTEM_PROMPT },
+        { role: 'user', content: userMessage },
+      ],
     }),
   });
 
