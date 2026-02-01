@@ -14,7 +14,7 @@ interface Briefing {
   stories?: StoryCard[];
 }
 
-type VoiceOption = 'alloy' | 'echo' | 'fable' | 'onyx' | 'nova' | 'shimmer';
+type VoiceOption = string; // Supports both OpenAI and Google voice IDs
 
 function buildScript(briefings: Briefing[]): string {
   return briefings.map(b => {
@@ -111,7 +111,11 @@ function chunkText(text: string, maxBytes: number = 4500): string[] {
   return chunks;
 }
 
-async function generateGoogleTTSChunk(text: string, apiKey: string): Promise<Uint8Array> {
+async function generateGoogleTTSChunk(text: string, apiKey: string, voiceName: string = 'en-US-Neural2-C'): Promise<Uint8Array> {
+  // Determine gender from voice name for fallback
+  const maleVoices = ['en-US-Neural2-A', 'en-US-Neural2-D', 'en-US-Neural2-I', 'en-US-Neural2-J'];
+  const ssmlGender = maleVoices.includes(voiceName) ? 'MALE' : 'FEMALE';
+
   const response = await fetch(
     `https://texttospeech.googleapis.com/v1/text:synthesize?key=${apiKey}`,
     {
@@ -121,8 +125,8 @@ async function generateGoogleTTSChunk(text: string, apiKey: string): Promise<Uin
         input: { text },
         voice: {
           languageCode: 'en-US',
-          name: 'en-US-Standard-J',
-          ssmlGender: 'MALE'
+          name: voiceName,
+          ssmlGender,
         },
         audioConfig: {
           audioEncoding: 'MP3',
@@ -149,18 +153,18 @@ async function generateGoogleTTSChunk(text: string, apiKey: string): Promise<Uin
   return bytes;
 }
 
-async function generateGoogleTTS(script: string): Promise<ArrayBuffer> {
+async function generateGoogleTTS(script: string, voiceName: string = 'en-US-Neural2-C'): Promise<ArrayBuffer> {
   const apiKey = process.env.GOOGLE_TTS_API_KEY;
   if (!apiKey) throw new Error('Google TTS API key not configured');
 
   const chunks = chunkText(script);
-  console.log(`Splitting into ${chunks.length} chunks for Google TTS`);
+  console.log(`Splitting into ${chunks.length} chunks for Google TTS (voice: ${voiceName})`);
 
   // Generate audio for each chunk
   const audioChunks: Uint8Array[] = [];
   for (let i = 0; i < chunks.length; i++) {
     console.log(`Processing chunk ${i + 1}/${chunks.length} (${chunks[i].length} chars)`);
-    const audioData = await generateGoogleTTSChunk(chunks[i], apiKey);
+    const audioData = await generateGoogleTTSChunk(chunks[i], apiKey, voiceName);
     audioChunks.push(audioData);
   }
 
@@ -196,7 +200,7 @@ export async function POST(request: NextRequest) {
     let audioBuffer: ArrayBuffer;
 
     if (provider === 'google') {
-      audioBuffer = await generateGoogleTTS(script);
+      audioBuffer = await generateGoogleTTS(script, voice);
     } else {
       audioBuffer = await generateOpenAITTS(script, voice);
     }
