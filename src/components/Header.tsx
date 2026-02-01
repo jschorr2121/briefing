@@ -1,57 +1,79 @@
 'use client';
 
 import { useSession, signOut } from 'next-auth/react';
-import { Newspaper, Settings, LogOut } from 'lucide-react';
+import { Newspaper, Settings, LogOut, User } from 'lucide-react';
+import Link from 'next/link';
 import { formatDistanceToNow } from '@/lib/utils';
+import { TierBadge } from '@/components/TierBadge';
+import { NavigationTabs } from './NavigationTabs';
 
 interface HeaderProps {
-  onSettingsClick: () => void;
-  lastGenerated: Date | null;
+  onSettingsClick?: () => void;
+  lastGenerated?: Date | null;
+  tier?: 'free' | 'pro';
 }
 
-export function Header({ onSettingsClick, lastGenerated }: HeaderProps) {
+export function Header({ onSettingsClick, lastGenerated, tier }: HeaderProps) {
   const { data: session } = useSession();
 
   return (
     <header className="sticky top-0 z-50 backdrop-blur-xl bg-[var(--background)]/90 border-b border-[var(--border)]">
-      <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[var(--accent)] flex items-center justify-center">
-            <Newspaper className="w-5 h-5 text-white" />
+      <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-[var(--accent)] flex items-center justify-center">
+              <Newspaper className="w-4.5 h-4.5 text-white" />
+            </div>
+            <div className="hidden sm:block">
+              <div className="flex items-center gap-2">
+                <h1 className="font-semibold text-base leading-tight">Briefing</h1>
+                {tier && <TierBadge tier={tier} compact />}
+              </div>
+              {lastGenerated && (
+                <p className="text-[10px] text-[var(--muted)]">
+                  Updated {formatDistanceToNow(lastGenerated)}
+                </p>
+              )}
+            </div>
           </div>
-          <div>
-            <h1 className="font-semibold text-lg">Briefing</h1>
-            {lastGenerated && (
-              <p className="text-xs text-[var(--muted)]">
-                Updated {formatDistanceToNow(lastGenerated)}
-              </p>
-            )}
-          </div>
+
+          {/* Navigation Tabs */}
+          <NavigationTabs />
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           {session?.user && (
             <div className="flex items-center gap-2">
               {session.user.image && (
                 <img
                   src={session.user.image}
                   alt=""
-                  className="w-8 h-8 rounded-full"
+                  className="w-7 h-7 rounded-full"
                 />
               )}
-              <span className="text-sm text-[var(--muted)] hidden sm:inline">
+              <span className="text-sm text-[var(--muted)] hidden md:inline">
                 {session.user.name?.split(' ')[0]}
               </span>
             </div>
           )}
-          
-          <button
-            onClick={onSettingsClick}
+
+          <Link
+            href="/account"
             className="p-2 rounded-lg border border-[var(--border)] hover:border-[var(--accent)] hover:bg-[var(--card)] transition-all"
-            aria-label="Settings"
+            aria-label="Account"
           >
-            <Settings className="w-4 h-4 text-[var(--muted)]" />
-          </button>
+            <User className="w-4 h-4 text-[var(--muted)]" />
+          </Link>
+          
+          {onSettingsClick && (
+            <button
+              onClick={onSettingsClick}
+              className="p-2 rounded-lg border border-[var(--border)] hover:border-[var(--accent)] hover:bg-[var(--card)] transition-all"
+              aria-label="Settings"
+            >
+              <Settings className="w-4 h-4 text-[var(--muted)]" />
+            </button>
+          )}
 
           {session && (
             <button
