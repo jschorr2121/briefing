@@ -168,6 +168,12 @@ async function fetchFromOpenAI(
   }
 
   const data = await response.json();
+  
+  // Log token usage to verify prompt caching
+  if (data.usage) {
+    console.log(`📊 Token usage — input: ${data.usage.input_tokens}, output: ${data.usage.output_tokens}, cached: ${data.usage.input_tokens_details?.cached_tokens ?? 'N/A'}`);
+  }
+  
   let outputText = data.output_text || '';
   
   if (!outputText && data.output) {
