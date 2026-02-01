@@ -335,23 +335,42 @@ export default function Home() {
         <div className="flex justify-center gap-3 mb-12 flex-wrap">
           {briefings.length > 0 && (
             <>
-              <button
-                onClick={generateAudio}
-                disabled={isGeneratingAudio}
-                className="btn-secondary px-5 py-3 rounded-xl font-medium flex items-center gap-2 disabled:opacity-50"
-              >
-                {isGeneratingAudio ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    Generating...
-                  </>
-                ) : (
-                  <>
-                    <Headphones className="w-4 h-4" />
-                    Listen
-                  </>
-                )}
-              </button>
+              <div className="flex items-center gap-0">
+                <button
+                  onClick={generateAudio}
+                  disabled={isGeneratingAudio}
+                  className="btn-secondary px-5 py-3 rounded-l-xl font-medium flex items-center gap-2 disabled:opacity-50"
+                >
+                  {isGeneratingAudio ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Generating...
+                    </>
+                  ) : (
+                    <>
+                      <Headphones className="w-4 h-4" />
+                      Listen
+                    </>
+                  )}
+                </button>
+                <select
+                  value={settings.voice}
+                  onChange={(e) => {
+                    const newSettings = { ...settings, voice: e.target.value as Settings['voice'] };
+                    setSettings(newSettings);
+                    localStorage.setItem('briefing-settings', JSON.stringify(newSettings));
+                  }}
+                  className="btn-secondary py-3 px-2 rounded-r-xl border-l border-[var(--border)] text-xs font-medium cursor-pointer bg-[var(--card)] appearance-none text-center"
+                  title="Select voice"
+                >
+                  <option value="nova">Nova ♀</option>
+                  <option value="alloy">Alloy ◎</option>
+                  <option value="echo">Echo ♂</option>
+                  <option value="fable">Fable 🇬🇧</option>
+                  <option value="onyx">Onyx ♂</option>
+                  <option value="shimmer">Shimmer ♀</option>
+                </select>
+              </div>
               <button
                 onClick={() => setShowEmailModal(true)}
                 disabled={emailSent}
