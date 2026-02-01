@@ -9,7 +9,7 @@ export function getStripe(): Stripe | null {
   if (!key) return null;
 
   stripeInstance = new Stripe(key, {
-    apiVersion: '2025-05-28.basil' as any,
+    apiVersion: '2026-01-28.clover',
     typescript: true,
   });
 
