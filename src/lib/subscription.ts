@@ -13,7 +13,7 @@ export interface UserSubscription {
 }
 
 export const FREE_DAILY_LIMIT = 999; // Unlimited for now
-export const FREE_TOPIC_LIMIT = 10; // Generous for now
+export const FREE_TOPIC_LIMIT = 4;
 
 // ─── Redis helpers ────────────────────────────────────────────────────
 function getRedis(): Redis | null {
