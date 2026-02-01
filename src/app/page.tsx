@@ -25,7 +25,7 @@ const DEFAULT_SETTINGS: Settings = {
   briefingLength: 'medium',
   includeLinks: true,
   tone: 'professional',
-  voice: 'nova',
+  voice: 'en-US-Neural2-C',
 };
 
 export default function Home() {
@@ -363,12 +363,15 @@ export default function Home() {
                   className="btn-secondary py-3 px-2 rounded-r-xl border-l border-[var(--border)] text-xs font-medium cursor-pointer bg-[var(--card)] appearance-none text-center"
                   title="Select voice"
                 >
-                  <option value="nova">Nova ♀</option>
-                  <option value="alloy">Alloy ◎</option>
-                  <option value="echo">Echo ♂</option>
-                  <option value="fable">Fable 🇬🇧</option>
-                  <option value="onyx">Onyx ♂</option>
-                  <option value="shimmer">Shimmer ♀</option>
+                  <option value="en-US-Neural2-C">Chloe ♀</option>
+                  <option value="en-US-Neural2-E">Emma ♀</option>
+                  <option value="en-US-Neural2-F">Fiona ♀</option>
+                  <option value="en-US-Neural2-G">Grace ♀</option>
+                  <option value="en-US-Neural2-H">Hannah ♀</option>
+                  <option value="en-US-Neural2-A">Adam ♂</option>
+                  <option value="en-US-Neural2-D">David ♂</option>
+                  <option value="en-US-Neural2-I">Isaac ♂</option>
+                  <option value="en-US-Neural2-J">James ♂</option>
                 </select>
               </div>
               <button
