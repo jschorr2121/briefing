@@ -193,16 +193,24 @@ export async function POST(request: NextRequest) {
 
     const script = buildScript(briefings);
     const provider = getTTSProvider();
-    const voice = requestedVoice || (process.env.OPENAI_TTS_VOICE as VoiceOption) || 'nova';
+    const defaultVoice = provider === 'google' ? 'en-US-Neural2-C' : 'nova';
+    const voice = requestedVoice || (process.env.OPENAI_TTS_VOICE as VoiceOption) || defaultVoice;
+    
+    // Validate voice matches provider - fall back to default if mismatched
+    const isGoogleVoice = typeof voice === 'string' && voice.startsWith('en-');
+    const isOpenAIVoice = typeof voice === 'string' && !voice.startsWith('en-');
+    const finalVoice = (provider === 'google' && isOpenAIVoice) ? 'en-US-Neural2-C' 
+                     : (provider === 'openai' && isGoogleVoice) ? 'nova' 
+                     : voice;
 
     console.log(`Generating TTS with ${provider}, script length: ${script.length} chars`);
 
     let audioBuffer: ArrayBuffer;
 
     if (provider === 'google') {
-      audioBuffer = await generateGoogleTTS(script, voice);
+      audioBuffer = await generateGoogleTTS(script, finalVoice);
     } else {
-      audioBuffer = await generateOpenAITTS(script, voice);
+      audioBuffer = await generateOpenAITTS(script, finalVoice);
     }
     
     return new NextResponse(audioBuffer, {
