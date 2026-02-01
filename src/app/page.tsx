@@ -13,7 +13,9 @@ import { AddTopicModal } from '@/components/AddTopicModal';
 import { HistoryPanel } from '@/components/HistoryPanel';
 import { KeyboardHints } from '@/components/KeyboardHints';
 import { BriefingStats } from '@/components/BriefingStats';
+import { UpgradeModal } from '@/components/UpgradeModal';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
+import { useSubscription } from '@/hooks/useSubscription';
 import type { Topic, Briefing, Settings, BriefingHistory } from '@/lib/types';
 import { generateId, getTotalReadingTime } from '@/lib/utils';
 
@@ -44,35 +46,30 @@ export default function Home() {
   const [history, setHistory] = useState<BriefingHistory[]>([]);
   const [refreshingTopic, setRefreshingTopic] = useState<string | null>(null);
   const [playbackSpeed, setPlaybackSpeed] = useState(1);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
+
+  // Subscription hook
+  const { isPro, isFree, canGenerate, usageCount, usageLimit, refresh: refreshSub } = useSubscription();
+  const tier = isPro ? 'pro' as const : 'free' as const;
 
   // Load saved state from localStorage
   useEffect(() => {
-    const savedTopics = localStorage.getItem('briefing-topics');
     const savedSettings = localStorage.getItem('briefing-settings');
     const savedBriefings = localStorage.getItem('briefing-cache');
     const savedTime = localStorage.getItem('briefing-time');
     const savedHistory = localStorage.getItem('briefing-history');
 
-    // Don't restore topics - always start fresh
-    // if (savedTopics) setTopics(JSON.parse(savedTopics));
     if (savedSettings) setSettings(JSON.parse(savedSettings));
     if (savedBriefings) setBriefings(JSON.parse(savedBriefings));
     if (savedTime) setLastGenerated(new Date(savedTime));
     if (savedHistory) setHistory(JSON.parse(savedHistory));
   }, []);
 
-  // Save state to localStorage
-  useEffect(() => {
-    // Don't persist topics - always start fresh
-    // localStorage.setItem('briefing-topics', JSON.stringify(topics));
-  }, [topics]);
-
   useEffect(() => {
     localStorage.setItem('briefing-settings', JSON.stringify(settings));
   }, [settings]);
 
-  // Save history to localStorage
   useEffect(() => {
     if (history.length > 0) {
       localStorage.setItem('briefing-history', JSON.stringify(history));
@@ -95,10 +92,10 @@ export default function Home() {
     onEscape: () => {
       setShowSettings(false);
       setShowAddTopic(false);
+      setShowUpgradeModal(false);
     },
   });
 
-  // History functions
   const addToHistory = useCallback((newBriefings: Briefing[]) => {
     const entry: BriefingHistory = {
       id: generateId(),
@@ -106,7 +103,7 @@ export default function Home() {
       generatedAt: new Date().toISOString(),
       topicNames: newBriefings.map(b => b.topic),
     };
-    setHistory(prev => [entry, ...prev].slice(0, 10)); // Keep last 10
+    setHistory(prev => [entry, ...prev].slice(0, 10));
   }, []);
 
   const loadFromHistory = useCallback((entry: BriefingHistory) => {
@@ -156,6 +153,15 @@ export default function Home() {
         body: JSON.stringify({ topics: enabledTopics, settings }),
       });
 
+      if (response.status === 429) {
+        const data = await response.json();
+        if (data.code === 'LIMIT_REACHED') {
+          setShowUpgradeModal(true);
+          setIsLoading(false);
+          return;
+        }
+      }
+
       if (!response.ok) {
         throw new Error('Failed to generate briefing');
       }
@@ -166,6 +172,7 @@ export default function Home() {
       localStorage.setItem('briefing-cache', JSON.stringify(data.briefings));
       localStorage.setItem('briefing-time', new Date().toISOString());
       addToHistory(data.briefings);
+      refreshSub();
     } catch (err) {
       console.error('Error generating briefing:', err);
       setError({ message: 'Failed to generate briefing. Please try again.', type: 'briefing' });
@@ -231,7 +238,7 @@ export default function Home() {
   const exportBriefing = () => {
     if (briefings.length === 0) return;
 
-    let markdown = `# Daily Briefing\n\n`;
+    let markdown = '# Daily Briefing\n\n';
     markdown += `*Generated: ${lastGenerated?.toLocaleString()}*\n\n---\n\n`;
 
     for (const briefing of briefings) {
@@ -239,7 +246,7 @@ export default function Home() {
       markdown += `${briefing.summary}\n\n`;
 
       if (briefing.articles.length > 0) {
-        markdown += `### Sources\n\n`;
+        markdown += '### Sources\n\n';
         for (const article of briefing.articles) {
           markdown += `- [${article.title}](${article.url}) - ${article.source}\n`;
         }
@@ -265,6 +272,7 @@ export default function Home() {
         <Header
           onSettingsClick={() => setShowSettings(true)}
           lastGenerated={lastGenerated}
+          tier={tier}
         />
 
       <div className="max-w-4xl mx-auto px-4 py-8">
@@ -277,6 +285,18 @@ export default function Home() {
             Select topics, generate a personalized briefing, stay informed.
           </p>
         </div>
+
+        {/* Free tier usage hint */}
+        {isFree && usageCount > 0 && (
+          <div className="text-center mb-4">
+            <p className="text-xs text-[var(--muted)]">
+              {usageCount}/{usageLimit} free briefings used today
+              {!canGenerate && (
+                <> &middot; <Link href="/pricing" className="text-[var(--accent)] hover:underline">Upgrade for unlimited</Link></>
+              )}
+            </p>
+          </div>
+        )}
 
         {/* Topic Selection */}
         <section className="mb-8">
@@ -486,7 +506,6 @@ export default function Home() {
                 className="bg-[var(--card)] rounded-2xl p-6 border border-[var(--border)] overflow-hidden"
                 style={{ animationDelay: `${index * 100}ms` }}
               >
-                {/* Header skeleton */}
                 <div className="flex items-center gap-4 mb-6">
                   <div className="w-10 h-10 rounded-lg bg-[var(--card-hover)] flex items-center justify-center">
                     <Newspaper className="w-5 h-5 text-[var(--muted)]" />
@@ -496,15 +515,11 @@ export default function Home() {
                     <div className="h-3 w-24 bg-[var(--border)] rounded animate-shimmer" style={{ animationDelay: '100ms' }} />
                   </div>
                 </div>
-                
-                {/* Summary skeleton */}
                 <div className="space-y-2 mb-6">
                   <div className="h-4 w-full bg-[var(--border)] rounded animate-shimmer" />
                   <div className="h-4 w-5/6 bg-[var(--border)] rounded animate-shimmer" style={{ animationDelay: '50ms' }} />
                   <div className="h-4 w-4/6 bg-[var(--border)] rounded animate-shimmer" style={{ animationDelay: '100ms' }} />
                 </div>
-                
-                {/* Story cards skeleton */}
                 <div className="flex gap-4 overflow-hidden">
                   {[0, 1, 2].map((i) => (
                     <div
@@ -559,6 +574,14 @@ export default function Home() {
         isOpen={showAddTopic}
         onClose={() => setShowAddTopic(false)}
         onAdd={addCustomTopic}
+      />
+
+      {/* Upgrade Modal */}
+      <UpgradeModal
+        isOpen={showUpgradeModal}
+        onClose={() => setShowUpgradeModal(false)}
+        usageCount={usageCount}
+        usageLimit={usageLimit}
       />
 
       {/* Email Modal */}

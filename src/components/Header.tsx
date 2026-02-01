@@ -1,15 +1,18 @@
 'use client';
 
 import { useSession, signOut } from 'next-auth/react';
-import { Newspaper, Settings, LogOut } from 'lucide-react';
+import { Newspaper, Settings, LogOut, User } from 'lucide-react';
+import Link from 'next/link';
 import { formatDistanceToNow } from '@/lib/utils';
+import { TierBadge } from '@/components/TierBadge';
 
 interface HeaderProps {
   onSettingsClick: () => void;
   lastGenerated: Date | null;
+  tier?: 'free' | 'pro';
 }
 
-export function Header({ onSettingsClick, lastGenerated }: HeaderProps) {
+export function Header({ onSettingsClick, lastGenerated, tier }: HeaderProps) {
   const { data: session } = useSession();
 
   return (
@@ -20,7 +23,10 @@ export function Header({ onSettingsClick, lastGenerated }: HeaderProps) {
             <Newspaper className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h1 className="font-semibold text-lg">Briefing</h1>
+            <div className="flex items-center gap-2">
+              <h1 className="font-semibold text-lg">Briefing</h1>
+              {tier && <TierBadge tier={tier} compact />}
+            </div>
             {lastGenerated && (
               <p className="text-xs text-[var(--muted)]">
                 Updated {formatDistanceToNow(lastGenerated)}
@@ -44,6 +50,14 @@ export function Header({ onSettingsClick, lastGenerated }: HeaderProps) {
               </span>
             </div>
           )}
+
+          <Link
+            href="/account"
+            className="p-2 rounded-lg border border-[var(--border)] hover:border-[var(--accent)] hover:bg-[var(--card)] transition-all"
+            aria-label="Account"
+          >
+            <User className="w-4 h-4 text-[var(--muted)]" />
+          </Link>
           
           <button
             onClick={onSettingsClick}
