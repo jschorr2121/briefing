@@ -49,10 +49,7 @@ function buildScript(briefings: Briefing[]): string {
   }).join('\n\n---\n\n');
 }
 
-async function generateOpenAITTS(script: string, voice: VoiceOption): Promise<ArrayBuffer> {
-  const openaiKey = process.env.OPENAI_API_KEY;
-  if (!openaiKey) throw new Error('OpenAI API key not configured');
-
+async function generateOpenAITTSChunk(script: string, voice: VoiceOption, openaiKey: string): Promise<ArrayBuffer> {
   const response = await fetch('https://api.openai.com/v1/audio/speech', {
     method: 'POST',
     headers: {
@@ -74,6 +71,38 @@ async function generateOpenAITTS(script: string, voice: VoiceOption): Promise<Ar
   }
 
   return response.arrayBuffer();
+}
+
+async function generateOpenAITTS(script: string, voice: VoiceOption): Promise<ArrayBuffer> {
+  const openaiKey = process.env.OPENAI_API_KEY;
+  if (!openaiKey) throw new Error('OpenAI API key not configured');
+
+  // OpenAI TTS has a 4096 character limit per request
+  if (script.length <= 4000) {
+    return generateOpenAITTSChunk(script, voice, openaiKey);
+  }
+
+  // Split into chunks and concatenate audio
+  const chunks = chunkText(script, 3900);
+  console.log(`Splitting into ${chunks.length} chunks for OpenAI TTS (voice: ${voice})`);
+
+  const audioChunks: ArrayBuffer[] = [];
+  for (let i = 0; i < chunks.length; i++) {
+    console.log(`Processing chunk ${i + 1}/${chunks.length} (${chunks[i].length} chars)`);
+    const audioData = await generateOpenAITTSChunk(chunks[i], voice, openaiKey);
+    audioChunks.push(audioData);
+  }
+
+  // Concatenate all audio buffers
+  const totalLength = audioChunks.reduce((sum, chunk) => sum + chunk.byteLength, 0);
+  const combined = new Uint8Array(totalLength);
+  let offset = 0;
+  for (const chunk of audioChunks) {
+    combined.set(new Uint8Array(chunk), offset);
+    offset += chunk.byteLength;
+  }
+
+  return combined.buffer;
 }
 
 // Split text into chunks under maxBytes, trying to break at sentence boundaries
