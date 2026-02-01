@@ -74,17 +74,18 @@ async function fetchWithRetry(url: string, options: RequestInit, maxRetries = 3)
   throw lastError || new Error('Max retries exceeded');
 }
 
-// Static system prompt — kept identical across all calls for OpenAI prompt caching.
-// OpenAI automatically caches repeated prompt prefixes at 90% discount on input tokens.
-// Keep ALL dynamic content (topic, queries, dates) in the user message, not here.
-const SYSTEM_PROMPT = `You are a news briefing generator. You search the web for recent news and produce structured JSON briefings.
+function buildSystemPrompt(): string {
+  const today = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  return `You are a news briefing generator. Today's date is ${today}. You search the web for recent news and produce structured JSON briefings.
 
 RULES:
-- Only include news from the past 7 days. Prioritize the most recent stories.
+- ONLY include news published within the last 7 days. Today is ${today}. Any story older than 7 days MUST be excluded.
+- If a story's date is more than 7 days before today, DO NOT include it. This is critical.
 - Do NOT use or cite Wikipedia. Only use news sources, official publications, and reputable journalism outlets.
 - Prefer primary sources (news outlets, official announcements) over aggregators or encyclopedias.
-- Every story MUST include a publication date.
+- Every story MUST include a publication date. Verify the date is within the last 7 days.
 - Every story MUST include the SPECIFIC article URL (not the homepage).
+- Prioritize stories from the last 48 hours over older ones.
 
 OUTPUT FORMAT — respond with ONLY valid JSON, no markdown code blocks:
 {
@@ -99,6 +100,7 @@ OUTPUT FORMAT — respond with ONLY valid JSON, no markdown code blocks:
     }
   ]
 }`;
+}
 
 function buildUserMessage(topic: string, queries: string[], settings: Settings): string {
   const lengthGuide = {
@@ -113,9 +115,13 @@ function buildUserMessage(topic: string, queries: string[], settings: Settings):
   };
   const searchQuery = queries.join(' OR ');
 
-  return `Search for the latest news about: ${topic}
+  const today = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  
+  return `Today is ${today}. Search for the latest news about: ${topic}
 
 Search queries to consider: ${searchQuery}
+
+IMPORTANT: Only include stories published within the last 7 days (after ${new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}). Exclude anything older.
 
 Briefing length: ${lengthGuide[settings.briefingLength]}
 Bullet points per story: ${settings.briefingLength === 'short' ? '2-3' : settings.briefingLength === 'medium' ? '3-4' : '4-5'}
@@ -154,7 +160,7 @@ async function fetchFromOpenAI(
     },
     body: JSON.stringify({
       model,
-      instructions: SYSTEM_PROMPT,
+      instructions: buildSystemPrompt(),
       tools: [{ type: 'web_search', user_location: { type: 'approximate', country: 'US' } }],
       tool_choice: 'auto',
       input: userMessage,
@@ -248,7 +254,7 @@ async function fetchFromPerplexity(
     body: JSON.stringify({
       model: 'sonar',
       messages: [
-        { role: 'system', content: SYSTEM_PROMPT },
+        { role: 'system', content: buildSystemPrompt() },
         { role: 'user', content: userMessage },
       ],
     }),
