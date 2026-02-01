@@ -76,19 +76,19 @@ export default function PricingPage() {
   };
 
   const freeFeatures = [
-    '3 briefings per day',
-    '2 topics per briefing',
+    'Unlimited briefings',
+    'Up to 4 topics per briefing',
     'Web search powered news',
-    'Export to markdown',
+    'Export & share',
     'Email delivery',
     'Briefing history',
   ];
 
   const proFeatures = [
-    'Unlimited briefings',
+    'Everything in Free',
     'Unlimited topics',
-    'Audio TTS playback',
-    'Priority news sources',
+    'Audio TTS playback (12 voices)',
+    'Premium news sources',
     'Scheduled auto-delivery',
     'Priority support',
     'Early access to new features',
