@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth';
 import { getGenerationModel, getOpenAIModel } from '@/lib/models';
+import { checkAndIncrementUsage, FREE_TOPIC_LIMIT } from '@/lib/subscription';
 
 interface Topic {
   id: string;
@@ -330,14 +332,42 @@ async function generateBriefingForTopic(topic: Topic, settings: Settings): Promi
 
 export async function POST(request: NextRequest) {
   try {
+    // Check auth
+    const session = await getServerSession();
+    const email = session?.user?.email;
+
+    // Check usage limits if user is authenticated
+    if (email) {
+      const usage = await checkAndIncrementUsage(email);
+      if (!usage.allowed) {
+        return NextResponse.json(
+          {
+            error: 'Daily briefing limit reached',
+            code: 'LIMIT_REACHED',
+            usage: { used: usage.used, limit: usage.limit, tier: usage.tier },
+          },
+          { status: 429 }
+        );
+      }
+    }
+
     const { topics, settings } = await request.json() as { topics: Topic[]; settings: Settings };
 
     if (!topics || !Array.isArray(topics) || topics.length === 0) {
       return NextResponse.json({ error: 'No topics provided' }, { status: 400 });
     }
 
-    // Cap at 4 topics max
-    const cappedTopics = topics.slice(0, 4);
+    // Free users: cap topics
+    let maxTopics = 4;
+    if (email) {
+      const { getUsageStatus } = await import('@/lib/subscription');
+      const status = await getUsageStatus(email);
+      if (status.tier === 'free') {
+        maxTopics = FREE_TOPIC_LIMIT;
+      }
+    }
+
+    const cappedTopics = topics.slice(0, maxTopics);
     const briefings: Briefing[] = [];
     
     for (const topic of cappedTopics) {
