@@ -47,7 +47,9 @@ export default function Home() {
   const [refreshingTopic, setRefreshingTopic] = useState<string | null>(null);
   const [playbackSpeed, setPlaybackSpeed] = useState(1);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [showVoicePicker, setShowVoicePicker] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
+  const voicePickerRef = useRef<HTMLDivElement>(null);
 
   // Subscription hook
   const { isPro, isFree, canGenerate, usageCount, usageLimit, refresh: refreshSub } = useSubscription();
@@ -75,6 +77,19 @@ export default function Home() {
       localStorage.setItem('briefing-history', JSON.stringify(history));
     }
   }, [history]);
+
+  // Close voice picker on click outside
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (voicePickerRef.current && !voicePickerRef.current.contains(e.target as Node)) {
+        setShowVoicePicker(false);
+      }
+    }
+    if (showVoicePicker) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [showVoicePicker]);
 
   // Keyboard shortcuts
   useKeyboardShortcuts({
@@ -335,11 +350,14 @@ export default function Home() {
         <div className="flex justify-center gap-3 mb-12 flex-wrap">
           {briefings.length > 0 && (
             <>
-              <div className="flex items-center gap-0">
+              <div className="relative" ref={voicePickerRef}>
                 <button
-                  onClick={generateAudio}
+                  onClick={() => {
+                    if (isGeneratingAudio) return;
+                    setShowVoicePicker(!showVoicePicker);
+                  }}
                   disabled={isGeneratingAudio}
-                  className="btn-secondary px-5 py-3 rounded-l-xl font-medium flex items-center gap-2 disabled:opacity-50"
+                  className="btn-secondary px-5 py-3 rounded-xl font-medium flex items-center gap-2 disabled:opacity-50"
                 >
                   {isGeneratingAudio ? (
                     <>
@@ -353,26 +371,47 @@ export default function Home() {
                     </>
                   )}
                 </button>
-                <select
-                  value={settings.voice}
-                  onChange={(e) => {
-                    const newSettings = { ...settings, voice: e.target.value as Settings['voice'] };
-                    setSettings(newSettings);
-                    localStorage.setItem('briefing-settings', JSON.stringify(newSettings));
-                  }}
-                  className="btn-secondary py-3 px-2 rounded-r-xl border-l border-[var(--border)] text-xs font-medium cursor-pointer bg-[var(--card)] appearance-none text-center"
-                  title="Select voice"
-                >
-                  <option value="en-US-Neural2-C">Chloe ♀</option>
-                  <option value="en-US-Neural2-E">Emma ♀</option>
-                  <option value="en-US-Neural2-F">Fiona ♀</option>
-                  <option value="en-US-Neural2-G">Grace ♀</option>
-                  <option value="en-US-Neural2-H">Hannah ♀</option>
-                  <option value="en-US-Neural2-A">Adam ♂</option>
-                  <option value="en-US-Neural2-D">David ♂</option>
-                  <option value="en-US-Neural2-I">Isaac ♂</option>
-                  <option value="en-US-Neural2-J">James ♂</option>
-                </select>
+
+                {/* Voice Picker Popup */}
+                {showVoicePicker && (
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 z-50 w-56 bg-[var(--card)] border border-[var(--border)] rounded-xl shadow-lg overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                    <div className="px-3 py-2 border-b border-[var(--border)]">
+                      <p className="text-xs font-medium text-[var(--muted)]">Choose a voice</p>
+                    </div>
+                    <div className="py-1 max-h-64 overflow-y-auto">
+                      {[
+                        { id: 'en-US-Neural2-C', name: 'Chloe', gender: '♀' },
+                        { id: 'en-US-Neural2-E', name: 'Emma', gender: '♀' },
+                        { id: 'en-US-Neural2-F', name: 'Fiona', gender: '♀' },
+                        { id: 'en-US-Neural2-G', name: 'Grace', gender: '♀' },
+                        { id: 'en-US-Neural2-H', name: 'Hannah', gender: '♀' },
+                        { id: 'en-US-Neural2-A', name: 'Adam', gender: '♂' },
+                        { id: 'en-US-Neural2-D', name: 'David', gender: '♂' },
+                        { id: 'en-US-Neural2-I', name: 'Isaac', gender: '♂' },
+                        { id: 'en-US-Neural2-J', name: 'James', gender: '♂' },
+                      ].map((voice) => (
+                        <button
+                          key={voice.id}
+                          onClick={() => {
+                            const newSettings = { ...settings, voice: voice.id as Settings['voice'] };
+                            setSettings(newSettings);
+                            localStorage.setItem('briefing-settings', JSON.stringify(newSettings));
+                            setShowVoicePicker(false);
+                            generateAudio();
+                          }}
+                          className={`w-full px-4 py-2.5 text-left text-sm flex items-center justify-between hover:bg-[var(--card-hover)] transition-colors ${
+                            settings.voice === voice.id ? 'text-[var(--accent)] font-medium' : 'text-[var(--foreground)]'
+                          }`}
+                        >
+                          <span>{voice.name} {voice.gender}</span>
+                          {settings.voice === voice.id && (
+                            <Check className="w-3.5 h-3.5 text-[var(--accent)]" />
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
               <button
                 onClick={() => setShowEmailModal(true)}
