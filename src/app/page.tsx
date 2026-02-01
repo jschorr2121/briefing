@@ -378,17 +378,20 @@ export default function Home() {
                     <div className="px-3 py-2 border-b border-[var(--border)]">
                       <p className="text-xs font-medium text-[var(--muted)]">Choose a voice</p>
                     </div>
-                    <div className="py-1 max-h-64 overflow-y-auto">
+                    <div className="py-1 max-h-72 overflow-y-auto">
                       {[
                         { id: 'alloy', name: 'Alloy', desc: 'Neutral & balanced' },
                         { id: 'ash', name: 'Ash', desc: 'Clear & direct' },
+                        { id: 'ballad', name: 'Ballad', desc: 'Warm & melodic' },
                         { id: 'coral', name: 'Coral', desc: 'Warm & engaging' },
                         { id: 'echo', name: 'Echo', desc: 'Smooth & calm' },
                         { id: 'fable', name: 'Fable', desc: 'Expressive & British' },
+                        { id: 'juniper', name: 'Juniper', desc: 'Lively & conversational' },
                         { id: 'nova', name: 'Nova', desc: 'Friendly & upbeat' },
                         { id: 'onyx', name: 'Onyx', desc: 'Deep & authoritative' },
                         { id: 'sage', name: 'Sage', desc: 'Soft & thoughtful' },
                         { id: 'shimmer', name: 'Shimmer', desc: 'Bright & cheerful' },
+                        { id: 'verse', name: 'Verse', desc: 'Confident & polished' },
                       ].map((voice) => (
                         <button
                           key={voice.id}
@@ -399,17 +402,12 @@ export default function Home() {
                             setShowVoicePicker(false);
                             generateAudio();
                           }}
-                          className={`w-full px-4 py-2.5 text-left text-sm flex items-center justify-between hover:bg-[var(--card-hover)] transition-colors ${
+                          className={`w-full px-4 py-2.5 text-left text-sm hover:bg-[var(--card-hover)] transition-colors ${
                             settings.voice === voice.id ? 'text-[var(--accent)] font-medium' : 'text-[var(--foreground)]'
                           }`}
                         >
-                          <div>
-                            <span className="block">{voice.name}</span>
-                            <span className="text-[10px] text-[var(--muted)]">{voice.desc}</span>
-                          </div>
-                          {settings.voice === voice.id && (
-                            <Check className="w-3.5 h-3.5 text-[var(--accent)]" />
-                          )}
+                          <span className="block">{voice.name}</span>
+                          <span className="text-[10px] text-[var(--muted)]">{voice.desc}</span>
                         </button>
                       ))}
                     </div>
