@@ -301,17 +301,7 @@ export default function Home() {
           </p>
         </div>
 
-        {/* Free tier usage hint */}
-        {isFree && usageCount > 0 && (
-          <div className="text-center mb-4">
-            <p className="text-xs text-[var(--muted)]">
-              {usageCount}/{usageLimit} free briefings used today
-              {!canGenerate && (
-                <> &middot; <Link href="/pricing" className="text-[var(--accent)] hover:underline">Upgrade for unlimited</Link></>
-              )}
-            </p>
-          </div>
-        )}
+        {/* Free tier usage hint - hidden while unlimited for friends */}
 
         {/* Topic Selection */}
         <section className="mb-8">

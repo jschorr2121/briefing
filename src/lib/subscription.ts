@@ -12,8 +12,8 @@ export interface UserSubscription {
   briefingsResetAt: string; // ISO date string (YYYY-MM-DD)
 }
 
-export const FREE_DAILY_LIMIT = 3;
-export const FREE_TOPIC_LIMIT = 2;
+export const FREE_DAILY_LIMIT = 999; // Unlimited for now
+export const FREE_TOPIC_LIMIT = 10; // Generous for now
 
 // ─── Redis helpers ────────────────────────────────────────────────────
 function getRedis(): Redis | null {
