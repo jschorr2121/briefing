@@ -147,13 +147,39 @@ function AccountContent() {
                 <div className="flex items-baseline gap-2 mb-3">
                   <span className="text-3xl font-bold">{usageCount}</span>
                   <span className="text-[var(--muted)]">
-                    briefings generated today
+                    / {isPro ? '∞' : usageLimit} briefings today
                   </span>
                 </div>
 
-                <p className="text-sm text-[var(--muted)]">
-                  Unlimited briefings — generate as many as you need.
-                </p>
+                {!isPro && (
+                  <div className="mb-3">
+                    <div className="w-full h-2 bg-[var(--card-hover)] rounded-full overflow-hidden">
+                      <div
+                        className="h-full rounded-full transition-all duration-500"
+                        style={{
+                          width: `${usagePercent}%`,
+                          backgroundColor:
+                            usagePercent >= 100
+                              ? 'var(--danger)'
+                              : usagePercent >= 66
+                              ? 'var(--warning)'
+                              : 'var(--accent)',
+                        }}
+                      />
+                    </div>
+                    <p className="text-xs text-[var(--muted)] mt-1.5">
+                      {usageCount >= usageLimit
+                        ? 'Daily limit reached — resets at midnight UTC'
+                        : `${usageLimit - usageCount} briefings remaining today`}
+                    </p>
+                  </div>
+                )}
+
+                {isPro && (
+                  <p className="text-sm text-[var(--muted)]">
+                    Unlimited briefings — generate as many as you need.
+                  </p>
+                )}
               </>
             )}
           </div>

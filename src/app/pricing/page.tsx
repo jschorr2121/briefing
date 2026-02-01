@@ -76,8 +76,8 @@ export default function PricingPage() {
   };
 
   const freeFeatures = [
-    'Unlimited briefings',
-    'Up to 4 topics per briefing',
+    '3 briefings per day',
+    '2 topics per briefing',
     'Web search powered news',
     'Export & share',
     'Email delivery',
