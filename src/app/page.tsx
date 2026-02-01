@@ -25,7 +25,7 @@ const DEFAULT_SETTINGS: Settings = {
   briefingLength: 'medium',
   includeLinks: true,
   tone: 'professional',
-  voice: 'en-US-Neural2-C',
+  voice: 'nova',
 };
 
 export default function Home() {
@@ -380,15 +380,15 @@ export default function Home() {
                     </div>
                     <div className="py-1 max-h-64 overflow-y-auto">
                       {[
-                        { id: 'en-US-Neural2-C', name: 'Chloe', gender: '♀' },
-                        { id: 'en-US-Neural2-E', name: 'Emma', gender: '♀' },
-                        { id: 'en-US-Neural2-F', name: 'Fiona', gender: '♀' },
-                        { id: 'en-US-Neural2-G', name: 'Grace', gender: '♀' },
-                        { id: 'en-US-Neural2-H', name: 'Hannah', gender: '♀' },
-                        { id: 'en-US-Neural2-A', name: 'Adam', gender: '♂' },
-                        { id: 'en-US-Neural2-D', name: 'David', gender: '♂' },
-                        { id: 'en-US-Neural2-I', name: 'Isaac', gender: '♂' },
-                        { id: 'en-US-Neural2-J', name: 'James', gender: '♂' },
+                        { id: 'alloy', name: 'Alloy', desc: 'Neutral & balanced' },
+                        { id: 'ash', name: 'Ash', desc: 'Clear & direct' },
+                        { id: 'coral', name: 'Coral', desc: 'Warm & engaging' },
+                        { id: 'echo', name: 'Echo', desc: 'Smooth & calm' },
+                        { id: 'fable', name: 'Fable', desc: 'Expressive & British' },
+                        { id: 'nova', name: 'Nova', desc: 'Friendly & upbeat' },
+                        { id: 'onyx', name: 'Onyx', desc: 'Deep & authoritative' },
+                        { id: 'sage', name: 'Sage', desc: 'Soft & thoughtful' },
+                        { id: 'shimmer', name: 'Shimmer', desc: 'Bright & cheerful' },
                       ].map((voice) => (
                         <button
                           key={voice.id}
@@ -403,7 +403,10 @@ export default function Home() {
                             settings.voice === voice.id ? 'text-[var(--accent)] font-medium' : 'text-[var(--foreground)]'
                           }`}
                         >
-                          <span>{voice.name} {voice.gender}</span>
+                          <div>
+                            <span className="block">{voice.name}</span>
+                            <span className="text-[10px] text-[var(--muted)]">{voice.desc}</span>
+                          </div>
                           {settings.voice === voice.id && (
                             <Check className="w-3.5 h-3.5 text-[var(--accent)]" />
                           )}
