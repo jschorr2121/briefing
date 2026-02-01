@@ -8,7 +8,7 @@ export type GenerationModel = 'gpt-4o' | 'gpt-4o-mini' | 'perplexity';
 export type TTSProvider = 'openai' | 'google';
 
 export function getGenerationModel(): GenerationModel {
-  const model = process.env.BRIEFING_MODEL?.toLowerCase() || 'gpt-4o';
+  const model = process.env.BRIEFING_MODEL?.toLowerCase() || 'gpt-4o-mini';
   if (['gpt-4o', 'gpt-4o-mini', 'perplexity'].includes(model)) {
     return model as GenerationModel;
   }
@@ -27,7 +27,7 @@ export function getOpenAIModel(): string {
   const model = getGenerationModel();
   if (model === 'gpt-4o') return 'gpt-4o';
   if (model === 'gpt-4o-mini') return 'gpt-4o-mini';
-  return 'gpt-4o'; // fallback
+  return 'gpt-4o-mini'; // fallback
 }
 
 // Model pricing info (per 1K tokens/chars)
