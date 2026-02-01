@@ -74,7 +74,33 @@ async function fetchWithRetry(url: string, options: RequestInit, maxRetries = 3)
   throw lastError || new Error('Max retries exceeded');
 }
 
-function buildPrompt(topic: string, queries: string[], settings: Settings): string {
+// Static system prompt — kept identical across all calls for OpenAI prompt caching.
+// OpenAI automatically caches repeated prompt prefixes at 90% discount on input tokens.
+// Keep ALL dynamic content (topic, queries, dates) in the user message, not here.
+const SYSTEM_PROMPT = `You are a news briefing generator. You search the web for recent news and produce structured JSON briefings.
+
+RULES:
+- Only include news from the past 7 days. Prioritize the most recent stories.
+- Do NOT use or cite Wikipedia. Only use news sources, official publications, and reputable journalism outlets.
+- Prefer primary sources (news outlets, official announcements) over aggregators or encyclopedias.
+- Every story MUST include a publication date.
+- Every story MUST include the SPECIFIC article URL (not the homepage).
+
+OUTPUT FORMAT — respond with ONLY valid JSON, no markdown code blocks:
+{
+  "summary": "Brief 2-3 sentence overview of the topic area...",
+  "stories": [
+    {
+      "headline": "Story headline (max 15 words)",
+      "bullets": ["Key point 1", "Key point 2", "Key point 3"],
+      "source": "Source Name",
+      "url": "https://example.com/actual-article-path",
+      "date": "Jan 26, 2026"
+    }
+  ]
+}`;
+
+function buildUserMessage(topic: string, queries: string[], settings: Settings): string {
   const lengthGuide = {
     short: '3 stories with 2-3 bullets each',
     medium: '4-5 stories with 3-4 bullets each',
@@ -86,49 +112,14 @@ function buildPrompt(topic: string, queries: string[], settings: Settings): stri
     technical: 'detailed and precise, with technical context'
   };
   const searchQuery = queries.join(' OR ');
-  
-  // Get date from 7 days ago for recency filter
-  const weekAgo = new Date();
-  weekAgo.setDate(weekAgo.getDate() - 7);
-  const weekAgoStr = weekAgo.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-  
+
   return `Search for the latest news about: ${topic}
 
 Search queries to consider: ${searchQuery}
 
-IMPORTANT GUIDELINES:
-- Only include news from the past 7 days (after ${weekAgoStr}). Prioritize the most recent stories.
-- Do NOT use or cite Wikipedia. Only use news sources, official publications, and reputable journalism outlets.
-- Prefer primary sources (news outlets, official announcements) over aggregators or encyclopedias.
-
-After searching, create a news briefing with:
-1. A brief 2-3 sentence overview summary of the topic area
-2. Individual story cards for ${lengthGuide[settings.briefingLength]}
-
-For each story, provide:
-- A clear headline (max 15 words)
-- ${settings.briefingLength === 'short' ? '2-3' : settings.briefingLength === 'medium' ? '3-4' : '4-5'} bullet points that fully explain the story
-- The source name
-- The SPECIFIC article URL (not the homepage - must be the direct link to the article)
-- The publication date (format: "Jan 26, 2026") - REQUIRED for every story, always include this
-
-Tone: ${toneGuide[settings.tone]}
-
-Format your response as JSON:
-{
-  "summary": "Brief overview of the topic area...",
-  "stories": [
-    {
-      "headline": "Story headline",
-      "bullets": ["Key point 1", "Key point 2", "Key point 3"],
-      "source": "Source Name",
-      "url": "https://example.com/actual-article-path",
-      "date": "Jan 26, 2026"
-    }
-  ]
-}
-
-Only return valid JSON, no markdown code blocks.`;
+Briefing length: ${lengthGuide[settings.briefingLength]}
+Bullet points per story: ${settings.briefingLength === 'short' ? '2-3' : settings.briefingLength === 'medium' ? '3-4' : '4-5'}
+Tone: ${toneGuide[settings.tone]}`;
 }
 
 function parseJSONResponse(text: string): { summary: string; stories: StoryCard[] } {
@@ -153,7 +144,7 @@ async function fetchFromOpenAI(
   const model = getOpenAIModel();
   console.log(`Using OpenAI model: ${model}`);
   
-  const prompt = buildPrompt(topic, queries, settings);
+  const userMessage = buildUserMessage(topic, queries, settings);
 
   const response = await fetchWithRetry('https://api.openai.com/v1/responses', {
     method: 'POST',
@@ -163,9 +154,10 @@ async function fetchFromOpenAI(
     },
     body: JSON.stringify({
       model,
+      instructions: SYSTEM_PROMPT,
       tools: [{ type: 'web_search', user_location: { type: 'approximate', country: 'US' } }],
       tool_choice: 'auto',
-      input: prompt,
+      input: userMessage,
     }),
   });
 
