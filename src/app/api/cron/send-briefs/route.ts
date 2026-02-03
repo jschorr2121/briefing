@@ -285,6 +285,23 @@ function formatBriefingEmail(briefings: Briefing[], recipientEmail: string, heal
     day: 'numeric',
   });
 
+  const healthTipsHtml = healthTips && healthTips.length > 0 ? `
+    <div style="background: rgba(34,197,94,0.08); border-radius: 12px; padding: 20px 24px; margin-bottom: 16px; border: 1px solid rgba(34,197,94,0.2);">
+      <h2 style="margin: 0 0 14px; font-size: 16px; color: #4ade80; font-weight: 600;">
+        💚 Health Tips
+      </h2>
+      ${healthTips.map(tip => `
+        <div style="margin-bottom: 10px; display: flex; gap: 8px; align-items: flex-start;">
+          <span style="font-size: 16px; flex-shrink: 0;">${tip.emoji}</span>
+          <div>
+            <span style="font-size: 11px; color: #4ade80; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 500;">${tip.category}</span>
+            <p style="margin: 2px 0 0; color: #d1d5db; font-size: 13px; line-height: 1.5;">${tip.tip}</p>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  ` : '';
+
   const sections = briefings.map(b => {
     const storiesHtml = b.stories && b.stories.length > 0 ? b.stories.map((story, i) => `
       <div style="margin-bottom: 16px; padding: 16px; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
@@ -356,6 +373,8 @@ function formatBriefingEmail(briefings: Briefing[], recipientEmail: string, heal
             ${date}
           </p>
         </div>
+        
+        ${healthTipsHtml}
         
         ${sections}
         
