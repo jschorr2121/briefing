@@ -19,7 +19,11 @@ import { useSubscription } from '@/hooks/useSubscription';
 import type { Topic, Briefing, Settings, BriefingHistory } from '@/lib/types';
 import { generateId, getTotalReadingTime } from '@/lib/utils';
 
-const DEFAULT_TOPICS: Topic[] = [];
+const DEFAULT_TOPICS: Topic[] = [
+  { id: 'ai-tech', name: 'AI & Tech', emoji: '', enabled: true },
+  { id: 'world-news', name: 'World News', emoji: '', enabled: true },
+  { id: 'finance', name: 'Finance', emoji: '', enabled: true },
+];
 
 const DEFAULT_SETTINGS: Settings = {
   briefingLength: 'medium',
@@ -61,16 +65,22 @@ export default function Home() {
     const savedBriefings = localStorage.getItem('briefing-cache');
     const savedTime = localStorage.getItem('briefing-time');
     const savedHistory = localStorage.getItem('briefing-history');
+    const savedTopics = localStorage.getItem('briefing-topics');
 
     if (savedSettings) setSettings(JSON.parse(savedSettings));
     if (savedBriefings) setBriefings(JSON.parse(savedBriefings));
     if (savedTime) setLastGenerated(new Date(savedTime));
     if (savedHistory) setHistory(JSON.parse(savedHistory));
+    if (savedTopics) setTopics(JSON.parse(savedTopics));
   }, []);
 
   useEffect(() => {
     localStorage.setItem('briefing-settings', JSON.stringify(settings));
   }, [settings]);
+
+  useEffect(() => {
+    localStorage.setItem('briefing-topics', JSON.stringify(topics));
+  }, [topics]);
 
   useEffect(() => {
     if (history.length > 0) {
