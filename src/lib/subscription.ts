@@ -109,11 +109,11 @@ const UNLIMITED_EMAILS = [
 export async function checkAndIncrementUsage(email: string): Promise<UsageCheck> {
   const sub = await getUserSubscription(email);
 
-  // Whitelisted users: unlimited
+  // Whitelisted users: unlimited but keep their actual tier for UI
   if (UNLIMITED_EMAILS.includes(email.toLowerCase())) {
     sub.briefingsToday += 1;
     await saveUserSubscription(sub);
-    return { allowed: true, used: sub.briefingsToday, limit: Infinity, tier: 'pro' };
+    return { allowed: true, used: sub.briefingsToday, limit: Infinity, tier: sub.tier };
   }
 
   // Pro users: unlimited
@@ -137,8 +137,12 @@ export async function checkAndIncrementUsage(email: string): Promise<UsageCheck>
 export async function getUsageStatus(email: string): Promise<UsageCheck> {
   const sub = await getUserSubscription(email);
 
-  if (UNLIMITED_EMAILS.includes(email.toLowerCase()) || (sub.tier === 'pro' && sub.subscriptionStatus === 'active')) {
+  if (sub.tier === 'pro' && sub.subscriptionStatus === 'active') {
     return { allowed: true, used: sub.briefingsToday, limit: Infinity, tier: 'pro' };
+  }
+
+  if (UNLIMITED_EMAILS.includes(email.toLowerCase())) {
+    return { allowed: true, used: sub.briefingsToday, limit: Infinity, tier: sub.tier };
   }
 
   return {
