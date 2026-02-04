@@ -29,9 +29,20 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="antialiased min-h-screen">
+      <body className="antialiased min-h-screen flex flex-col">
         <Providers>
-          {children}
+          <main className="flex-1">
+            {children}
+          </main>
+          <footer className="border-t border-[var(--border)] py-4 px-6 text-center text-sm text-[var(--muted)]">
+            <div className="flex items-center justify-center gap-4">
+              <a href="/privacy" className="hover:text-[var(--foreground)] transition-colors">Privacy</a>
+              <span>·</span>
+              <a href="/terms" className="hover:text-[var(--foreground)] transition-colors">Terms</a>
+              <span>·</span>
+              <a href="/support" className="hover:text-[var(--foreground)] transition-colors">Support</a>
+            </div>
+          </footer>
         </Providers>
       </body>
     </html>
