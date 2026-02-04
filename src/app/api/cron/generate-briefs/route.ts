@@ -31,17 +31,10 @@ interface Briefing {
   articles: Article[];
 }
 
-interface HealthTip {
-  emoji: string;
-  category: string;
-  tip: string;
-}
-
 interface CachedBriefing {
   email: string;
   topics: string[];
   briefings: Briefing[];
-  healthTips: HealthTip[];
   generatedAt: string;
 }
 
@@ -253,58 +246,6 @@ async function generateBriefings(topics: string[]): Promise<Briefing[]> {
   return briefings;
 }
 
-async function generateHealthTips(): Promise<HealthTip[]> {
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) return [];
-
-  try {
-    const today = new Date();
-    const dayOfWeek = today.toLocaleDateString('en-US', { weekday: 'long' });
-    
-    const response = await fetchWithRetry(
-      'https://api.openai.com/v1/chat/completions',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`,
-        },
-        body: JSON.stringify({
-          model: getOpenAIModel(),
-          messages: [{
-            role: 'user',
-            content: `Generate 2-3 practical health tips for today (${dayOfWeek}). Mix categories like: nutrition, exercise, sleep, mental health, hydration, posture, stretching, or habits.
-
-Keep tips actionable and specific. Format as JSON array:
-[
-  {"emoji": "🥗", "category": "Nutrition", "tip": "Add leafy greens to one meal today - they're packed with magnesium for energy."},
-  {"emoji": "🚶", "category": "Movement", "tip": "Take a 10-minute walk after lunch to boost afternoon focus."}
-]
-
-Return only valid JSON, no markdown.`
-          }],
-          max_tokens: 500,
-        }),
-      }
-    );
-
-    if (!response.ok) return [];
-
-    const data = await response.json();
-    const content = data.choices?.[0]?.message?.content || '';
-    
-    // Parse JSON
-    const jsonMatch = content.match(/\[[\s\S]*\]/);
-    if (jsonMatch) {
-      return JSON.parse(jsonMatch[0]);
-    }
-    return [];
-  } catch (error) {
-    console.error('Error generating health tips:', error);
-    return [];
-  }
-}
-
 function getCacheKey(date?: string): string {
   const d = date || new Date().toISOString().split('T')[0];
   return `briefings:cache:${d}`;
@@ -343,10 +284,6 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ generated: 0, cached: [] });
     }
 
-    // Generate health tips once for all
-    const healthTips = await generateHealthTips();
-    console.log(`Generated ${healthTips.length} health tips`);
-
     const cached: CachedBriefing[] = [];
 
     // Generate briefings for each schedule sequentially
@@ -359,7 +296,6 @@ export async function GET(request: NextRequest) {
         email: schedule.email,
         topics: schedule.topics,
         briefings,
-        healthTips,
         generatedAt: new Date().toISOString(),
       };
       
