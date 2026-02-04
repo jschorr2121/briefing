@@ -52,3 +52,6 @@ See latest progress notes below.
 - Removed Hub, health tips from product emails
 - Default topics + topic persistence shipped
 - Preparing for App Store submission (see checklist in notes)
+- **[dev branch]** Added Terms of Service page (/terms) — required for App Store
+- **[dev branch]** Added Support page (/support) with FAQ + contact — required by Apple
+- **[dev branch]** Added global footer with Privacy, Terms, Support links
