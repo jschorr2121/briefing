@@ -19,11 +19,7 @@ import { useSubscription } from '@/hooks/useSubscription';
 import type { Topic, Briefing, Settings, BriefingHistory } from '@/lib/types';
 import { generateId, getTotalReadingTime } from '@/lib/utils';
 
-const DEFAULT_TOPICS: Topic[] = [
-  { id: 'ai-tech', name: 'AI & Tech', emoji: '', enabled: true },
-  { id: 'world-news', name: 'World News', emoji: '', enabled: true },
-  { id: 'finance', name: 'Finance', emoji: '', enabled: true },
-];
+const DEFAULT_TOPICS: Topic[] = [];
 
 const DEFAULT_SETTINGS: Settings = {
   briefingLength: 'medium',
