@@ -80,7 +80,8 @@ async function generateBriefingWithOpenAI(topic: string): Promise<Briefing> {
     throw new Error('OPENAI_API_KEY not configured');
   }
 
-  const prompt = `Search for the latest news about: ${topic}
+  const today = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  const prompt = `Today is ${today}. Search for the latest news about: ${topic}
 
 After searching, create a news briefing with:
 1. A brief 2-3 sentence overview summary
@@ -89,7 +90,10 @@ After searching, create a news briefing with:
 For each story, provide:
 - A clear headline (max 15 words)
 - 2-3 bullet points explaining the key details
+- The publication date (e.g. "Feb 4, 2026")
 - The source name and URL
+
+IMPORTANT: Every story MUST include a "date" field with the publication date. Only include stories from the last 7 days.
 
 Format your response as JSON:
 {
@@ -99,7 +103,8 @@ Format your response as JSON:
       "headline": "Story headline",
       "bullets": ["Key point 1", "Key point 2"],
       "source": "Source Name",
-      "url": "https://..."
+      "url": "https://...",
+      "date": "Feb 4, 2026"
     }
   ]
 }
@@ -236,7 +241,7 @@ function formatBriefingEmail(briefings: Briefing[], recipientEmail: string): str
       <div style="margin-bottom: 16px; padding: 16px; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
         <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
           <span style="font-size: 11px; font-weight: 600; color: #60a5fa; background: rgba(96,165,250,0.15); padding: 2px 8px; border-radius: 4px;">#${i + 1}</span>
-          ${story.date ? `<span style="font-size: 11px; color: #888;">${story.date}</span>` : ''}
+          ${story.date ? `<span style="font-size: 11px; color: #9ca3af; background: rgba(255,255,255,0.05); padding: 2px 8px; border-radius: 4px;">${story.date}</span>` : ''}
         </div>
         <h3 style="margin: 0 0 10px; font-size: 15px; color: #93c5fd; font-weight: 600;">
           ${story.headline}

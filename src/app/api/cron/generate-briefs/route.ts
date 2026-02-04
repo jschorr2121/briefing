@@ -79,7 +79,8 @@ async function generateBriefingWithOpenAI(topic: string): Promise<Briefing> {
     throw new Error('OPENAI_API_KEY not configured');
   }
 
-  const prompt = `Search for the latest news about: ${topic}
+  const today = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  const prompt = `Today is ${today}. Search for the latest news about: ${topic}
 
 After searching, create a news briefing with:
 1. A brief 2-3 sentence overview summary
@@ -88,7 +89,10 @@ After searching, create a news briefing with:
 For each story, provide:
 - A clear headline (max 15 words)
 - 2-3 bullet points explaining the key details
+- The publication date (e.g. "Feb 4, 2026")
 - The source name and URL
+
+IMPORTANT: Every story MUST include a "date" field with the publication date. Only include stories from the last 7 days.
 
 Format your response as JSON:
 {
@@ -98,7 +102,8 @@ Format your response as JSON:
       "headline": "Story headline",
       "bullets": ["Key point 1", "Key point 2"],
       "source": "Source Name",
-      "url": "https://..."
+      "url": "https://...",
+      "date": "Feb 4, 2026"
     }
   ]
 }
