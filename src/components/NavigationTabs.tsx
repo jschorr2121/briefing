@@ -2,12 +2,11 @@
 
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { Newspaper, Zap } from 'lucide-react';
+import { Newspaper } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const tabs = [
   { name: 'Briefing', href: '/', icon: Newspaper },
-  { name: 'Hub', href: '/hub', icon: Zap },
 ];
 
 export function NavigationTabs() {
