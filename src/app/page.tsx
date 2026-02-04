@@ -384,7 +384,7 @@ export default function Home() {
 
                 {/* Voice Picker Popup */}
                 {showVoicePicker && (
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 z-50 w-56 bg-[var(--card)] border border-[var(--border)] rounded-xl shadow-lg overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                  <div className="absolute top-full right-0 sm:left-1/2 sm:-translate-x-1/2 sm:right-auto mt-2 z-50 w-56 bg-[var(--card)] border border-[var(--border)] rounded-xl shadow-lg overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
                     <div className="px-3 py-2 border-b border-[var(--border)]">
                       <p className="text-xs font-medium text-[var(--muted)]">Choose a voice</p>
                     </div>
