@@ -5,7 +5,6 @@ import { Newspaper, Settings, LogOut, User } from 'lucide-react';
 import Link from 'next/link';
 import { formatDistanceToNow } from '@/lib/utils';
 import { TierBadge } from '@/components/TierBadge';
-import { NavigationTabs } from './NavigationTabs';
 
 interface HeaderProps {
   onSettingsClick?: () => void;
@@ -37,8 +36,6 @@ export function Header({ onSettingsClick, lastGenerated, tier }: HeaderProps) {
             </div>
           </div>
 
-          {/* Navigation Tabs */}
-          <NavigationTabs />
         </div>
 
         <div className="flex items-center gap-2">
