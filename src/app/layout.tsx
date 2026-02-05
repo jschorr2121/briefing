@@ -4,12 +4,29 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Briefing - Your Personal News Intelligence",
-  description: "AI-powered personalized news briefings tailored to your interests",
+  description: "AI-powered personalized news briefings tailored to your interests. Choose your topics, get daily briefings with real-time news, listen via audio, and stay informed effortlessly.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
     title: "Briefing",
+  },
+  openGraph: {
+    title: "Briefing - Your Personal News Intelligence",
+    description: "AI-powered personalized news briefings tailored to your interests. Choose your topics, get daily briefings, and listen on the go.",
+    siteName: "Briefing",
+    type: "website",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary",
+    title: "Briefing - Your Personal News Intelligence",
+    description: "AI-powered personalized news briefings tailored to your interests.",
+  },
+  keywords: ["news", "AI", "briefing", "personalized news", "daily briefing", "news summary", "AI news"],
+  robots: {
+    index: true,
+    follow: true,
   },
 };
 
