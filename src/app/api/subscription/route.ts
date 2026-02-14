@@ -1,16 +1,16 @@
-import { NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
+import { NextRequest, NextResponse } from 'next/server';
+import { getAuthenticatedUser } from '@/lib/auth-helper';
 import { getUserSubscription, getUsageStatus } from '@/lib/subscription';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession();
-    if (!session?.user?.email) {
+    const user = await getAuthenticatedUser(request);
+    if (!user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const sub = await getUserSubscription(session.user.email);
-    const usage = await getUsageStatus(session.user.email);
+    const sub = await getUserSubscription(user.email);
+    const usage = await getUsageStatus(user.email);
 
     return NextResponse.json({
       tier: sub.tier,

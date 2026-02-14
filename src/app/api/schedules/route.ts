@@ -1,21 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { 
-  getSchedulesByUser, 
-  saveSchedule, 
+import { getAuthenticatedUser } from '@/lib/auth-helper';
+import {
+  getSchedulesByUser,
+  saveSchedule,
   deleteSchedule,
-  type ScheduledBrief 
+  type ScheduledBrief
 } from '@/lib/schedules';
 
 // GET - List user's schedules
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession();
-    if (!session?.user?.email) {
+    const user = await getAuthenticatedUser(request);
+    if (!user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const schedules = await getSchedulesByUser(session.user.email);
+    const schedules = await getSchedulesByUser(user.email);
     return NextResponse.json({ schedules });
   } catch (error) {
     console.error('Error fetching schedules:', error);
@@ -26,8 +26,8 @@ export async function GET() {
 // POST - Create new schedule
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession();
-    if (!session?.user?.email) {
+    const user = await getAuthenticatedUser(request);
+    if (!user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
 
     const schedule: ScheduledBrief = {
       id: `schedule-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      userId: session.user.email,
+      userId: user.email,
       email,
       topics,
       frequency,
@@ -62,8 +62,8 @@ export async function POST(request: NextRequest) {
 // PUT - Update schedule
 export async function PUT(request: NextRequest) {
   try {
-    const session = await getServerSession();
-    if (!session?.user?.email) {
+    const user = await getAuthenticatedUser(request);
+    if (!user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -75,7 +75,7 @@ export async function PUT(request: NextRequest) {
     }
 
     // Verify ownership
-    const schedules = await getSchedulesByUser(session.user.email);
+    const schedules = await getSchedulesByUser(user.email);
     const existing = schedules.find(s => s.id === id);
     if (!existing) {
       return NextResponse.json({ error: 'Schedule not found' }, { status: 404 });
@@ -98,8 +98,8 @@ export async function PUT(request: NextRequest) {
 // DELETE - Remove schedule
 export async function DELETE(request: NextRequest) {
   try {
-    const session = await getServerSession();
-    if (!session?.user?.email) {
+    const user = await getAuthenticatedUser(request);
+    if (!user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -111,7 +111,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     // Verify ownership
-    const schedules = await getSchedulesByUser(session.user.email);
+    const schedules = await getSchedulesByUser(user.email);
     const existing = schedules.find(s => s.id === id);
     if (!existing) {
       return NextResponse.json({ error: 'Schedule not found' }, { status: 404 });
