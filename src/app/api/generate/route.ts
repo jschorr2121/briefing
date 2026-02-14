@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
+import { getAuthenticatedUser } from '@/lib/auth-helper';
 import { getGenerationModel, getOpenAIModel } from '@/lib/models';
 import { checkAndIncrementUsage, FREE_TOPIC_LIMIT } from '@/lib/subscription';
 
@@ -340,8 +340,8 @@ async function generateBriefingForTopic(topic: Topic, settings: Settings): Promi
 export async function POST(request: NextRequest) {
   try {
     // Check auth
-    const session = await getServerSession();
-    const email = session?.user?.email;
+    const user = await getAuthenticatedUser(request);
+    const email = user?.email;
 
     // Check usage limits if user is authenticated
     if (email) {
