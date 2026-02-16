@@ -1,3 +1,14 @@
 {
-  "crons": []
+  "crons": [],
+  "functions": {
+    "src/app/api/generate/route.ts": {
+      "maxDuration": 60
+    },
+    "src/app/api/cron/generate-briefs/route.ts": {
+      "maxDuration": 60
+    },
+    "src/app/api/cron/send-briefs/route.ts": {
+      "maxDuration": 60
+    }
+  }
 }
