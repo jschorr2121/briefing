@@ -63,13 +63,12 @@ async function fetchWithRetry(url: string, options: RequestInit, maxRetries = 5)
         const retryAfter = response.headers.get('Retry-After');
         const waitTime = retryAfter ? parseInt(retryAfter) * 1000 : Math.pow(2, i + 1) * 1000;
         const clampedWait = Math.min(waitTime, 30000);
-        console.warn(`⚠️ Rate limited (429) on attempt ${i + 1}/${maxRetries}. Waiting ${clampedWait}ms...`);
+        const errorBody = await response.text().catch(() => 'unable to read body');
+        console.warn(`⚠️ Rate limited (429) on attempt ${i + 1}/${maxRetries}. Body: ${errorBody}. Retry-After: ${retryAfter}. Waiting ${clampedWait}ms...`);
         if (i < maxRetries - 1) {
           await delay(clampedWait);
           continue;
         }
-        // Last attempt — read the body for diagnostics and throw
-        const errorBody = await response.text().catch(() => 'unable to read body');
         throw new Error(`Rate limited after ${maxRetries} retries. Last response: ${errorBody}`);
       }
       if (!response.ok && response.status >= 500) {
