@@ -14,7 +14,7 @@ A personalized AI news briefing app. Users choose topics, generate briefings wit
 - **Hosting**: Vercel
 - **Mobile**: Capacitor (iOS + Android WebView shell)
 
-## Current State (Feb 4, 2026)
+## Current State (Feb 16, 2026)
 - Web app is live and functional at briefing-five.vercel.app
 - 3 users receiving daily scheduled briefings
 - Capacitor mobile scaffolding complete (iOS + Android projects, native plugins)
@@ -47,6 +47,12 @@ See latest progress notes below.
 ---
 
 ## Progress Log
+
+### Feb 16, 2026
+- **[dev branch]** Added App Store listing copy draft (`docs/app-store-listing.md`)
+  - Name, subtitle, full description, keywords, categories
+  - Screenshots checklist and tips
+  - Ready for Jake to review before submission
 
 ### Feb 4, 2026
 - Removed Hub, health tips from product emails
