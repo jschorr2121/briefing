@@ -54,21 +54,36 @@ const TOPIC_QUERIES: Record<string, string[]> = {
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-async function fetchWithRetry(url: string, options: RequestInit, maxRetries = 3): Promise<Response> {
+async function fetchWithRetry(url: string, options: RequestInit, maxRetries = 5): Promise<Response> {
   let lastError: Error | null = null;
   for (let i = 0; i < maxRetries; i++) {
     try {
       const response = await fetch(url, options);
       if (response.status === 429) {
         const retryAfter = response.headers.get('Retry-After');
-        const waitTime = retryAfter ? parseInt(retryAfter) * 1000 : Math.pow(2, i) * 1000;
-        await delay(Math.min(waitTime, 10000));
+        const waitTime = retryAfter ? parseInt(retryAfter) * 1000 : Math.pow(2, i + 1) * 1000;
+        const clampedWait = Math.min(waitTime, 30000);
+        console.warn(`⚠️ Rate limited (429) on attempt ${i + 1}/${maxRetries}. Waiting ${clampedWait}ms...`);
+        if (i < maxRetries - 1) {
+          await delay(clampedWait);
+          continue;
+        }
+        // Last attempt — read the body for diagnostics and throw
+        const errorBody = await response.text().catch(() => 'unable to read body');
+        throw new Error(`Rate limited after ${maxRetries} retries. Last response: ${errorBody}`);
+      }
+      if (!response.ok && response.status >= 500) {
+        const errorBody = await response.text().catch(() => '');
+        console.warn(`⚠️ Server error (${response.status}) on attempt ${i + 1}/${maxRetries}: ${errorBody}`);
+        lastError = new Error(`API error ${response.status}: ${errorBody}`);
+        if (i < maxRetries - 1) await delay(Math.pow(2, i + 1) * 1000);
         continue;
       }
       return response;
     } catch (error) {
       lastError = error as Error;
-      if (i < maxRetries - 1) await delay(Math.pow(2, i) * 1000);
+      console.warn(`⚠️ Fetch error on attempt ${i + 1}/${maxRetries}: ${lastError.message}`);
+      if (i < maxRetries - 1) await delay(Math.pow(2, i + 1) * 1000);
     }
   }
   throw lastError || new Error('Max retries exceeded');
