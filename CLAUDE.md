@@ -49,6 +49,9 @@ See latest progress notes below.
 ## Progress Log
 
 ### Feb 17, 2026
+- **[dev branch]** Added robots.txt and sitemap.xml for SEO
+  - robots.txt: allows crawling, blocks API/login routes
+  - sitemap.xml: all public pages with priorities
 - **[dev branch]** Added Google Play Store listing copy draft (`docs/google-play-listing.md`)
   - Full description with Google Play-friendly formatting (emoji headers, visual breaks)
   - Data safety declaration template
