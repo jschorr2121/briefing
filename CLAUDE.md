@@ -48,6 +48,13 @@ See latest progress notes below.
 
 ## Progress Log
 
+### Feb 17, 2026
+- **[dev branch]** Added Google Play Store listing copy draft (`docs/google-play-listing.md`)
+  - Full description with Google Play-friendly formatting (emoji headers, visual breaks)
+  - Data safety declaration template
+  - Feature graphic and screenshot requirements
+  - Submission checklist and review tips
+
 ### Feb 16, 2026
 - **[dev branch]** Added App Store listing copy draft (`docs/app-store-listing.md`)
   - Name, subtitle, full description, keywords, categories
