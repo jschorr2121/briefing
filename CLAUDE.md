@@ -78,3 +78,8 @@ See latest progress notes below.
   - twitter-image.tsx generates Twitter card image
   - Updated metadata: summary_large_image card, added creator @jschorr21, added canonical URL
   - Improves appearance when Briefing is shared on social media
+- **[dev branch]** Added /api/health endpoint for monitoring
+  - Checks Redis connectivity (with latency)
+  - Validates required env vars
+  - Returns healthy/degraded status with detailed checks
+  - Useful for uptime monitoring and debugging
