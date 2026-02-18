@@ -17,11 +17,13 @@ export const metadata: Metadata = {
     siteName: "Briefing",
     type: "website",
     locale: "en_US",
+    url: "https://briefing-five.vercel.app",
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Briefing - Your Personal News Intelligence",
     description: "AI-powered personalized news briefings tailored to your interests.",
+    creator: "@jschorr21",
   },
   keywords: ["news", "AI", "briefing", "personalized news", "daily briefing", "news summary", "AI news"],
   robots: {

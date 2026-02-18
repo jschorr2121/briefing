@@ -71,3 +71,10 @@ See latest progress notes below.
 - **[dev branch]** Added Terms of Service page (/terms) — required for App Store
 - **[dev branch]** Added Support page (/support) with FAQ + contact — required by Apple
 - **[dev branch]** Added global footer with Privacy, Terms, Support links
+
+### Feb 18, 2026
+- **[dev branch]** Added dynamic OG/Twitter images for social sharing
+  - opengraph-image.tsx generates 1200x630 OG image
+  - twitter-image.tsx generates Twitter card image
+  - Updated metadata: summary_large_image card, added creator @jschorr21, added canonical URL
+  - Improves appearance when Briefing is shared on social media
