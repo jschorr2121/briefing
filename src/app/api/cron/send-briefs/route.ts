@@ -4,6 +4,12 @@ import { Redis } from '@upstash/redis';
 import { getSchedules, shouldSendNow, type ScheduledBrief } from '@/lib/schedules';
 import { getOpenAIModel } from '@/lib/models';
 
+// Increase function timeout (requires Vercel Pro for >10s)
+export const maxDuration = 60;
+
+// Maximum emails to send per run to avoid timeout
+const MAX_EMAILS_PER_RUN = 5;
+
 const CRON_SECRET = process.env.CRON_SECRET;
 
 const redis = new Redis({
