@@ -83,3 +83,8 @@ See latest progress notes below.
   - Validates required env vars
   - Returns healthy/degraded status with detailed checks
   - Useful for uptime monitoring and debugging
+- **[dev branch]** Fixed cron timeout issues
+  - Added `maxDuration = 60` to generate-briefs and send-briefs routes
+  - Added batch limits: max 3 schedules per generate run, max 5 emails per send run
+  - Prevents function timeout on Vercel (requires Pro for >10s timeout)
+  - Note: If more than 3 users, will need multiple cron runs or Vercel Pro
