@@ -8,6 +8,7 @@ export interface SubscriptionData {
   subscriptionStatus: string | null;
   currentPeriodEnd: string | null;
   hasStripeCustomer: boolean;
+  topicLimit: number | null; // null = unlimited
   usage: {
     used: number;
     limit: number | null; // null = unlimited
@@ -48,6 +49,8 @@ export function useSubscription() {
   const canGenerate = subscription?.usage?.allowed ?? true;
   const usageCount = subscription?.usage?.used ?? 0;
   const usageLimit = subscription?.usage?.limit ?? 3;
+  // topicLimit: null = unlimited (admin), number = limit, default 4 before subscription loads
+  const topicLimit = subscription ? subscription.topicLimit : 4;
 
   return {
     subscription,
@@ -57,6 +60,7 @@ export function useSubscription() {
     canGenerate,
     usageCount,
     usageLimit,
+    topicLimit,
     refresh,
   };
 }

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthenticatedUser } from '@/lib/auth-helper';
-import { getUserSubscription, getUsageStatus } from '@/lib/subscription';
+import { getUserSubscription, getUsageStatus, getTopicLimit } from '@/lib/subscription';
 
 export async function GET(request: NextRequest) {
   try {
@@ -12,11 +12,14 @@ export async function GET(request: NextRequest) {
     const sub = await getUserSubscription(user.email);
     const usage = await getUsageStatus(user.email);
 
+    const topicLimit = getTopicLimit(user.email);
+
     return NextResponse.json({
       tier: sub.tier,
       subscriptionStatus: sub.subscriptionStatus || null,
       currentPeriodEnd: sub.currentPeriodEnd || null,
       hasStripeCustomer: !!sub.stripeCustomerId,
+      topicLimit, // null = unlimited
       usage: {
         used: usage.used,
         limit: usage.limit === Infinity ? null : usage.limit,

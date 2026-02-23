@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthenticatedUser } from '@/lib/auth-helper';
 import { getGenerationModel, getOpenAIModel } from '@/lib/models';
-import { checkAndIncrementUsage, FREE_TOPIC_LIMIT } from '@/lib/subscription';
+import { checkAndIncrementUsage, getTopicLimit } from '@/lib/subscription';
 import { filterRecentStories } from '@/lib/filter-stories';
 import { buildSystemPrompt, buildUserMessage } from '@/lib/prompts';
 import { generateBriefing } from '@/lib/briefing-generator';
@@ -333,17 +333,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No topics provided' }, { status: 400 });
     }
 
-    // Free users: cap topics
-    let maxTopics = 4;
-    if (email) {
-      const { getUsageStatus } = await import('@/lib/subscription');
-      const status = await getUsageStatus(email);
-      if (status.tier === 'free') {
-        maxTopics = FREE_TOPIC_LIMIT;
-      }
-    }
-
-    const cappedTopics = topics.slice(0, maxTopics);
+    // Cap topics based on user's limit (null = unlimited for admin)
+    const topicLimit = getTopicLimit(email);
+    const cappedTopics = topicLimit ? topics.slice(0, topicLimit) : topics;
 
     // ── Perigon pipeline (default) ────────────────────────────────
     if (NEWS_SOURCE === 'perigon') {

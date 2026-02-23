@@ -11,7 +11,7 @@ enum AppConfig {
     static let bundleID = "com.briefing.app"
 
     static let freeDailyLimit = 3
-    static let freeTopicLimit = 2
+    static let freeTopicLimit = 4
     static let maxHistoryCount = 10
 
     static let defaultTopics: [Topic] = [
