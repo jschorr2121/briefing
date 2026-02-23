@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getAuthenticatedUser } from '@/lib/auth-helper';
 import { getGenerationModel, getOpenAIModel } from '@/lib/models';
 import { checkAndIncrementUsage, FREE_TOPIC_LIMIT } from '@/lib/subscription';
+import { filterRecentStories } from '@/lib/filter-stories';
+import { buildSystemPrompt, buildUserMessage } from '@/lib/prompts';
 
 interface Topic {
   id: string;
@@ -40,18 +42,6 @@ interface Briefing {
   model: string;
 }
 
-// Search queries for each topic
-const TOPIC_QUERIES: Record<string, string[]> = {
-  ai: ['AI artificial intelligence news today', 'OpenAI Anthropic Google AI'],
-  finance: ['stock market news today', 'crypto bitcoin ethereum news', 'federal reserve economy'],
-  world: ['breaking world news today', 'international politics news'],
-  sports: ['NBA NFL sports news today', 'Premier League soccer highlights'],
-  science: ['science discovery news this week', 'space NASA research'],
-  startups: ['startup funding news', 'tech unicorn venture capital'],
-  jets: ['NY Jets NFL news', 'New York Jets football'],
-  basketball: ['NBA basketball news today', 'basketball highlights scores'],
-};
-
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 async function fetchWithRetry(url: string, options: RequestInit, maxRetries = 5): Promise<Response> {
@@ -88,60 +78,6 @@ async function fetchWithRetry(url: string, options: RequestInit, maxRetries = 5)
   throw lastError || new Error('Max retries exceeded');
 }
 
-function buildSystemPrompt(): string {
-  const today = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-  return `You are a news briefing generator. Today's date is ${today}. You search the web for recent news and produce structured JSON briefings.
-
-RULES:
-- ONLY include news published within the last 7 days. Today is ${today}. Any story older than 7 days MUST be excluded.
-- If a story's date is more than 7 days before today, DO NOT include it. This is critical.
-- Do NOT use or cite Wikipedia. Only use news sources, official publications, and reputable journalism outlets.
-- Prefer primary sources (news outlets, official announcements) over aggregators or encyclopedias.
-- Every story MUST include a publication date. Verify the date is within the last 7 days.
-- Every story MUST include the SPECIFIC article URL (not the homepage).
-- Prioritize stories from the last 48 hours over older ones.
-
-OUTPUT FORMAT — respond with ONLY valid JSON, no markdown code blocks:
-{
-  "summary": "Brief 2-3 sentence overview of the topic area...",
-  "stories": [
-    {
-      "headline": "Story headline (max 15 words)",
-      "bullets": ["Key point 1", "Key point 2", "Key point 3"],
-      "source": "Source Name",
-      "url": "https://example.com/actual-article-path",
-      "date": "Jan 26, 2026"
-    }
-  ]
-}`;
-}
-
-function buildUserMessage(topic: string, queries: string[], settings: Settings): string {
-  const lengthGuide = {
-    short: '3 stories with 2-3 bullets each',
-    medium: '4-5 stories with 3-4 bullets each',
-    long: '5-6 stories with 4-5 bullets each'
-  };
-  const toneGuide = {
-    casual: 'conversational and engaging, like a smart friend',
-    professional: 'clear and informative, like a quality newsletter',
-    technical: 'detailed and precise, with technical context'
-  };
-  const searchQuery = queries.join(' OR ');
-
-  const today = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-  
-  return `Today is ${today}. Search for the latest news about: ${topic}
-
-Search queries to consider: ${searchQuery}
-
-IMPORTANT: Only include stories published within the last 7 days (after ${new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}). Exclude anything older.
-
-Briefing length: ${lengthGuide[settings.briefingLength]}
-Bullet points per story: ${settings.briefingLength === 'short' ? '2-3' : settings.briefingLength === 'medium' ? '3-4' : '4-5'}
-Tone: ${toneGuide[settings.tone]}`;
-}
-
 function parseJSONResponse(text: string): { summary: string; stories: StoryCard[] } {
   let cleanText = text.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
   const jsonStart = cleanText.indexOf('{');
@@ -155,7 +91,6 @@ function parseJSONResponse(text: string): { summary: string; stories: StoryCard[
 // OpenAI Web Search (gpt-4o or gpt-4o-mini)
 async function fetchFromOpenAI(
   topic: string,
-  queries: string[],
   settings: Settings
 ): Promise<{ summary: string; stories: StoryCard[]; articles: Article[] }> {
   const apiKey = process.env.OPENAI_API_KEY;
@@ -163,8 +98,8 @@ async function fetchFromOpenAI(
 
   const model = getOpenAIModel();
   console.log(`Using OpenAI model: ${model}`);
-  
-  const userMessage = buildUserMessage(topic, queries, settings);
+
+  const userMessage = buildUserMessage(topic, { settings });
 
   const response = await fetchWithRetry('https://api.openai.com/v1/responses', {
     method: 'POST',
@@ -234,6 +169,15 @@ async function fetchFromOpenAI(
   }
 
   const parsed = parseJSONResponse(outputText);
+  if (!parsed.stories || parsed.stories.length === 0) {
+    console.warn(`⚠️ No stories parsed for topic. Raw output (first 500 chars): ${outputText.substring(0, 500)}`);
+  } else {
+    console.log(`📰 Parsed ${parsed.stories.length} stories. Dates: ${parsed.stories.map(s => s.date || 'none').join(', ')}`);
+  }
+  const filteredStories = filterRecentStories(parsed.stories || []);
+  if (filteredStories.length < (parsed.stories || []).length) {
+    console.warn(`⚠️ Filtered ${(parsed.stories || []).length - filteredStories.length} stories, ${filteredStories.length} remaining`);
+  }
   const seen = new Set<string>();
   const uniqueArticles = articles.filter(a => {
     if (seen.has(a.url)) return false;
@@ -243,7 +187,7 @@ async function fetchFromOpenAI(
 
   return {
     summary: parsed.summary || outputText.substring(0, 300),
-    stories: parsed.stories || [],
+    stories: filteredStories,
     articles: uniqueArticles.slice(0, 8),
   };
 }
@@ -251,13 +195,12 @@ async function fetchFromOpenAI(
 // Perplexity Search
 async function fetchFromPerplexity(
   topic: string,
-  queries: string[],
   settings: Settings
 ): Promise<{ summary: string; stories: StoryCard[]; articles: Article[] }> {
   const apiKey = process.env.PERPLEXITY_API_KEY;
   if (!apiKey) throw new Error('Perplexity API key not configured');
 
-  const userMessage = buildUserMessage(topic, queries, settings);
+  const userMessage = buildUserMessage(topic, { settings });
 
   const response = await fetchWithRetry('https://api.perplexity.ai/chat/completions', {
     method: 'POST',
@@ -307,18 +250,26 @@ async function fetchFromPerplexity(
   }
 
   const parsed = parseJSONResponse(outputText);
+  if (!parsed.stories || parsed.stories.length === 0) {
+    console.warn(`⚠️ [Perplexity] No stories parsed for topic. Raw output (first 500 chars): ${outputText.substring(0, 500)}`);
+  } else {
+    console.log(`📰 [Perplexity] Parsed ${parsed.stories.length} stories. Dates: ${parsed.stories.map(s => s.date || 'none').join(', ')}`);
+  }
+  const filteredStories = filterRecentStories(parsed.stories || []);
+  if (filteredStories.length < (parsed.stories || []).length) {
+    console.warn(`⚠️ [Perplexity] Filtered ${(parsed.stories || []).length - filteredStories.length} stories, ${filteredStories.length} remaining`);
+  }
 
   return {
     summary: parsed.summary || outputText.substring(0, 300),
-    stories: parsed.stories || [],
+    stories: filteredStories,
     articles: articles.slice(0, 8),
   };
 }
 
 async function generateBriefingForTopic(topic: Topic, settings: Settings): Promise<Briefing> {
-  const queries = TOPIC_QUERIES[topic.id] || [`${topic.name} news today`];
   const model = getGenerationModel();
-  
+
   let summary: string;
   let stories: StoryCard[] = [];
   let articles: Article[] = [];
@@ -328,9 +279,9 @@ async function generateBriefingForTopic(topic: Topic, settings: Settings): Promi
   try {
     let result;
     if (model === 'perplexity') {
-      result = await fetchFromPerplexity(topic.name, queries, settings);
+      result = await fetchFromPerplexity(topic.name, settings);
     } else {
-      result = await fetchFromOpenAI(topic.name, queries, settings);
+      result = await fetchFromOpenAI(topic.name, settings);
     }
     summary = result.summary;
     stories = result.stories;
