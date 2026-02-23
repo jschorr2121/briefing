@@ -22,16 +22,20 @@ interface TopicSelectorProps {
   onToggle: (id: string) => void;
   onAdd: (topic: Topic) => void;
   onRemove?: (id: string) => void;
+  maxTopics?: number | null; // null = unlimited
 }
 
-export function TopicSelector({ topics, onAdd, onRemove }: TopicSelectorProps) {
+export function TopicSelector({ topics, onAdd, onRemove, maxTopics }: TopicSelectorProps) {
   const [inputValue, setInputValue] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const atLimit = maxTopics != null && topics.length >= maxTopics;
 
   const handleAddTopic = (name: string) => {
     const trimmed = name.trim();
     if (!trimmed) return;
-    
+    if (atLimit) return;
+
     // Check if topic already exists
     const exists = topics.some(t => t.name.toLowerCase() === trimmed.toLowerCase());
     if (exists) {
@@ -45,7 +49,7 @@ export function TopicSelector({ topics, onAdd, onRemove }: TopicSelectorProps) {
       emoji: '',
       enabled: true,
     };
-    
+
     onAdd(newTopic);
     setInputValue('');
     inputRef.current?.focus();
@@ -73,17 +77,25 @@ export function TopicSelector({ topics, onAdd, onRemove }: TopicSelectorProps) {
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Add any topics you'd like in your briefing..."
-          className="input w-full pr-12"
+          placeholder={atLimit ? `Maximum ${maxTopics} topics reached` : "Add any topics you'd like in your briefing..."}
+          disabled={atLimit}
+          className="input w-full pr-12 disabled:opacity-50"
         />
         <button
           onClick={() => handleAddTopic(inputValue)}
-          disabled={!inputValue.trim()}
+          disabled={!inputValue.trim() || atLimit}
           className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-md bg-[var(--accent)] text-white disabled:opacity-30 disabled:cursor-not-allowed"
         >
           <Plus className="w-4 h-4" />
         </button>
       </div>
+
+      {/* Topic count */}
+      {maxTopics != null && (
+        <p className="text-xs text-[var(--muted)]">
+          {topics.length}/{maxTopics} topics
+        </p>
+      )}
 
       {/* Selected Topics */}
       {topics.length > 0 && (
@@ -108,7 +120,7 @@ export function TopicSelector({ topics, onAdd, onRemove }: TopicSelectorProps) {
       )}
 
       {/* Suggestions */}
-      {availableSuggestions.length > 0 && (
+      {availableSuggestions.length > 0 && !atLimit && (
         <div className="space-y-2">
           <p className="text-xs text-[var(--muted)]">Suggestions:</p>
           <div className="flex flex-wrap gap-2">

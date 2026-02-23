@@ -61,9 +61,18 @@ final class HomeViewModel {
 
     // MARK: - Topics
 
+    var topicLimit: Int {
+        AppConfig.freeTopicLimit
+    }
+
+    var atTopicLimit: Bool {
+        topics.count >= topicLimit
+    }
+
     func addTopic() {
         let name = newTopicName.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !name.isEmpty else { return }
+        guard !atTopicLimit else { return }
         guard !topics.contains(where: { $0.name.lowercased() == name.lowercased() }) else { return }
 
         let topic = Topic(name: name)
@@ -74,6 +83,7 @@ final class HomeViewModel {
     }
 
     func addSuggestedTopic(_ topic: Topic) {
+        guard !atTopicLimit else { return }
         guard !topics.contains(where: { $0.id == topic.id }) else { return }
         topics.append(topic)
         HapticManager.selection()
@@ -101,12 +111,7 @@ final class HomeViewModel {
         HapticManager.impact(.medium)
 
         do {
-            let enabledTopics: [Topic]
-            if tier == "free" {
-                enabledTopics = Array(selectedTopics.prefix(AppConfig.freeTopicLimit))
-            } else {
-                enabledTopics = selectedTopics
-            }
+            let enabledTopics = Array(selectedTopics.prefix(topicLimit))
 
             briefings = try await BriefingService.generate(topics: enabledTopics, settings: settings)
             audioData = nil // Clear old audio

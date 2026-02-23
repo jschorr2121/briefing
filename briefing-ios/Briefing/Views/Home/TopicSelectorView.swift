@@ -7,7 +7,10 @@ struct TopicSelectorView: View {
         VStack(alignment: .leading, spacing: 12) {
             // Input row
             HStack(spacing: 8) {
-                TextField("Add a topic...", text: $vm.newTopicName)
+                TextField(
+                    vm.atTopicLimit ? "Maximum \(vm.topicLimit) topics" : "Add a topic...",
+                    text: $vm.newTopicName
+                )
                     .font(.bodyRegular)
                     .foregroundStyle(Color.textPrimary)
                     .padding(.horizontal, 14)
@@ -20,6 +23,8 @@ struct TopicSelectorView: View {
                     )
                     .submitLabel(.done)
                     .onSubmit { vm.addTopic() }
+                    .disabled(vm.atTopicLimit)
+                    .opacity(vm.atTopicLimit ? 0.5 : 1)
 
                 Button {
                     vm.addTopic()
@@ -28,8 +33,13 @@ struct TopicSelectorView: View {
                         .font(.title2)
                         .foregroundStyle(Color.accent)
                 }
-                .disabled(vm.newTopicName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                .disabled(vm.newTopicName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || vm.atTopicLimit)
             }
+
+            // Topic count
+            Text("\(vm.topics.count)/\(vm.topicLimit) topics")
+                .font(.caption)
+                .foregroundStyle(Color.textMuted)
 
             // Selected topics
             if !vm.topics.isEmpty {
@@ -49,7 +59,7 @@ struct TopicSelectorView: View {
                 !vm.topics.contains(where: { $0.id == suggestion.id })
             }
 
-            if !remainingSuggestions.isEmpty {
+            if !remainingSuggestions.isEmpty && !vm.atTopicLimit {
                 VStack(alignment: .leading, spacing: 6) {
                     Text("Suggestions")
                         .font(.caption)

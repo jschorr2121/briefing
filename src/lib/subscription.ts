@@ -13,7 +13,8 @@ export interface UserSubscription {
 }
 
 export const FREE_DAILY_LIMIT = 3;
-export const FREE_TOPIC_LIMIT = 2;
+export const FREE_TOPIC_LIMIT = 4;
+export const MAX_TOPICS = 4;
 
 // ─── Redis helpers ────────────────────────────────────────────────────
 function getRedis(): Redis | null {
@@ -102,9 +103,15 @@ export interface UsageCheck {
 }
 
 // Whitelisted emails that get unlimited usage regardless of tier
-const UNLIMITED_EMAILS = [
+export const UNLIMITED_EMAILS = [
   'jacobschorr99@gmail.com',
 ];
+
+/** Get max topics allowed for a user */
+export function getTopicLimit(email?: string | null): number | null {
+  if (email && UNLIMITED_EMAILS.includes(email.toLowerCase())) return null; // unlimited
+  return MAX_TOPICS;
+}
 
 export async function checkAndIncrementUsage(email: string): Promise<UsageCheck> {
   const sub = await getUserSubscription(email);
