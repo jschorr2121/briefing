@@ -50,7 +50,20 @@ function lastFetchKey(topicId: string) {
   return `perigon:last_fetch:${topicId}`;
 }
 
-// ─── Article cache ───────────────────────────────────────────────────
+/** Generate a cache key from query type + query string */
+function queryArticlesKey(type: string, query: string): string {
+  const normalized = `${type}:${query.toLowerCase().trim()}`;
+  // Simple hash to keep keys short
+  let hash = 0;
+  for (let i = 0; i < normalized.length; i++) {
+    const chr = normalized.charCodeAt(i);
+    hash = ((hash << 5) - hash) + chr;
+    hash |= 0;
+  }
+  return `perigon:q:${Math.abs(hash).toString(36)}`;
+}
+
+// ─── Legacy article cache (by topic ID) ──────────────────────────────
 
 export async function getCachedArticles(topicId: string): Promise<PerigonResult | null> {
   const redis = getRedis();
@@ -72,6 +85,32 @@ export async function setCachedArticles(topicId: string, data: PerigonResult): P
     await redis.set(lastFetchKey(topicId), new Date().toISOString(), { ex: CACHE_TTL_SECONDS });
   } catch (err) {
     console.error('Error writing Perigon article cache:', err);
+  }
+}
+
+// ─── Query-based article cache ───────────────────────────────────────
+
+export async function getCachedQueryArticles(type: string, query: string): Promise<PerigonResult | null> {
+  const redis = getRedis();
+  if (!redis) return null;
+  try {
+    const key = queryArticlesKey(type, query);
+    const data = await redis.get<PerigonResult>(key);
+    return data ?? null;
+  } catch (err) {
+    console.error('Error reading query article cache:', err);
+    return null;
+  }
+}
+
+export async function setCachedQueryArticles(type: string, query: string, data: PerigonResult): Promise<void> {
+  const redis = getRedis();
+  if (!redis) return;
+  try {
+    const key = queryArticlesKey(type, query);
+    await redis.set(key, data, { ex: CACHE_TTL_SECONDS });
+  } catch (err) {
+    console.error('Error writing query article cache:', err);
   }
 }
 
