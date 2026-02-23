@@ -323,19 +323,18 @@ export async function generateBriefing(
   // 1. Resolve all topics via query planner
   const resolved = await resolveTopics(topics);
 
-  // 2. Fetch articles and assemble briefings for each topic
-  const briefings: Briefing[] = [];
+  // 2. Fetch articles for ALL topics in parallel
+  const articleResults = await Promise.allSettled(
+    resolved.map(r => fetchArticlesForTopic(r))
+  );
 
-  for (let i = 0; i < resolved.length; i++) {
-    const original = topics[i];
-    const resolvedTopic = resolved[i];
-
-    // Check for pre-generated cached section first
+  // 3. Assemble ALL briefings with LLM in parallel
+  const assemblyTasks = topics.map(async (original, i) => {
     const sectionCacheId = original.name.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
     const cachedSection = await getCachedSection(sectionCacheId);
     if (cachedSection) {
       console.log(`📦 Using cached briefing section for "${original.name}"`);
-      briefings.push({
+      return {
         topic: original.name,
         emoji: original.emoji || '',
         summary: cachedSection.summary,
@@ -343,26 +342,28 @@ export async function generateBriefing(
         articles: settings.includeLinks !== false ? cachedSection.articles.slice(0, 5) : [],
         generatedAt: cachedSection.generatedAt,
         model,
-      });
-      continue;
+      } as Briefing;
     }
 
-    // Fetch articles for all queries in this topic
+    const articleResult = articleResults[i];
+    if (articleResult.status === 'rejected') {
+      console.error(`❌ Article fetch failed for "${original.name}":`, articleResult.reason);
+      return null;
+    }
+
+    const articles = articleResult.value;
+    if (articles.length === 0) {
+      console.warn(`⚠️ No articles found for "${original.name}", skipping`);
+      return null;
+    }
+
     try {
-      const articles = await fetchArticlesForTopic(resolvedTopic);
-
-      if (articles.length === 0) {
-        console.warn(`⚠️ No articles found for "${original.name}", skipping`);
-        continue;
-      }
-
       console.log(`🤖 Assembling briefing for "${original.name}" with ${articles.length} articles...`);
       const assembled = await assembleWithLLM(original.name, articles, briefingSettings);
-
       const filteredStories = filterRecentStories(assembled.stories || []);
       const frontendArticles = toFrontendArticles(articles);
 
-      briefings.push({
+      return {
         topic: original.name,
         emoji: original.emoji || '',
         summary: assembled.summary || '',
@@ -370,10 +371,10 @@ export async function generateBriefing(
         articles: settings.includeLinks !== false ? frontendArticles.slice(0, 5) : [],
         generatedAt: new Date().toISOString(),
         model,
-      });
+      } as Briefing;
     } catch (err) {
-      console.error(`❌ Failed to generate briefing for "${original.name}":`, err);
-      briefings.push({
+      console.error(`❌ LLM assembly failed for "${original.name}":`, err);
+      return {
         topic: original.name,
         emoji: original.emoji || '',
         summary: `Latest news about ${original.name}.`,
@@ -381,9 +382,12 @@ export async function generateBriefing(
         articles: [],
         generatedAt: new Date().toISOString(),
         model,
-      });
+      } as Briefing;
     }
-  }
+  });
+
+  const results = await Promise.all(assemblyTasks);
+  const briefings = results.filter((b): b is Briefing => b !== null);
 
   return { briefings, model };
 }
