@@ -4,6 +4,10 @@ import { getGenerationModel, getOpenAIModel } from '@/lib/models';
 import { checkAndIncrementUsage, FREE_TOPIC_LIMIT } from '@/lib/subscription';
 import { filterRecentStories } from '@/lib/filter-stories';
 import { buildSystemPrompt, buildUserMessage } from '@/lib/prompts';
+import { generateBriefing } from '@/lib/briefing-generator';
+
+// Set NEWS_SOURCE=openai or NEWS_SOURCE=perplexity to revert to legacy providers
+const NEWS_SOURCE = process.env.NEWS_SOURCE || 'perigon';
 
 interface Topic {
   id: string;
@@ -43,6 +47,8 @@ interface Briefing {
 }
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+// ─── Legacy code paths (kept for revert capability) ──────────────────
 
 async function fetchWithRetry(url: string, options: RequestInit, maxRetries = 5): Promise<Response> {
   let lastError: Error | null = null;
@@ -88,7 +94,7 @@ function parseJSONResponse(text: string): { summary: string; stories: StoryCard[
   return { summary: text.substring(0, 500), stories: [] };
 }
 
-// OpenAI Web Search (gpt-4o or gpt-4o-mini)
+// Legacy: OpenAI Web Search (gpt-4o or gpt-4o-mini)
 async function fetchFromOpenAI(
   topic: string,
   settings: Settings
@@ -97,7 +103,7 @@ async function fetchFromOpenAI(
   if (!apiKey) throw new Error('OpenAI API key not configured');
 
   const model = getOpenAIModel();
-  console.log(`Using OpenAI model: ${model}`);
+  console.log(`[Legacy] Using OpenAI model: ${model}`);
 
   const userMessage = buildUserMessage(topic, { settings });
 
@@ -123,14 +129,13 @@ async function fetchFromOpenAI(
   }
 
   const data = await response.json();
-  
-  // Log token usage to verify prompt caching
+
   if (data.usage) {
     console.log(`📊 Token usage — input: ${data.usage.input_tokens}, output: ${data.usage.output_tokens}, cached: ${data.usage.input_tokens_details?.cached_tokens ?? 'N/A'}`);
   }
-  
+
   let outputText = data.output_text || '';
-  
+
   if (!outputText && data.output) {
     for (const item of data.output) {
       if (item.type === 'message' && item.content) {
@@ -146,7 +151,6 @@ async function fetchFromOpenAI(
 
   if (!outputText) throw new Error('No output from OpenAI');
 
-  // Extract citations
   const articles: Article[] = [];
   if (data.output) {
     for (const item of data.output) {
@@ -192,7 +196,7 @@ async function fetchFromOpenAI(
   };
 }
 
-// Perplexity Search
+// Legacy: Perplexity Search
 async function fetchFromPerplexity(
   topic: string,
   settings: Settings
@@ -225,15 +229,13 @@ async function fetchFromPerplexity(
 
   const data = await response.json();
   const outputText = data.choices?.[0]?.message?.content || '';
-  
+
   if (!outputText) throw new Error('No output from Perplexity');
 
-  // Extract citations if available
   const articles: Article[] = [];
   if (data.citations && Array.isArray(data.citations)) {
     for (const citation of data.citations) {
       try {
-        // Citations can be strings (URLs) or objects with url property
         const url = typeof citation === 'string' ? citation : citation?.url;
         if (url && url.startsWith('http')) {
           articles.push({
@@ -243,7 +245,6 @@ async function fetchFromPerplexity(
           });
         }
       } catch (e) {
-        // Skip invalid URLs
         console.log('Skipping invalid citation:', citation);
       }
     }
@@ -267,14 +268,15 @@ async function fetchFromPerplexity(
   };
 }
 
-async function generateBriefingForTopic(topic: Topic, settings: Settings): Promise<Briefing> {
+// Legacy: generate a single topic briefing via OpenAI/Perplexity web search
+async function generateBriefingForTopic_legacy(topic: Topic, settings: Settings): Promise<Briefing> {
   const model = getGenerationModel();
 
   let summary: string;
   let stories: StoryCard[] = [];
   let articles: Article[] = [];
 
-  console.log(`Generating briefing for ${topic.name} using ${model}...`);
+  console.log(`[Legacy] Generating briefing for ${topic.name} using ${model}...`);
 
   try {
     let result;
@@ -301,6 +303,8 @@ async function generateBriefingForTopic(topic: Topic, settings: Settings): Promi
     model,
   };
 }
+
+// ─── POST handler ────────────────────────────────────────────────────
 
 export async function POST(request: NextRequest) {
   try {
@@ -340,10 +344,19 @@ export async function POST(request: NextRequest) {
     }
 
     const cappedTopics = topics.slice(0, maxTopics);
+
+    // ── Perigon pipeline (default) ────────────────────────────────
+    if (NEWS_SOURCE === 'perigon') {
+      console.log(`🔄 Using Perigon pipeline for ${cappedTopics.length} topics`);
+      const result = await generateBriefing(cappedTopics, settings);
+      return NextResponse.json({ briefings: result.briefings, model: result.model });
+    }
+
+    // ── Legacy pipelines (OpenAI web_search / Perplexity) ─────────
+    console.log(`🔄 Using legacy ${NEWS_SOURCE} pipeline for ${cappedTopics.length} topics`);
     const briefings: Briefing[] = [];
-    
     for (const topic of cappedTopics) {
-      const briefing = await generateBriefingForTopic(topic, settings);
+      const briefing = await generateBriefingForTopic_legacy(topic, settings);
       briefings.push(briefing);
       await delay(500);
     }
