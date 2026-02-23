@@ -68,9 +68,8 @@ function daysAgo(n: number): string {
   return d.toISOString().split('T')[0];
 }
 
-// ─── Article Search (broad/popular topics) ───────────────────────────
-// Uses GET /v1/all with the `topic` param (Perigon taxonomy tag)
-// and optional `category` param for filtering.
+// ─── Legacy Article Search (GET /v1/all with taxonomy tags) ──────────
+// Kept for backward compatibility. New code should use searchArticlesAll().
 
 export async function searchArticles(opts: {
   topic?: string;
@@ -96,6 +95,71 @@ export async function searchArticles(opts: {
   if (!res.ok) {
     const body = await res.text().catch(() => '');
     throw new Error(`Perigon article search failed (${res.status}): ${body}`);
+  }
+
+  return res.json() as Promise<PerigonArticlesResponse>;
+}
+
+// ─── Articles/All Search (primary endpoint) ──────────────────────────
+// Uses GET /v1/articles/all with full filtering: source groups, label
+// exclusion, reprint dedup, relevance sorting.
+
+export interface ArticleSearchParams {
+  q: string;
+  sortBy?: string;
+  size?: number;
+  page?: number;
+  from?: string;
+  to?: string;
+  sourceGroup?: string[];
+  excludeLabel?: string[];
+  showReprints?: boolean;
+  category?: string[];
+  topic?: string[];
+  language?: string[];
+  country?: string[];
+  medium?: string[];
+}
+
+export async function searchArticlesAll(opts: ArticleSearchParams): Promise<PerigonArticlesResponse> {
+  const defaults = {
+    sortBy: 'relevance',
+    size: 15,
+    from: daysAgo(3),
+    sourceGroup: ['top100'],
+    excludeLabel: ['Non-news', 'Opinion', 'Paid News'],
+    showReprints: false,
+    language: ['en'],
+    medium: ['Article'],
+  };
+
+  const params = new URLSearchParams({
+    apiKey: getApiKey(),
+    q: opts.q,
+    sortBy: opts.sortBy ?? defaults.sortBy,
+    size: String(opts.size ?? defaults.size),
+    from: opts.from ?? defaults.from,
+    showReprints: String(opts.showReprints ?? defaults.showReprints),
+  });
+
+  if (opts.to) params.set('to', opts.to);
+  if (opts.page !== undefined) params.set('page', String(opts.page));
+
+  // Array params: append each value separately
+  for (const sg of opts.sourceGroup ?? defaults.sourceGroup) params.append('sourceGroup', sg);
+  for (const el of opts.excludeLabel ?? defaults.excludeLabel) params.append('excludeLabel', el);
+  for (const lang of opts.language ?? defaults.language) params.append('language', lang);
+  for (const med of opts.medium ?? defaults.medium) params.append('medium', med);
+  if (opts.category) for (const cat of opts.category) params.append('category', cat);
+  if (opts.topic) for (const t of opts.topic) params.append('topic', t);
+  if (opts.country) for (const c of opts.country) params.append('country', c);
+
+  const url = `${PERIGON_BASE}/articles/all?${params}`;
+  const res = await fetch(url, { signal: createAbortSignal() });
+
+  if (!res.ok) {
+    const body = await res.text().catch(() => '');
+    throw new Error(`Perigon articles/all search failed (${res.status}): ${body}`);
   }
 
   return res.json() as Promise<PerigonArticlesResponse>;

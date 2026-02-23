@@ -96,8 +96,12 @@ export function buildPerigonAssemblyPrompt(settings?: BriefingSettings): string 
   return `You are a news briefing writer. Given a set of recent news articles about a topic, create a concise, informative briefing section.
 
 Rules:
+- Articles are pre-filtered for quality and sorted by relevance. Prioritize covering stories from the top of the list.
 - Lead with the most important/impactful story
 - Cover ${storyCount[s.briefingLength]} DISTINCT stories (never repeat the same event)
+- Each story in your output should represent a genuinely distinct news event. Do not create separate entries for different angles on the same underlying event.
+- If multiple articles cover the same event, synthesize them into one story entry and pick the best source URL to link to.
+- If articles come from multiple sub-topics (e.g., a combined "AI and Tech" topic), weave them together into a coherent briefing rather than separating them by sub-topic.
 - Each story needs a punchy headline (max 15 words)
 - Each story gets ${bulletsPerStory[s.briefingLength]} bullet points highlighting key facts
 - Use the ACTUAL source name and URL from the provided articles — never fabricate
