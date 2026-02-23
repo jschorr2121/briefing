@@ -4,6 +4,10 @@ import { getSchedules, shouldSendNow, type ScheduledBrief } from '@/lib/schedule
 import { getOpenAIModel } from '@/lib/models';
 import { filterRecentStories } from '@/lib/filter-stories';
 import { buildSystemPrompt, buildUserMessage } from '@/lib/prompts';
+import { generateBriefingsForCron } from '@/lib/briefing-generator';
+
+// Set NEWS_SOURCE=openai to revert to legacy provider
+const NEWS_SOURCE = process.env.NEWS_SOURCE || 'perigon';
 
 const CRON_SECRET = process.env.CRON_SECRET;
 
@@ -43,6 +47,8 @@ interface CachedBriefing {
 // Simple delay helper
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
+// ─── Legacy code paths (kept for revert capability) ──────────────────
+
 // Fetch with retry and exponential backoff
 async function fetchWithRetry(
   url: string,
@@ -50,11 +56,11 @@ async function fetchWithRetry(
   maxRetries = 3
 ): Promise<Response> {
   let lastError: Error | null = null;
-  
+
   for (let i = 0; i < maxRetries; i++) {
     try {
       const response = await fetch(url, options);
-      
+
       if (response.status === 429) {
         const retryAfter = response.headers.get('Retry-After');
         const waitTime = retryAfter ? parseInt(retryAfter) * 1000 : Math.pow(2, i) * 1000;
@@ -62,7 +68,7 @@ async function fetchWithRetry(
         await delay(Math.min(waitTime, 10000));
         continue;
       }
-      
+
       return response;
     } catch (error) {
       lastError = error as Error;
@@ -71,11 +77,11 @@ async function fetchWithRetry(
       }
     }
   }
-  
+
   throw lastError || new Error('Max retries exceeded');
 }
 
-async function generateBriefingWithOpenAI(topic: string): Promise<Briefing> {
+async function generateBriefingWithOpenAI_legacy(topic: string): Promise<Briefing> {
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
     throw new Error('OPENAI_API_KEY not configured');
@@ -118,7 +124,7 @@ async function generateBriefingWithOpenAI(topic: string): Promise<Briefing> {
 
     // Extract the output text
     let outputText = data.output_text || '';
-    
+
     if (!outputText && data.output) {
       for (const item of data.output) {
         if (item.type === 'message' && item.content) {
@@ -165,10 +171,10 @@ async function generateBriefingWithOpenAI(topic: string): Promise<Briefing> {
         .replace(/```json\s*/gi, '')
         .replace(/```\s*/g, '')
         .trim();
-      
+
       const jsonStart = cleanText.indexOf('{');
       const jsonEnd = cleanText.lastIndexOf('}');
-      
+
       if (jsonStart !== -1 && jsonEnd > jsonStart) {
         const jsonStr = cleanText.substring(jsonStart, jsonEnd + 1);
         parsed = JSON.parse(jsonStr);
@@ -208,13 +214,13 @@ async function generateBriefingWithOpenAI(topic: string): Promise<Briefing> {
   }
 }
 
-async function generateBriefings(topics: string[]): Promise<Briefing[]> {
+async function generateBriefings_legacy(topics: string[]): Promise<Briefing[]> {
   // Cap at 4 topics max
   const cappedTopics = topics.slice(0, 4);
   const briefings: Briefing[] = [];
 
   for (const topic of cappedTopics) {
-    const briefing = await generateBriefingWithOpenAI(topic);
+    const briefing = await generateBriefingWithOpenAI_legacy(topic);
     briefings.push(briefing);
     // Small delay between topics to avoid rate limits
     await delay(500);
@@ -222,6 +228,20 @@ async function generateBriefings(topics: string[]): Promise<Briefing[]> {
 
   return briefings;
 }
+
+// ─── Generate briefings (routes to Perigon or legacy) ────────────────
+
+async function generateBriefings(topics: string[]): Promise<Briefing[]> {
+  if (NEWS_SOURCE === 'perigon') {
+    console.log(`🔄 [Cron] Using Perigon pipeline for ${topics.length} topics`);
+    return generateBriefingsForCron(topics);
+  }
+
+  console.log(`🔄 [Cron] Using legacy OpenAI pipeline for ${topics.length} topics`);
+  return generateBriefings_legacy(topics);
+}
+
+// ─── Route handler ───────────────────────────────────────────────────
 
 function getCacheKey(date?: string): string {
   const d = date || new Date().toISOString().split('T')[0];
@@ -238,25 +258,25 @@ export async function GET(request: NextRequest) {
 
     // Check for test mode (single email)
     const testEmail = request.nextUrl.searchParams.get('testEmail');
-    
+
     const schedules = await getSchedules();
     console.log(`Found ${schedules.length} total schedules`);
-    
+
     // Filter to schedules that should send today
     let schedulesToGenerate = schedules.filter(schedule => {
       const shouldSend = shouldSendNow(schedule);
       console.log(`Schedule ${schedule.id} (${schedule.email}): shouldGenerate=${shouldSend}`);
       return shouldSend;
     });
-    
+
     // If test mode, filter to only the test email
     if (testEmail) {
       schedulesToGenerate = schedulesToGenerate.filter(s => s.email === testEmail);
       console.log(`Test mode: filtered to ${testEmail} only`);
     }
-    
+
     console.log(`${schedulesToGenerate.length} schedules to generate briefings for`);
-    
+
     if (schedulesToGenerate.length === 0) {
       return NextResponse.json({ generated: 0, cached: [] });
     }
@@ -266,16 +286,16 @@ export async function GET(request: NextRequest) {
     // Generate briefings for each schedule sequentially
     for (const schedule of schedulesToGenerate) {
       console.log(`Generating briefings for ${schedule.email}...`);
-      
+
       const briefings = await generateBriefings(schedule.topics);
-      
+
       const cachedBriefing: CachedBriefing = {
         email: schedule.email,
         topics: schedule.topics,
         briefings,
         generatedAt: new Date().toISOString(),
       };
-      
+
       cached.push(cachedBriefing);
       console.log(`Generated ${briefings.length} briefings for ${schedule.email}`);
     }
@@ -285,7 +305,7 @@ export async function GET(request: NextRequest) {
     await redis.set(cacheKey, cached, { ex: 86400 }); // Expire after 24 hours as backup
     console.log(`Cached ${cached.length} briefings under ${cacheKey}`);
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       generated: cached.length,
       cacheKey,
       cached: cached.map(c => ({ email: c.email, topics: c.topics.length, briefings: c.briefings.length }))

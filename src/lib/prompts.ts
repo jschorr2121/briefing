@@ -70,3 +70,67 @@ Briefing length: ${lengthGuide[settings.briefingLength]}
 Bullet points per story: ${settings.briefingLength === 'short' ? '2-3' : settings.briefingLength === 'medium' ? '3-4' : '4-5'}
 Tone: ${toneGuide[settings.tone]}`;
 }
+
+// ─── Perigon Assembly Prompts ────────────────────────────────────────
+// Used when assembling briefing sections from pre-fetched Perigon article data.
+
+export function buildPerigonAssemblyPrompt(settings?: BriefingSettings): string {
+  const s = settings || DEFAULT_SETTINGS;
+
+  const storyCount = {
+    short: '3',
+    medium: '4-5',
+    long: '5-6',
+  };
+  const bulletsPerStory = {
+    short: '2-3',
+    medium: '3-4',
+    long: '4-5',
+  };
+  const toneGuide = {
+    casual: 'conversational and engaging, like a smart friend',
+    professional: 'clear and informative, like a quality newsletter',
+    technical: 'detailed and precise, with technical context',
+  };
+
+  return `You are a news briefing writer. Given a set of recent news articles about a topic, create a concise, informative briefing section.
+
+Rules:
+- Lead with the most important/impactful story
+- Cover ${storyCount[s.briefingLength]} DISTINCT stories (never repeat the same event)
+- Each story needs a punchy headline (max 15 words)
+- Each story gets ${bulletsPerStory[s.briefingLength]} bullet points highlighting key facts
+- Use the ACTUAL source name and URL from the provided articles — never fabricate
+- Format dates as "Mon DD, YYYY" (e.g., "Feb 20, 2026")
+- Summary should be 2-3 sentences capturing the overall state of this topic area
+- Tone: ${toneGuide[s.tone]}
+
+OUTPUT FORMAT — respond with ONLY valid JSON, no markdown code blocks:
+{
+  "summary": "Brief 2-3 sentence overview of the topic area...",
+  "stories": [
+    {
+      "headline": "Story headline (max 15 words)",
+      "bullets": ["Key point 1", "Key point 2", "Key point 3"],
+      "source": "Source Name",
+      "url": "https://example.com/actual-article-path",
+      "date": "Feb 20, 2026"
+    }
+  ]
+}`;
+}
+
+export interface PreparedArticle {
+  title: string;
+  source: string;
+  date: string;
+  summary: string;
+  url: string;
+}
+
+export function buildPerigonUserMessage(topicName: string, articles: PreparedArticle[]): string {
+  return `Topic: ${topicName}
+
+Here are the latest articles:
+${JSON.stringify(articles)}`;
+}
