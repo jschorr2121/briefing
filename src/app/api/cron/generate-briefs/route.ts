@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { Redis } from '@upstash/redis';
 import { getSchedules, shouldSendNow, type ScheduledBrief } from '@/lib/schedules';
 import { getOpenAIModel } from '@/lib/models';
+import { filterRecentStories } from '@/lib/filter-stories';
+import { buildSystemPrompt, buildUserMessage } from '@/lib/prompts';
 
 const CRON_SECRET = process.env.CRON_SECRET;
 
@@ -79,37 +81,6 @@ async function generateBriefingWithOpenAI(topic: string): Promise<Briefing> {
     throw new Error('OPENAI_API_KEY not configured');
   }
 
-  const today = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-  const prompt = `Today is ${today}. Search for the latest news about: ${topic}
-
-After searching, create a news briefing with:
-1. A brief 2-3 sentence overview summary
-2. 3-4 individual story cards
-
-For each story, provide:
-- A clear headline (max 15 words)
-- 2-3 bullet points explaining the key details
-- The publication date (e.g. "Feb 4, 2026")
-- The source name and URL
-
-IMPORTANT: Every story MUST include a "date" field with the publication date. Only include stories from the last 7 days.
-
-Format your response as JSON:
-{
-  "summary": "Brief overview...",
-  "stories": [
-    {
-      "headline": "Story headline",
-      "bullets": ["Key point 1", "Key point 2"],
-      "source": "Source Name",
-      "url": "https://...",
-      "date": "Feb 4, 2026"
-    }
-  ]
-}
-
-Only return valid JSON, no markdown code blocks.`;
-
   try {
     const response = await fetchWithRetry(
       'https://api.openai.com/v1/responses',
@@ -121,8 +92,9 @@ Only return valid JSON, no markdown code blocks.`;
         },
         body: JSON.stringify({
           model: getOpenAIModel(),
+          instructions: buildSystemPrompt(),
           tools: [
-            { 
+            {
               type: 'web_search',
               user_location: {
                 type: 'approximate',
@@ -131,7 +103,7 @@ Only return valid JSON, no markdown code blocks.`;
             }
           ],
           tool_choice: 'auto',
-          input: prompt,
+          input: buildUserMessage(topic),
         }),
       }
     );
@@ -222,7 +194,7 @@ Only return valid JSON, no markdown code blocks.`;
     return {
       topic,
       summary: parsed.summary || outputText.substring(0, 300),
-      stories: parsed.stories || [],
+      stories: filterRecentStories(parsed.stories || []),
       articles: uniqueArticles.slice(0, 5),
     };
   } catch (error) {
