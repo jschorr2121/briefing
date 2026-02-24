@@ -279,5 +279,15 @@ export async function resolveTopics(
     }
   }
 
+  // Log the full query plan
+  for (const r of resolved) {
+    const querySummary = r.queries.map(q => {
+      let s = `[${q.type}] "${q.query}"`;
+      if (q.vectorQuery) s += ` (vector: "${q.vectorQuery}")`;
+      return s;
+    }).join(', ');
+    console.log(`🔍 Query plan for "${r.displayName}": ${querySummary}`);
+  }
+
   return resolved;
 }
