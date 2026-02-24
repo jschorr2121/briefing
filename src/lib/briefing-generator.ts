@@ -258,7 +258,7 @@ async function assembleWithLLM(
   if (!apiKey) throw new Error('OpenAI API key not configured');
 
   const model = getOpenAIModel();
-  const systemPrompt = buildPerigonAssemblyPrompt(settings);
+  const systemPrompt = buildPerigonAssemblyPrompt(topicName, settings);
   const userMessage = buildPerigonUserMessage(topicName, articles);
 
   async function callLLM(): Promise<{ summary: string; stories: StoryCard[] }> {

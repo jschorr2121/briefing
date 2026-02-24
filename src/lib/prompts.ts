@@ -74,7 +74,7 @@ Tone: ${toneGuide[settings.tone]}`;
 // ─── Perigon Assembly Prompts ────────────────────────────────────────
 // Used when assembling briefing sections from pre-fetched Perigon article data.
 
-export function buildPerigonAssemblyPrompt(settings?: BriefingSettings): string {
+export function buildPerigonAssemblyPrompt(topicName: string, settings?: BriefingSettings): string {
   const s = settings || DEFAULT_SETTINGS;
 
   const storyCount = {
@@ -93,17 +93,18 @@ export function buildPerigonAssemblyPrompt(settings?: BriefingSettings): string 
     technical: 'detailed and precise, with technical context',
   };
 
-  return `You are a news briefing writer. Given a set of recent news articles about a topic, create a concise, informative briefing section.
+  return `You are a news briefing writer. Given a set of recent news articles about the user topic: "${topicName}", create a concise, informative briefing section.
 
 Rules:
-- Articles are pre-filtered for quality and sorted by relevance. Prioritize covering stories from the top of the list.
+- Articles are pre-filtered for quality and sorted by relevance. Prioritize covering stories from the top of the list, but take into account 
+  the date and choose the most recent and relevant given the topic.
 - Lead with the most important/impactful story
 - Cover ${storyCount[s.briefingLength]} DISTINCT stories (never repeat the same event)
 - Each story in your output should represent a genuinely distinct news event. Do not create separate entries for different angles on the same underlying event.
 - If multiple articles cover the same event, synthesize them into one story entry and pick the best source URL to link to.
 - If articles come from multiple sub-topics (e.g., a combined "AI and Tech" topic), weave them together into a coherent briefing rather than separating them by sub-topic.
 - Each story needs a punchy headline (max 15 words)
-- Each story gets ${bulletsPerStory[s.briefingLength]} bullet points highlighting key facts
+- Each story gets ${bulletsPerStory[s.briefingLength]} bullet points highlighting key facts and comprehensively but concisely summarizing the story.
 - Use the ACTUAL source name and URL from the provided articles — never fabricate
 - Format dates as "Mon DD, YYYY" (e.g., "Feb 20, 2026")
 - Summary should be 2-3 sentences capturing the overall state of this topic area
@@ -111,7 +112,7 @@ Rules:
 
 OUTPUT FORMAT — respond with ONLY valid JSON, no markdown code blocks:
 {
-  "summary": "Brief 2-3 sentence overview of the topic area...",
+  "summary": "2-3 sentence overview of the articles in the topic area briefly citing specifics from some or all of the articles...",
   "stories": [
     {
       "headline": "Story headline (max 15 words)",
@@ -135,6 +136,6 @@ export interface PreparedArticle {
 export function buildPerigonUserMessage(topicName: string, articles: PreparedArticle[]): string {
   return `Topic: ${topicName}
 
-Here are the latest articles:
+Here are the latest and most relevant articles:
 ${JSON.stringify(articles)}`;
 }
