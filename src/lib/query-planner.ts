@@ -196,11 +196,10 @@ async function callQueryPlannerLLM(topicNames: string[]): Promise<QueryPlan[]> {
 // ─── Convert curated config to QueryInstructions ─────────────────────
 
 function curatedToInstructions(config: TopicConfig): QueryInstruction[] {
-  if (config.queryStrategy === 'stories') {
-    // Curated "stories" topics have good keyword queries
+  if (config.queryStrategy === 'articles') {
     return [{ type: 'articles', query: config.keywordQuery }];
   } else {
-    // Curated "vector" topics benefit from both search types
+    // "both" strategy: keyword + semantic search in parallel
     return [{
       type: 'both',
       query: config.keywordQuery,
