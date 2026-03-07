@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Headphones, Mail, Download, Check, Loader2, Newspaper, Calendar, Settings as SettingsIcon } from 'lucide-react';
+import { Headphones, Mail, Download, Check, Loader2, Newspaper, Calendar, Settings as SettingsIcon, Share2, Link2 } from 'lucide-react';
 import Link from 'next/link';
 import { AuthGuard } from '@/components/AuthGuard';
 import { TopicSelector } from '@/components/TopicSelector';
@@ -14,8 +14,10 @@ import { HistoryPanel } from '@/components/HistoryPanel';
 import { KeyboardHints } from '@/components/KeyboardHints';
 import { BriefingStats } from '@/components/BriefingStats';
 import { UpgradeModal } from '@/components/UpgradeModal';
+import { OnboardingFlow } from '@/components/OnboardingFlow';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { useSubscription } from '@/hooks/useSubscription';
+import { useShareBriefing } from '@/hooks/useShareBriefing';
 import type { Topic, Briefing, Settings, BriefingHistory } from '@/lib/types';
 import { generateId, getTotalReadingTime } from '@/lib/utils';
 
@@ -48,12 +50,17 @@ export default function Home() {
   const [playbackSpeed, setPlaybackSpeed] = useState(1);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [showVoicePicker, setShowVoicePicker] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
   const voicePickerRef = useRef<HTMLDivElement>(null);
 
   // Subscription hook
   const { isPro, isFree, canGenerate, usageCount, usageLimit, topicLimit, refresh: refreshSub } = useSubscription();
   const tier = isPro ? 'pro' as const : 'free' as const;
+
+  // Share hook
+  const { shareBriefing, isSharing, shareUrl, clearShare } = useShareBriefing();
 
   // Load saved state from localStorage
   useEffect(() => {
@@ -67,7 +74,17 @@ export default function Home() {
     if (savedBriefings) setBriefings(JSON.parse(savedBriefings));
     if (savedTime) setLastGenerated(new Date(savedTime));
     if (savedHistory) setHistory(JSON.parse(savedHistory));
-    if (savedTopics) setTopics(JSON.parse(savedTopics));
+    if (savedTopics) {
+      const parsed = JSON.parse(savedTopics);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        setTopics(parsed);
+      } else {
+        setShowOnboarding(true);
+      }
+    } else {
+      setShowOnboarding(true);
+    }
+    setHydrated(true);
   }, []);
 
   useEffect(() => {
@@ -287,6 +304,45 @@ export default function Home() {
     URL.revokeObjectURL(url);
   };
 
+  const handleOnboardingComplete = (onboardingTopics: Topic[]) => {
+    setTopics(onboardingTopics);
+    localStorage.setItem('briefing-topics', JSON.stringify(onboardingTopics));
+    setShowOnboarding(false);
+    // Auto-generate first briefing
+    setTimeout(() => {
+      const enabledTopics = onboardingTopics.filter(t => t.enabled);
+      if (enabledTopics.length > 0) {
+        setIsLoading(true);
+        setError(null);
+        setBriefings([]);
+        setAudioUrl(null);
+        setEmailSent(false);
+        fetch('/api/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ topics: enabledTopics, settings }),
+        })
+          .then(r => r.json())
+          .then(data => {
+            setBriefings(data.briefings);
+            setLastGenerated(new Date());
+            localStorage.setItem('briefing-cache', JSON.stringify(data.briefings));
+            localStorage.setItem('briefing-time', new Date().toISOString());
+            addToHistory(data.briefings);
+            refreshSub();
+          })
+          .catch(() => setError({ message: 'Failed to generate briefing. Please try again.', type: 'briefing' }))
+          .finally(() => setIsLoading(false));
+      }
+    }, 100);
+  };
+
+  if (!hydrated) return null;
+
+  if (showOnboarding) {
+    return <OnboardingFlow onComplete={handleOnboardingComplete} />;
+  }
+
   return (
     <AuthGuard>
       <main className="min-h-screen pb-20">
@@ -444,6 +500,28 @@ export default function Home() {
               >
                 <Download className="w-4 h-4" />
                 Export
+              </button>
+              <button
+                onClick={() => shareBriefing(briefings, topics.map(t => t.name))}
+                disabled={isSharing}
+                className="btn-secondary px-5 py-3 rounded-xl font-medium flex items-center gap-2 disabled:opacity-50"
+              >
+                {isSharing ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Sharing...
+                  </>
+                ) : shareUrl ? (
+                  <>
+                    <Check className="w-4 h-4 text-green-400" />
+                    Link Copied!
+                  </>
+                ) : (
+                  <>
+                    <Link2 className="w-4 h-4" />
+                    Share Link
+                  </>
+                )}
               </button>
             </>
           )}
