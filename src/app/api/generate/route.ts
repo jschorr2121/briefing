@@ -1,7 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
+import { getAuthenticatedUser } from '@/lib/auth-helper';
 import { getGenerationModel, getOpenAIModel } from '@/lib/models';
-import { checkAndIncrementUsage, FREE_TOPIC_LIMIT } from '@/lib/subscription';
+import { checkAndIncrementUsage, getTopicLimit } from '@/lib/subscription';
+import { filterRecentStories } from '@/lib/filter-stories';
+import { buildSystemPrompt, buildUserMessage } from '@/lib/prompts';
+import { generateBriefing } from '@/lib/briefing-generator';
+
+// Set NEWS_SOURCE=openai or NEWS_SOURCE=perplexity to revert to legacy providers
+const NEWS_SOURCE = process.env.NEWS_SOURCE || 'perigon';
 
 interface Topic {
   id: string;
@@ -40,92 +46,42 @@ interface Briefing {
   model: string;
 }
 
-// Search queries for each topic
-const TOPIC_QUERIES: Record<string, string[]> = {
-  ai: ['AI artificial intelligence news today', 'OpenAI Anthropic Google AI'],
-  finance: ['stock market news today', 'crypto bitcoin ethereum news', 'federal reserve economy'],
-  world: ['breaking world news today', 'international politics news'],
-  sports: ['NBA NFL sports news today', 'Premier League soccer highlights'],
-  science: ['science discovery news this week', 'space NASA research'],
-  startups: ['startup funding news', 'tech unicorn venture capital'],
-  jets: ['NY Jets NFL news', 'New York Jets football'],
-  basketball: ['NBA basketball news today', 'basketball highlights scores'],
-};
-
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-async function fetchWithRetry(url: string, options: RequestInit, maxRetries = 3): Promise<Response> {
+// ─── Legacy code paths (kept for revert capability) ──────────────────
+
+async function fetchWithRetry(url: string, options: RequestInit, maxRetries = 5): Promise<Response> {
   let lastError: Error | null = null;
   for (let i = 0; i < maxRetries; i++) {
     try {
       const response = await fetch(url, options);
       if (response.status === 429) {
         const retryAfter = response.headers.get('Retry-After');
-        const waitTime = retryAfter ? parseInt(retryAfter) * 1000 : Math.pow(2, i) * 1000;
-        await delay(Math.min(waitTime, 10000));
+        const waitTime = retryAfter ? parseInt(retryAfter) * 1000 : Math.pow(2, i + 1) * 1000;
+        const clampedWait = Math.min(waitTime, 30000);
+        const errorBody = await response.text().catch(() => 'unable to read body');
+        console.warn(`⚠️ Rate limited (429) on attempt ${i + 1}/${maxRetries}. Body: ${errorBody}. Retry-After: ${retryAfter}. Waiting ${clampedWait}ms...`);
+        if (i < maxRetries - 1) {
+          await delay(clampedWait);
+          continue;
+        }
+        throw new Error(`Rate limited after ${maxRetries} retries. Last response: ${errorBody}`);
+      }
+      if (!response.ok && response.status >= 500) {
+        const errorBody = await response.text().catch(() => '');
+        console.warn(`⚠️ Server error (${response.status}) on attempt ${i + 1}/${maxRetries}: ${errorBody}`);
+        lastError = new Error(`API error ${response.status}: ${errorBody}`);
+        if (i < maxRetries - 1) await delay(Math.pow(2, i + 1) * 1000);
         continue;
       }
       return response;
     } catch (error) {
       lastError = error as Error;
-      if (i < maxRetries - 1) await delay(Math.pow(2, i) * 1000);
+      console.warn(`⚠️ Fetch error on attempt ${i + 1}/${maxRetries}: ${lastError.message}`);
+      if (i < maxRetries - 1) await delay(Math.pow(2, i + 1) * 1000);
     }
   }
   throw lastError || new Error('Max retries exceeded');
-}
-
-function buildSystemPrompt(): string {
-  const today = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-  return `You are a news briefing generator. Today's date is ${today}. You search the web for recent news and produce structured JSON briefings.
-
-RULES:
-- ONLY include news published within the last 7 days. Today is ${today}. Any story older than 7 days MUST be excluded.
-- If a story's date is more than 7 days before today, DO NOT include it. This is critical.
-- Do NOT use or cite Wikipedia. Only use news sources, official publications, and reputable journalism outlets.
-- Prefer primary sources (news outlets, official announcements) over aggregators or encyclopedias.
-- Every story MUST include a publication date. Verify the date is within the last 7 days.
-- Every story MUST include the SPECIFIC article URL (not the homepage).
-- Prioritize stories from the last 48 hours over older ones.
-
-OUTPUT FORMAT — respond with ONLY valid JSON, no markdown code blocks:
-{
-  "summary": "Brief 2-3 sentence overview of the topic area...",
-  "stories": [
-    {
-      "headline": "Story headline (max 15 words)",
-      "bullets": ["Key point 1", "Key point 2", "Key point 3"],
-      "source": "Source Name",
-      "url": "https://example.com/actual-article-path",
-      "date": "Jan 26, 2026"
-    }
-  ]
-}`;
-}
-
-function buildUserMessage(topic: string, queries: string[], settings: Settings): string {
-  const lengthGuide = {
-    short: '3 stories with 2-3 bullets each',
-    medium: '4-5 stories with 3-4 bullets each',
-    long: '5-6 stories with 4-5 bullets each'
-  };
-  const toneGuide = {
-    casual: 'conversational and engaging, like a smart friend',
-    professional: 'clear and informative, like a quality newsletter',
-    technical: 'detailed and precise, with technical context'
-  };
-  const searchQuery = queries.join(' OR ');
-
-  const today = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-  
-  return `Today is ${today}. Search for the latest news about: ${topic}
-
-Search queries to consider: ${searchQuery}
-
-IMPORTANT: Only include stories published within the last 7 days (after ${new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}). Exclude anything older.
-
-Briefing length: ${lengthGuide[settings.briefingLength]}
-Bullet points per story: ${settings.briefingLength === 'short' ? '2-3' : settings.briefingLength === 'medium' ? '3-4' : '4-5'}
-Tone: ${toneGuide[settings.tone]}`;
 }
 
 function parseJSONResponse(text: string): { summary: string; stories: StoryCard[] } {
@@ -138,19 +94,18 @@ function parseJSONResponse(text: string): { summary: string; stories: StoryCard[
   return { summary: text.substring(0, 500), stories: [] };
 }
 
-// OpenAI Web Search (gpt-4o or gpt-4o-mini)
+// Legacy: OpenAI Web Search (gpt-4o or gpt-4o-mini)
 async function fetchFromOpenAI(
   topic: string,
-  queries: string[],
   settings: Settings
 ): Promise<{ summary: string; stories: StoryCard[]; articles: Article[] }> {
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) throw new Error('OpenAI API key not configured');
 
   const model = getOpenAIModel();
-  console.log(`Using OpenAI model: ${model}`);
-  
-  const userMessage = buildUserMessage(topic, queries, settings);
+  console.log(`[Legacy] Using OpenAI model: ${model}`);
+
+  const userMessage = buildUserMessage(topic, { settings });
 
   const response = await fetchWithRetry('https://api.openai.com/v1/responses', {
     method: 'POST',
@@ -174,14 +129,13 @@ async function fetchFromOpenAI(
   }
 
   const data = await response.json();
-  
-  // Log token usage to verify prompt caching
+
   if (data.usage) {
     console.log(`📊 Token usage — input: ${data.usage.input_tokens}, output: ${data.usage.output_tokens}, cached: ${data.usage.input_tokens_details?.cached_tokens ?? 'N/A'}`);
   }
-  
+
   let outputText = data.output_text || '';
-  
+
   if (!outputText && data.output) {
     for (const item of data.output) {
       if (item.type === 'message' && item.content) {
@@ -197,7 +151,6 @@ async function fetchFromOpenAI(
 
   if (!outputText) throw new Error('No output from OpenAI');
 
-  // Extract citations
   const articles: Article[] = [];
   if (data.output) {
     for (const item of data.output) {
@@ -220,6 +173,15 @@ async function fetchFromOpenAI(
   }
 
   const parsed = parseJSONResponse(outputText);
+  if (!parsed.stories || parsed.stories.length === 0) {
+    console.warn(`⚠️ No stories parsed for topic. Raw output (first 500 chars): ${outputText.substring(0, 500)}`);
+  } else {
+    console.log(`📰 Parsed ${parsed.stories.length} stories. Dates: ${parsed.stories.map(s => s.date || 'none').join(', ')}`);
+  }
+  const filteredStories = filterRecentStories(parsed.stories || []);
+  if (filteredStories.length < (parsed.stories || []).length) {
+    console.warn(`⚠️ Filtered ${(parsed.stories || []).length - filteredStories.length} stories, ${filteredStories.length} remaining`);
+  }
   const seen = new Set<string>();
   const uniqueArticles = articles.filter(a => {
     if (seen.has(a.url)) return false;
@@ -229,21 +191,20 @@ async function fetchFromOpenAI(
 
   return {
     summary: parsed.summary || outputText.substring(0, 300),
-    stories: parsed.stories || [],
+    stories: filteredStories,
     articles: uniqueArticles.slice(0, 8),
   };
 }
 
-// Perplexity Search
+// Legacy: Perplexity Search
 async function fetchFromPerplexity(
   topic: string,
-  queries: string[],
   settings: Settings
 ): Promise<{ summary: string; stories: StoryCard[]; articles: Article[] }> {
   const apiKey = process.env.PERPLEXITY_API_KEY;
   if (!apiKey) throw new Error('Perplexity API key not configured');
 
-  const userMessage = buildUserMessage(topic, queries, settings);
+  const userMessage = buildUserMessage(topic, { settings });
 
   const response = await fetchWithRetry('https://api.perplexity.ai/chat/completions', {
     method: 'POST',
@@ -268,15 +229,13 @@ async function fetchFromPerplexity(
 
   const data = await response.json();
   const outputText = data.choices?.[0]?.message?.content || '';
-  
+
   if (!outputText) throw new Error('No output from Perplexity');
 
-  // Extract citations if available
   const articles: Article[] = [];
   if (data.citations && Array.isArray(data.citations)) {
     for (const citation of data.citations) {
       try {
-        // Citations can be strings (URLs) or objects with url property
         const url = typeof citation === 'string' ? citation : citation?.url;
         if (url && url.startsWith('http')) {
           articles.push({
@@ -286,37 +245,45 @@ async function fetchFromPerplexity(
           });
         }
       } catch (e) {
-        // Skip invalid URLs
         console.log('Skipping invalid citation:', citation);
       }
     }
   }
 
   const parsed = parseJSONResponse(outputText);
+  if (!parsed.stories || parsed.stories.length === 0) {
+    console.warn(`⚠️ [Perplexity] No stories parsed for topic. Raw output (first 500 chars): ${outputText.substring(0, 500)}`);
+  } else {
+    console.log(`📰 [Perplexity] Parsed ${parsed.stories.length} stories. Dates: ${parsed.stories.map(s => s.date || 'none').join(', ')}`);
+  }
+  const filteredStories = filterRecentStories(parsed.stories || []);
+  if (filteredStories.length < (parsed.stories || []).length) {
+    console.warn(`⚠️ [Perplexity] Filtered ${(parsed.stories || []).length - filteredStories.length} stories, ${filteredStories.length} remaining`);
+  }
 
   return {
     summary: parsed.summary || outputText.substring(0, 300),
-    stories: parsed.stories || [],
+    stories: filteredStories,
     articles: articles.slice(0, 8),
   };
 }
 
-async function generateBriefingForTopic(topic: Topic, settings: Settings): Promise<Briefing> {
-  const queries = TOPIC_QUERIES[topic.id] || [`${topic.name} news today`];
+// Legacy: generate a single topic briefing via OpenAI/Perplexity web search
+async function generateBriefingForTopic_legacy(topic: Topic, settings: Settings): Promise<Briefing> {
   const model = getGenerationModel();
-  
+
   let summary: string;
   let stories: StoryCard[] = [];
   let articles: Article[] = [];
 
-  console.log(`Generating briefing for ${topic.name} using ${model}...`);
+  console.log(`[Legacy] Generating briefing for ${topic.name} using ${model}...`);
 
   try {
     let result;
     if (model === 'perplexity') {
-      result = await fetchFromPerplexity(topic.name, queries, settings);
+      result = await fetchFromPerplexity(topic.name, settings);
     } else {
-      result = await fetchFromOpenAI(topic.name, queries, settings);
+      result = await fetchFromOpenAI(topic.name, settings);
     }
     summary = result.summary;
     stories = result.stories;
@@ -337,11 +304,13 @@ async function generateBriefingForTopic(topic: Topic, settings: Settings): Promi
   };
 }
 
+// ─── POST handler ────────────────────────────────────────────────────
+
 export async function POST(request: NextRequest) {
   try {
     // Check auth
-    const session = await getServerSession();
-    const email = session?.user?.email;
+    const user = await getAuthenticatedUser(request);
+    const email = user?.email;
 
     // Check usage limits if user is authenticated
     if (email) {
@@ -364,21 +333,22 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No topics provided' }, { status: 400 });
     }
 
-    // Free users: cap topics
-    let maxTopics = 4;
-    if (email) {
-      const { getUsageStatus } = await import('@/lib/subscription');
-      const status = await getUsageStatus(email);
-      if (status.tier === 'free') {
-        maxTopics = FREE_TOPIC_LIMIT;
-      }
+    // Cap topics based on user's limit (null = unlimited for admin)
+    const topicLimit = getTopicLimit(email);
+    const cappedTopics = topicLimit ? topics.slice(0, topicLimit) : topics;
+
+    // ── Perigon pipeline (default) ────────────────────────────────
+    if (NEWS_SOURCE === 'perigon') {
+      console.log(`🔄 Using Perigon pipeline for ${cappedTopics.length} topics`);
+      const result = await generateBriefing(cappedTopics, settings);
+      return NextResponse.json({ briefings: result.briefings, model: result.model });
     }
 
-    const cappedTopics = topics.slice(0, maxTopics);
+    // ── Legacy pipelines (OpenAI web_search / Perplexity) ─────────
+    console.log(`🔄 Using legacy ${NEWS_SOURCE} pipeline for ${cappedTopics.length} topics`);
     const briefings: Briefing[] = [];
-    
     for (const topic of cappedTopics) {
-      const briefing = await generateBriefingForTopic(topic, settings);
+      const briefing = await generateBriefingForTopic_legacy(topic, settings);
       briefings.push(briefing);
       await delay(500);
     }

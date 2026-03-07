@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
+import { getAuthenticatedUser } from '@/lib/auth-helper';
 import { getStripe } from '@/lib/stripe';
 import { getUserSubscription, saveUserSubscription } from '@/lib/subscription';
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession();
-    if (!session?.user?.email) {
+    const user = await getAuthenticatedUser(request);
+    if (!user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Price ID required' }, { status: 400 });
     }
 
-    const email = session.user.email;
+    const email = user.email;
     const sub = await getUserSubscription(email);
 
     // Reuse existing Stripe customer or create new one
@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
     if (!customerId) {
       const customer = await stripe.customers.create({
         email,
-        name: session.user.name || undefined,
+        name: user.name || undefined,
         metadata: { source: 'briefing-app' },
       });
       customerId = customer.id;

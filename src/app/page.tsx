@@ -52,7 +52,7 @@ export default function Home() {
   const voicePickerRef = useRef<HTMLDivElement>(null);
 
   // Subscription hook
-  const { isPro, isFree, canGenerate, usageCount, usageLimit, refresh: refreshSub } = useSubscription();
+  const { isPro, isFree, canGenerate, usageCount, usageLimit, topicLimit, refresh: refreshSub } = useSubscription();
   const tier = isPro ? 'pro' as const : 'free' as const;
 
   // Load saved state from localStorage
@@ -326,6 +326,7 @@ export default function Home() {
             onToggle={toggleTopic}
             onAdd={addCustomTopic}
             onRemove={removeTopic}
+            maxTopics={topicLimit}
           />
         </section>
 

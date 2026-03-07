@@ -3,6 +3,12 @@ import { createTransport } from 'nodemailer';
 import { Redis } from '@upstash/redis';
 import { getSchedules, shouldSendNow, type ScheduledBrief } from '@/lib/schedules';
 import { getOpenAIModel } from '@/lib/models';
+import { filterRecentStories } from '@/lib/filter-stories';
+import { buildSystemPrompt, buildUserMessage } from '@/lib/prompts';
+import { generateBriefingsForCron } from '@/lib/briefing-generator';
+
+// Set NEWS_SOURCE=openai to revert to legacy provider
+const NEWS_SOURCE = process.env.NEWS_SOURCE || 'perigon';
 
 const CRON_SECRET = process.env.CRON_SECRET;
 
@@ -42,6 +48,8 @@ interface CachedBriefing {
 // Simple delay helper
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
+// ─── Legacy code paths (kept for revert capability) ──────────────────
+
 // Fetch with retry and exponential backoff
 async function fetchWithRetry(
   url: string,
@@ -49,11 +57,11 @@ async function fetchWithRetry(
   maxRetries = 3
 ): Promise<Response> {
   let lastError: Error | null = null;
-  
+
   for (let i = 0; i < maxRetries; i++) {
     try {
       const response = await fetch(url, options);
-      
+
       if (response.status === 429) {
         const retryAfter = response.headers.get('Retry-After');
         const waitTime = retryAfter ? parseInt(retryAfter) * 1000 : Math.pow(2, i) * 1000;
@@ -61,7 +69,7 @@ async function fetchWithRetry(
         await delay(Math.min(waitTime, 10000));
         continue;
       }
-      
+
       return response;
     } catch (error) {
       lastError = error as Error;
@@ -70,41 +78,15 @@ async function fetchWithRetry(
       }
     }
   }
-  
+
   throw lastError || new Error('Max retries exceeded');
 }
 
-async function generateBriefingWithOpenAI(topic: string): Promise<Briefing> {
+async function generateBriefingWithOpenAI_legacy(topic: string): Promise<Briefing> {
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
     throw new Error('OPENAI_API_KEY not configured');
   }
-
-  const prompt = `Search for the latest news about: ${topic}
-
-After searching, create a news briefing with:
-1. A brief 2-3 sentence overview summary
-2. 3-4 individual story cards
-
-For each story, provide:
-- A clear headline (max 15 words)
-- 2-3 bullet points explaining the key details
-- The source name and URL
-
-Format your response as JSON:
-{
-  "summary": "Brief overview...",
-  "stories": [
-    {
-      "headline": "Story headline",
-      "bullets": ["Key point 1", "Key point 2"],
-      "source": "Source Name",
-      "url": "https://..."
-    }
-  ]
-}
-
-Only return valid JSON, no markdown code blocks.`;
 
   try {
     const response = await fetchWithRetry(
@@ -117,8 +99,9 @@ Only return valid JSON, no markdown code blocks.`;
         },
         body: JSON.stringify({
           model: getOpenAIModel(),
+          instructions: buildSystemPrompt(),
           tools: [
-            { 
+            {
               type: 'web_search',
               user_location: {
                 type: 'approximate',
@@ -127,7 +110,7 @@ Only return valid JSON, no markdown code blocks.`;
             }
           ],
           tool_choice: 'auto',
-          input: prompt,
+          input: buildUserMessage(topic),
         }),
       }
     );
@@ -140,7 +123,7 @@ Only return valid JSON, no markdown code blocks.`;
 
     const data = await response.json();
     let outputText = data.output_text || '';
-    
+
     if (!outputText && data.output) {
       for (const item of data.output) {
         if (item.type === 'message' && item.content) {
@@ -184,7 +167,7 @@ Only return valid JSON, no markdown code blocks.`;
       let cleanText = outputText.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
       const jsonStart = cleanText.indexOf('{');
       const jsonEnd = cleanText.lastIndexOf('}');
-      
+
       if (jsonStart !== -1 && jsonEnd > jsonStart) {
         parsed = JSON.parse(cleanText.substring(jsonStart, jsonEnd + 1));
       } else {
@@ -204,7 +187,7 @@ Only return valid JSON, no markdown code blocks.`;
     return {
       topic,
       summary: parsed.summary || outputText.substring(0, 300),
-      stories: parsed.stories || [],
+      stories: filterRecentStories(parsed.stories || []),
       articles: uniqueArticles.slice(0, 5),
     };
   } catch (error) {
@@ -213,15 +196,29 @@ Only return valid JSON, no markdown code blocks.`;
   }
 }
 
-async function generateBriefings(topics: string[]): Promise<Briefing[]> {
+async function generateBriefings_legacy(topics: string[]): Promise<Briefing[]> {
   const cappedTopics = topics.slice(0, 4);
   const briefings: Briefing[] = [];
   for (const topic of cappedTopics) {
-    briefings.push(await generateBriefingWithOpenAI(topic));
+    briefings.push(await generateBriefingWithOpenAI_legacy(topic));
     await delay(500);
   }
   return briefings;
 }
+
+// ─── Generate briefings (routes to Perigon or legacy) ────────────────
+
+async function generateBriefings(topics: string[]): Promise<Briefing[]> {
+  if (NEWS_SOURCE === 'perigon') {
+    console.log(`🔄 [Cron/Send] Using Perigon pipeline for ${topics.length} topics`);
+    return generateBriefingsForCron(topics);
+  }
+
+  console.log(`🔄 [Cron/Send] Using legacy OpenAI pipeline for ${topics.length} topics`);
+  return generateBriefings_legacy(topics);
+}
+
+// ─── Email formatting ────────────────────────────────────────────────
 
 function formatBriefingEmail(briefings: Briefing[], recipientEmail: string): string {
   const date = new Date().toLocaleDateString('en-US', {
@@ -236,7 +233,7 @@ function formatBriefingEmail(briefings: Briefing[], recipientEmail: string): str
       <div style="margin-bottom: 16px; padding: 16px; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
         <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
           <span style="font-size: 11px; font-weight: 600; color: #60a5fa; background: rgba(96,165,250,0.15); padding: 2px 8px; border-radius: 4px;">#${i + 1}</span>
-          ${story.date ? `<span style="font-size: 11px; color: #888;">${story.date}</span>` : ''}
+          ${story.date ? `<span style="font-size: 11px; color: #9ca3af; background: rgba(255,255,255,0.05); padding: 2px 8px; border-radius: 4px;">${story.date}</span>` : ''}
         </div>
         <h3 style="margin: 0 0 10px; font-size: 15px; color: #93c5fd; font-weight: 600;">
           ${story.headline}
@@ -302,9 +299,9 @@ function formatBriefingEmail(briefings: Briefing[], recipientEmail: string): str
             ${date}
           </p>
         </div>
-        
+
         ${sections}
-        
+
         <div style="text-align: center; margin-top: 32px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.08);">
           <p style="color: #444; font-size: 11px; margin: 0;">
             You're receiving this because you scheduled a briefing.
@@ -346,6 +343,8 @@ function getCacheKey(date?: string): string {
   return `briefings:cache:${d}`;
 }
 
+// ─── Route handler ───────────────────────────────────────────────────
+
 export async function GET(request: NextRequest) {
   try {
     // Verify cron secret
@@ -357,13 +356,13 @@ export async function GET(request: NextRequest) {
     // Check for cached briefings first
     const cacheKey = getCacheKey();
     const cached = await redis.get<CachedBriefing[]>(cacheKey);
-    
+
     const results: { email: string; status: string; error?: string; source: string }[] = [];
-    
+
     if (cached && cached.length > 0) {
       // Use cached briefings - send all at once!
       console.log(`Found ${cached.length} cached briefings, sending...`);
-      
+
       for (const item of cached) {
         try {
           await sendBriefingEmail(item.email, item.briefings);
@@ -371,23 +370,23 @@ export async function GET(request: NextRequest) {
           console.log(`Sent cached briefing to ${item.email}`);
         } catch (error) {
           console.error(`Error sending to ${item.email}:`, error);
-          results.push({ 
-            email: item.email, 
-            status: 'error', 
+          results.push({
+            email: item.email,
+            status: 'error',
             error: error instanceof Error ? error.message : 'Unknown error',
             source: 'cache'
           });
         }
       }
-      
+
       // Clean up cache after sending
       await redis.del(cacheKey);
       console.log(`Deleted cache key ${cacheKey}`);
-      
+
     } else {
       // No cache - generate on the fly (fallback for manual triggers or missed generation)
       console.log('No cached briefings found, generating on the fly...');
-      
+
       const schedules = await getSchedules();
       for (const schedule of schedules) {
         if (!shouldSendNow(schedule)) continue;
@@ -399,9 +398,9 @@ export async function GET(request: NextRequest) {
           console.log(`Sent generated briefing to ${schedule.email}`);
         } catch (error) {
           console.error(`Error sending to ${schedule.email}:`, error);
-          results.push({ 
-            email: schedule.email, 
-            status: 'error', 
+          results.push({
+            email: schedule.email,
+            status: 'error',
             error: error instanceof Error ? error.message : 'Unknown error',
             source: 'generated'
           });
@@ -409,9 +408,9 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       processed: results.length,
-      results 
+      results
     });
   } catch (error) {
     console.error('Send briefs error:', error);

@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
+import { getAuthenticatedUser } from '@/lib/auth-helper';
 import { getStripe } from '@/lib/stripe';
 import { getUserSubscription } from '@/lib/subscription';
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession();
-    if (!session?.user?.email) {
+    const user = await getAuthenticatedUser(request);
+    if (!user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Stripe not configured' }, { status: 503 });
     }
 
-    const sub = await getUserSubscription(session.user.email);
+    const sub = await getUserSubscription(user.email);
     if (!sub.stripeCustomerId) {
       return NextResponse.json({ error: 'No billing account found' }, { status: 400 });
     }

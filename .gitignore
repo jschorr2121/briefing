@@ -6,10 +6,8 @@ out/
 .env*.local
 .DS_Store
 
-# Capacitor — native projects ARE tracked in git (recommended by Capacitor)
-# Build artifacts within native projects
-ios/App/App/public/
-android/app/src/main/assets/public/
-ios/App/Pods/
-android/.gradle/
-android/app/build/
+# iOS build artifacts
+briefing-ios/Briefing.xcodeproj/xcuserdata/
+briefing-ios/Briefing.xcodeproj/project.xcworkspace/xcuserdata/
+briefing-ios/**/*.xcuserstate
+briefing-ios/DerivedData/
