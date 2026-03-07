@@ -9,6 +9,12 @@ import { generateBriefingsForCron } from '@/lib/briefing-generator';
 // Set NEWS_SOURCE=openai to revert to legacy provider
 const NEWS_SOURCE = process.env.NEWS_SOURCE || 'perigon';
 
+// Increase function timeout (requires Vercel Pro for >10s)
+export const maxDuration = 60;
+
+// Maximum schedules to process per run to avoid timeout
+const MAX_SCHEDULES_PER_RUN = 3;
+
 const CRON_SECRET = process.env.CRON_SECRET;
 
 const redis = new Redis({
@@ -281,10 +287,16 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ generated: 0, cached: [] });
     }
 
+    // Limit schedules per run to avoid timeout
+    const schedulesToProcess = schedulesToGenerate.slice(0, MAX_SCHEDULES_PER_RUN);
+    if (schedulesToGenerate.length > MAX_SCHEDULES_PER_RUN) {
+      console.log(`Processing ${MAX_SCHEDULES_PER_RUN} of ${schedulesToGenerate.length} schedules (will continue in next run)`);
+    }
+
     const cached: CachedBriefing[] = [];
 
     // Generate briefings for each schedule sequentially
-    for (const schedule of schedulesToGenerate) {
+    for (const schedule of schedulesToProcess) {
       console.log(`Generating briefings for ${schedule.email}...`);
 
       const briefings = await generateBriefings(schedule.topics);

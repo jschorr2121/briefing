@@ -10,6 +10,12 @@ import { generateBriefingsForCron } from '@/lib/briefing-generator';
 // Set NEWS_SOURCE=openai to revert to legacy provider
 const NEWS_SOURCE = process.env.NEWS_SOURCE || 'perigon';
 
+// Increase function timeout (requires Vercel Pro for >10s)
+export const maxDuration = 60;
+
+// Maximum emails to send per run to avoid timeout
+const MAX_EMAILS_PER_RUN = 5;
+
 const CRON_SECRET = process.env.CRON_SECRET;
 
 const redis = new Redis({

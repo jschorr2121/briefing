@@ -48,6 +48,16 @@ See latest progress notes below.
 
 ## Progress Log
 
+### Feb 17, 2026
+- **[dev branch]** Added robots.txt and sitemap.xml for SEO
+  - robots.txt: allows crawling, blocks API/login routes
+  - sitemap.xml: all public pages with priorities
+- **[dev branch]** Added Google Play Store listing copy draft (`docs/google-play-listing.md`)
+  - Full description with Google Play-friendly formatting (emoji headers, visual breaks)
+  - Data safety declaration template
+  - Feature graphic and screenshot requirements
+  - Submission checklist and review tips
+
 ### Feb 16, 2026
 - **[dev branch]** Added App Store listing copy draft (`docs/app-store-listing.md`)
   - Name, subtitle, full description, keywords, categories
@@ -61,3 +71,20 @@ See latest progress notes below.
 - **[dev branch]** Added Terms of Service page (/terms) — required for App Store
 - **[dev branch]** Added Support page (/support) with FAQ + contact — required by Apple
 - **[dev branch]** Added global footer with Privacy, Terms, Support links
+
+### Feb 18, 2026
+- **[dev branch]** Added dynamic OG/Twitter images for social sharing
+  - opengraph-image.tsx generates 1200x630 OG image
+  - twitter-image.tsx generates Twitter card image
+  - Updated metadata: summary_large_image card, added creator @jschorr21, added canonical URL
+  - Improves appearance when Briefing is shared on social media
+- **[dev branch]** Added /api/health endpoint for monitoring
+  - Checks Redis connectivity (with latency)
+  - Validates required env vars
+  - Returns healthy/degraded status with detailed checks
+  - Useful for uptime monitoring and debugging
+- **[dev branch]** Fixed cron timeout issues
+  - Added `maxDuration = 60` to generate-briefs and send-briefs routes
+  - Added batch limits: max 3 schedules per generate run, max 5 emails per send run
+  - Prevents function timeout on Vercel (requires Pro for >10s timeout)
+  - Note: If more than 3 users, will need multiple cron runs or Vercel Pro
