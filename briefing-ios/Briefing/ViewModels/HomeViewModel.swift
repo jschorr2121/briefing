@@ -246,6 +246,59 @@ final class HomeViewModel {
         return md
     }
 
+    func exportFullMarkdown() -> String {
+        var md = "# Daily Briefing (Dev Export)\n\n"
+        let date = Date().formatted(date: .long, time: .omitted)
+        md += "_Generated \(date)_\n\n"
+
+        for briefing in briefings {
+            md += "---\n\n## \(briefing.emoji.isEmpty ? "" : "\(briefing.emoji) ")\(briefing.topic)\n\n"
+
+            // Debug info: Perigon search parameters
+            if let debug = briefing.debugInfo {
+                md += "> **Perigon Search Debug**\n>\n"
+                for q in debug.queries {
+                    md += "> - **Type:** `\(q.type)` | **Query:** `\(q.query)`\n"
+                    if let vq = q.vectorQuery {
+                        md += ">   - **Vector query:** `\(vq)`\n"
+                    }
+                }
+                if let step = debug.cascadeStep {
+                    md += "> - **Cascade step:** `\(step)`\n"
+                }
+                md += "> - **Articles fetched:** \(debug.articleCount ?? 0)\n"
+                md += "\n"
+            }
+
+            md += "\(briefing.summary)\n\n"
+
+            for story in briefing.storyList {
+                md += "### \(story.headline)\n\n"
+                if let source = story.source ?? story.date {
+                    let meta = [story.source, story.date].compactMap { $0 }.joined(separator: " | ")
+                    md += "_\(meta)_\n\n"
+                }
+                for bullet in story.bullets {
+                    md += "- \(bullet)\n"
+                }
+                if let url = story.url {
+                    md += "\n[Read more](\(url))\n"
+                }
+                md += "\n"
+            }
+
+            if !briefing.articles.isEmpty {
+                md += "### Sources\n\n"
+                for article in briefing.articles {
+                    md += "- [\(article.title)](\(article.url)) — \(article.source)\n"
+                }
+                md += "\n"
+            }
+        }
+
+        return md
+    }
+
     // MARK: - Persistence
 
     private func loadPersistedTopics() {

@@ -22,6 +22,18 @@ interface StoryCard {
   date?: string;
 }
 
+interface DebugQueryInfo {
+  type: string;
+  query: string;
+  vectorQuery?: string;
+}
+
+interface DebugInfo {
+  queries: DebugQueryInfo[];
+  articleCount: number;
+  cascadeStep?: string;
+}
+
 interface Briefing {
   topic: string;
   emoji: string;
@@ -30,6 +42,7 @@ interface Briefing {
   articles: Article[];
   generatedAt: string;
   model: string;
+  debugInfo?: DebugInfo;
 }
 
 export interface BriefingResponse {
@@ -119,12 +132,17 @@ function daysAgo(n: number): string {
 
 // ─── Cascade fallback for a single QueryInstruction ──────────────────
 
-async function executeQuery(instruction: QueryInstruction): Promise<PerigonArticle[]> {
+interface ExecuteQueryResult {
+  articles: PerigonArticle[];
+  cascadeStep: string;
+}
+
+async function executeQuery(instruction: QueryInstruction): Promise<ExecuteQueryResult> {
   const { type, query, vectorQuery } = instruction;
 
   if (type === 'vector') {
     const result = await vectorSearchArticles({ prompt: query, size: 10 });
-    return result.articles;
+    return { articles: result.articles, cascadeStep: 'vector-only' };
   }
 
   if (type === 'both') {
@@ -149,7 +167,7 @@ async function executeQuery(instruction: QueryInstruction): Promise<PerigonArtic
     if (vectorResult.status === 'fulfilled') articles.push(...vectorResult.value.articles);
 
     // Deduplicate, preferring articles/all results (listed first, have richer metadata)
-    return deduplicateArticles(articles);
+    return { articles: deduplicateArticles(articles), cascadeStep: 'both-parallel' };
   }
 
   // type === 'articles': cascade fallback
@@ -167,7 +185,7 @@ async function executeQuery(instruction: QueryInstruction): Promise<PerigonArtic
   });
 
   if (step1.articles.length >= 3) {
-    return step1.articles;
+    return { articles: step1.articles, cascadeStep: 'step1-top100-3d' };
   }
   console.log(`📉 Step 1 returned ${step1.articles.length} articles for "${query}", broadening...`);
 
@@ -185,18 +203,23 @@ async function executeQuery(instruction: QueryInstruction): Promise<PerigonArtic
   });
 
   if (step2.articles.length >= 3) {
-    return step2.articles;
+    return { articles: step2.articles, cascadeStep: 'step2-allsources-7d' };
   }
   console.log(`📉 Step 2 returned ${step2.articles.length} articles for "${query}", falling back to vector...`);
 
   // Step 3: vector search as last resort
   const step3 = await vectorSearchArticles({ prompt: query, size: 10 });
-  return step3.articles;
+  return { articles: step3.articles, cascadeStep: 'step3-vector-fallback' };
 }
 
 // ─── Fetch articles for a single QueryInstruction (with caching) ─────
 
-async function fetchQueryArticles(instruction: QueryInstruction): Promise<PerigonArticle[]> {
+interface FetchQueryResult {
+  articles: PerigonArticle[];
+  cascadeStep: string;
+}
+
+async function fetchQueryArticles(instruction: QueryInstruction): Promise<FetchQueryResult> {
   const cacheType = instruction.type;
   const cacheQuery = instruction.query;
 
@@ -204,11 +227,11 @@ async function fetchQueryArticles(instruction: QueryInstruction): Promise<Perigo
   const cached = await getCachedQueryArticles(cacheType, cacheQuery);
   if (cached) {
     console.log(`📦 Cache hit for query "${cacheQuery}" (${cacheType})`);
-    return cached.data.articles;
+    return { articles: cached.data.articles, cascadeStep: 'cached' };
   }
 
   // Execute query with cascade fallback
-  const articles = await executeQuery(instruction);
+  const { articles, cascadeStep } = await executeQuery(instruction);
 
   // Cache the result
   const result: PerigonResult = {
@@ -216,25 +239,46 @@ async function fetchQueryArticles(instruction: QueryInstruction): Promise<Perigo
   };
   await setCachedQueryArticles(cacheType, cacheQuery, result);
 
-  return articles;
+  return { articles, cascadeStep };
 }
 
 // ─── Fetch & merge all queries for a topic ───────────────────────────
 
-async function fetchArticlesForTopic(resolved: ResolvedTopic): Promise<PreparedArticle[]> {
+interface TopicFetchResult {
+  articles: PreparedArticle[];
+  debugInfo: DebugInfo;
+}
+
+async function fetchArticlesForTopic(resolved: ResolvedTopic): Promise<TopicFetchResult> {
   // Fetch all queries in parallel
   const queryResults = await Promise.all(
     resolved.queries.map(q => fetchQueryArticles(q))
   );
 
+  // Collect debug info
+  const debugQueries: DebugQueryInfo[] = resolved.queries.map(q => ({
+    type: q.type,
+    query: q.query,
+    vectorQuery: q.vectorQuery,
+  }));
+  const cascadeSteps = queryResults.map(r => r.cascadeStep);
+
   // Interleave results from multiple queries for balanced coverage
-  const interleaved = interleaveArticles(queryResults);
+  const rawArticles = queryResults.map(r => r.articles);
+  const interleaved = interleaveArticles(rawArticles);
 
   // Deduplicate and take top 10
   const deduped = deduplicateArticles(interleaved);
   const top = deduped.slice(0, 10);
 
-  return prepareArticles(top, 10);
+  return {
+    articles: prepareArticles(top, 10),
+    debugInfo: {
+      queries: debugQueries,
+      articleCount: top.length,
+      cascadeStep: cascadeSteps.join(', '),
+    },
+  };
 }
 
 // ─── GPT-5-nano briefing assembly ────────────────────────────────────
@@ -351,7 +395,7 @@ export async function generateBriefing(
       return null;
     }
 
-    const articles = articleResult.value;
+    const { articles, debugInfo } = articleResult.value;
     if (articles.length === 0) {
       console.warn(`⚠️ No articles found for "${original.name}", skipping`);
       return null;
@@ -371,6 +415,7 @@ export async function generateBriefing(
         articles: settings.includeLinks !== false ? frontendArticles.slice(0, 5) : [],
         generatedAt: new Date().toISOString(),
         model,
+        debugInfo,
       } as Briefing;
     } catch (err) {
       console.error(`❌ LLM assembly failed for "${original.name}":`, err);
