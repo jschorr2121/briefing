@@ -372,8 +372,23 @@ export async function generateBriefing(
     resolved.map(r => fetchArticlesForTopic(r))
   );
 
+  // Build debug info from resolved topics (available even when briefing is cached)
+  const debugInfoByIndex: (DebugInfo | undefined)[] = topics.map((_, i) => {
+    const r = resolved[i];
+    if (!r) return undefined;
+    const fetchResult = articleResults[i];
+    const cascadeStep = fetchResult?.status === 'fulfilled' ? fetchResult.value.debugInfo.cascadeStep : undefined;
+    const articleCount = fetchResult?.status === 'fulfilled' ? fetchResult.value.debugInfo.articleCount : 0;
+    return {
+      queries: r.queries.map(q => ({ type: q.type, query: q.query, vectorQuery: q.vectorQuery })),
+      articleCount: articleCount ?? 0,
+      cascadeStep,
+    };
+  });
+
   // 3. Assemble ALL briefings with LLM in parallel
   const assemblyTasks = topics.map(async (original, i) => {
+    const topicDebugInfo = debugInfoByIndex[i];
     const sectionCacheId = original.name.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
     const cachedSection = await getCachedSection(sectionCacheId);
     if (cachedSection) {
@@ -386,6 +401,7 @@ export async function generateBriefing(
         articles: settings.includeLinks !== false ? cachedSection.articles.slice(0, 5) : [],
         generatedAt: cachedSection.generatedAt,
         model,
+        debugInfo: topicDebugInfo,
       } as Briefing;
     }
 
@@ -395,7 +411,7 @@ export async function generateBriefing(
       return null;
     }
 
-    const { articles, debugInfo } = articleResult.value;
+    const { articles } = articleResult.value;
     if (articles.length === 0) {
       console.warn(`⚠️ No articles found for "${original.name}", skipping`);
       return null;
@@ -415,7 +431,7 @@ export async function generateBriefing(
         articles: settings.includeLinks !== false ? frontendArticles.slice(0, 5) : [],
         generatedAt: new Date().toISOString(),
         model,
-        debugInfo,
+        debugInfo: topicDebugInfo,
       } as Briefing;
     } catch (err) {
       console.error(`❌ LLM assembly failed for "${original.name}":`, err);
