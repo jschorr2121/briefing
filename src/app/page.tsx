@@ -19,6 +19,8 @@ import { useSubscription } from '@/hooks/useSubscription';
 import type { Topic, Briefing, Settings, BriefingHistory } from '@/lib/types';
 import { generateId, getTotalReadingTime } from '@/lib/utils';
 
+const DEV_MODE = process.env.NEXT_PUBLIC_DEV_MODE === 'true';
+
 const DEFAULT_TOPICS: Topic[] = [];
 
 const DEFAULT_SETTINGS: Settings = {
@@ -52,8 +54,9 @@ export default function Home() {
   const voicePickerRef = useRef<HTMLDivElement>(null);
 
   // Subscription hook
-  const { isPro, isFree, canGenerate, usageCount, usageLimit, topicLimit, refresh: refreshSub } = useSubscription();
+  const { isPro, isFree, canGenerate, usageCount, usageLimit, topicLimit: rawTopicLimit, refresh: refreshSub } = useSubscription();
   const tier = isPro ? 'pro' as const : 'free' as const;
+  const topicLimit = DEV_MODE ? null : rawTopicLimit;
 
   // Load saved state from localStorage
   useEffect(() => {
@@ -287,6 +290,77 @@ export default function Home() {
     URL.revokeObjectURL(url);
   };
 
+  const downloadFullMarkdown = () => {
+    if (briefings.length === 0) return;
+
+    let md = '# Daily Briefing (Dev Export)\n\n';
+    md += `*Generated: ${lastGenerated?.toLocaleString()}*\n\n`;
+
+    for (const briefing of briefings) {
+      md += `---\n\n## ${briefing.emoji ? briefing.emoji + ' ' : ''}${briefing.topic}\n\n`;
+
+      // Dev mode: Perigon search parameters
+      const debug = (briefing as Record<string, unknown>).debugInfo as {
+        queries?: { type: string; query: string; vectorQuery?: string }[];
+        articleCount?: number;
+        cascadeStep?: string;
+      } | undefined;
+      if (debug) {
+        md += `> **Perigon Search Debug**\n>\n`;
+        if (debug.queries) {
+          for (const q of debug.queries) {
+            md += `> - **Type:** \`${q.type}\` | **Query:** \`${q.query}\`\n`;
+            if (q.vectorQuery) {
+              md += `>   - **Vector query:** \`${q.vectorQuery}\`\n`;
+            }
+          }
+        }
+        if (debug.cascadeStep) {
+          md += `> - **Cascade step:** \`${debug.cascadeStep}\`\n`;
+        }
+        md += `> - **Articles fetched:** ${debug.articleCount ?? 'N/A'}\n`;
+        md += '\n';
+      }
+
+      md += `${briefing.summary}\n\n`;
+
+      if (briefing.stories && briefing.stories.length > 0) {
+        for (const story of briefing.stories) {
+          md += `### ${story.headline}\n\n`;
+          if (story.source || story.date) {
+            const meta = [story.source, story.date].filter(Boolean).join(' | ');
+            md += `*${meta}*\n\n`;
+          }
+          for (const bullet of story.bullets) {
+            md += `- ${bullet}\n`;
+          }
+          if (story.url) {
+            md += `\n[Read more](${story.url})\n`;
+          }
+          md += '\n';
+        }
+      }
+
+      if (briefing.articles.length > 0) {
+        md += '### Sources\n\n';
+        for (const article of briefing.articles) {
+          md += `- [${article.title}](${article.url}) — ${article.source}\n`;
+        }
+        md += '\n';
+      }
+    }
+
+    const blob = new Blob([md], { type: 'text/markdown' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `briefing-full-${new Date().toISOString().split('T')[0]}.md`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <AuthGuard>
       <main className="min-h-screen pb-20">
@@ -445,6 +519,15 @@ export default function Home() {
                 <Download className="w-4 h-4" />
                 Export
               </button>
+              {DEV_MODE && (
+                <button
+                  onClick={downloadFullMarkdown}
+                  className="btn-secondary px-5 py-3 rounded-xl font-medium flex items-center gap-2 border border-yellow-500/30 text-yellow-400"
+                >
+                  <Download className="w-4 h-4" />
+                  Download MD
+                </button>
+              )}
             </>
           )}
         </div>

@@ -5,13 +5,12 @@ struct TierBadgeView: View {
 
     var body: some View {
         Text(tier.uppercased())
-            .font(.caption)
-            .fontWeight(.bold)
-            .foregroundStyle(tier == "pro" ? Color.accent : Color.textSecondary)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
+            .font(.system(size: 10, weight: .bold))
+            .foregroundStyle(tier == "pro" ? Color.accent : Color.textMuted)
+            .padding(.horizontal, 6)
+            .padding(.vertical, 3)
             .background(
-                (tier == "pro" ? Color.accent : Color.textSecondary).opacity(0.15)
+                (tier == "pro" ? Color.accent : Color.textMuted).opacity(0.12)
             )
             .clipShape(Capsule())
     }

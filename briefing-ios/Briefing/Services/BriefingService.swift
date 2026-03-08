@@ -43,7 +43,8 @@ enum BriefingService {
         return try await APIClient.shared.requestData(
             "POST",
             path: "/api/audio",
-            body: AudioRequest(briefings: briefings, voice: voice)
+            body: AudioRequest(briefings: briefings, voice: voice),
+            timeoutInterval: 120
         )
     }
 

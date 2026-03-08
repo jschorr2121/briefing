@@ -70,6 +70,7 @@ Visit `http://localhost:3000`.
 | `SMTP_USER` | Gmail address for sending emails | For email |
 | `SMTP_PASS` | Gmail app password | For email |
 | `NEWS_SOURCE` | `perigon` (default), `openai`, or `perplexity` | No |
+| `NEXT_PUBLIC_DEV_MODE` | `true` to enable dev mode (unlimited topics, full markdown download) | No |
 
 ## Project Structure
 

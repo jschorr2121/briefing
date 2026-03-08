@@ -17,6 +17,18 @@ struct Article: Codable, Identifiable, Equatable {
     let snippet: String?
 }
 
+struct DebugQueryInfo: Codable, Equatable {
+    let type: String
+    let query: String
+    let vectorQuery: String?
+}
+
+struct DebugInfo: Codable, Equatable {
+    let queries: [DebugQueryInfo]
+    let articleCount: Int?
+    let cascadeStep: String?
+}
+
 struct Briefing: Codable, Identifiable, Equatable {
     var id: String { "\(topic)-\(generatedAt)" }
     let topic: String
@@ -27,6 +39,7 @@ struct Briefing: Codable, Identifiable, Equatable {
     let generatedAt: String
     let readingTime: Int?
     let model: String?
+    let debugInfo: DebugInfo?
 
     var storyList: [StoryCard] {
         stories ?? []

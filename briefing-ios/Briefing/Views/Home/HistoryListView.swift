@@ -21,14 +21,38 @@ struct HistoryListView: View {
                         Button {
                             vm.loadFromHistory(entry)
                         } label: {
-                            VStack(alignment: .leading, spacing: 6) {
-                                Text(entry.topicNames.joined(separator: ", "))
-                                    .font(.bodyRegular)
-                                    .foregroundStyle(Color.textPrimary)
-                                    .lineLimit(1)
+                            HStack(spacing: 12) {
+                                Image(systemName: "newspaper")
+                                    .font(.system(size: 14))
+                                    .foregroundStyle(Color.accent)
+                                    .frame(width: 32, height: 32)
+                                    .background(Color.accent.opacity(0.1))
+                                    .clipShape(RoundedRectangle(cornerRadius: 8))
 
-                                Text(formatDate(entry.generatedAt))
-                                    .font(.bodySmall)
+                                VStack(alignment: .leading, spacing: 4) {
+                                    // Topic names as title
+                                    let topics = entry.topicNames.isEmpty
+                                        ? entry.briefings.map(\.topic)
+                                        : entry.topicNames
+
+                                    Text(topics.isEmpty ? "Briefing" : topics.joined(separator: ", "))
+                                        .font(.bodyRegular)
+                                        .foregroundStyle(Color.textPrimary)
+                                        .lineLimit(1)
+
+                                    HStack(spacing: 8) {
+                                        Text(formatDate(entry.generatedAt))
+                                        Text("\u{2022}")
+                                        Text("\(entry.briefings.count) topics")
+                                    }
+                                    .font(.caption)
+                                    .foregroundStyle(Color.textMuted)
+                                }
+
+                                Spacer()
+
+                                Image(systemName: "chevron.right")
+                                    .font(.caption)
                                     .foregroundStyle(Color.textMuted)
                             }
                             .padding(.vertical, 4)

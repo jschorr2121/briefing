@@ -34,12 +34,5 @@ struct GenerateButtonView: View {
         }
         .disabled(!vm.canGenerate)
         .padding(.horizontal)
-
-        // Usage indicator for free users
-        if vm.tier == "free", let limit = vm.usageLimit {
-            Text("\(vm.usageUsed)/\(limit) briefings used today")
-                .font(.bodySmall)
-                .foregroundStyle(Color.textMuted)
-        }
     }
 }

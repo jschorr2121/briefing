@@ -333,8 +333,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No topics provided' }, { status: 400 });
     }
 
-    // Cap topics based on user's limit (null = unlimited for admin)
-    const topicLimit = getTopicLimit(email);
+    // Cap topics based on user's limit (null = unlimited for admin/dev)
+    const devMode = process.env.NEXT_PUBLIC_DEV_MODE === 'true';
+    const topicLimit = devMode ? null : getTopicLimit(email);
     const cappedTopics = topicLimit ? topics.slice(0, topicLimit) : topics;
 
     // ── Perigon pipeline (default) ────────────────────────────────

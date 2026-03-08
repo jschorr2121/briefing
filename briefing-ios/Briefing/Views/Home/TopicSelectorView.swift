@@ -8,7 +8,7 @@ struct TopicSelectorView: View {
             // Input row
             HStack(spacing: 8) {
                 TextField(
-                    vm.atTopicLimit ? "Maximum \(vm.topicLimit) topics" : "Add a topic...",
+                    vm.atTopicLimit ? "Maximum \(vm.topicLimit) topics reached" : "Add any topics you'd like in your briefing...",
                     text: $vm.newTopicName
                 )
                     .font(.bodyRegular)
@@ -16,9 +16,9 @@ struct TopicSelectorView: View {
                     .padding(.horizontal, 14)
                     .padding(.vertical, 12)
                     .background(Color.bgCard)
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
                     .overlay(
-                        RoundedRectangle(cornerRadius: 10)
+                        RoundedRectangle(cornerRadius: 12)
                             .stroke(Color.borderDefault, lineWidth: 1)
                     )
                     .submitLabel(.done)
@@ -29,17 +29,23 @@ struct TopicSelectorView: View {
                 Button {
                     vm.addTopic()
                 } label: {
-                    Image(systemName: "plus.circle.fill")
-                        .font(.title2)
-                        .foregroundStyle(Color.accent)
+                    Image(systemName: "plus")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundStyle(.white)
+                        .frame(width: 32, height: 32)
+                        .background(Color.accent)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
                 }
                 .disabled(vm.newTopicName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || vm.atTopicLimit)
+                .opacity(vm.newTopicName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || vm.atTopicLimit ? 0.3 : 1)
             }
 
             // Topic count
-            Text("\(vm.topics.count)/\(vm.topicLimit) topics")
-                .font(.caption)
-                .foregroundStyle(Color.textMuted)
+            if vm.topicLimit > 0 {
+                Text("\(vm.topics.count)/\(vm.topicLimit) topics")
+                    .font(.caption)
+                    .foregroundStyle(Color.textMuted)
+            }
 
             // Selected topics
             if !vm.topics.isEmpty {
@@ -47,7 +53,6 @@ struct TopicSelectorView: View {
                     ForEach(vm.topics) { topic in
                         TopicChipView(
                             topic: topic,
-                            onToggle: { vm.toggleTopic(topic) },
                             onRemove: { vm.removeTopic(topic) }
                         )
                     }
@@ -60,27 +65,31 @@ struct TopicSelectorView: View {
             }
 
             if !remainingSuggestions.isEmpty && !vm.atTopicLimit {
-                VStack(alignment: .leading, spacing: 6) {
-                    Text("Suggestions")
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Suggestions:")
                         .font(.caption)
                         .foregroundStyle(Color.textMuted)
 
-                    FlowLayout(spacing: 6) {
+                    FlowLayout(spacing: 8) {
                         ForEach(remainingSuggestions) { topic in
                             Button {
                                 vm.addSuggestedTopic(topic)
                             } label: {
-                                Text("\(topic.emoji) \(topic.name)")
-                                    .font(.bodySmall)
-                                    .foregroundStyle(Color.textSecondary)
-                                    .padding(.horizontal, 10)
-                                    .padding(.vertical, 6)
-                                    .background(Color.bgCard.opacity(0.6))
-                                    .clipShape(Capsule())
-                                    .overlay(
-                                        Capsule()
-                                            .strokeBorder(Color.borderDefault.opacity(0.5), style: StrokeStyle(lineWidth: 1, dash: [4]))
-                                    )
+                                HStack(spacing: 4) {
+                                    Text("+")
+                                        .font(.bodySmall)
+                                    Text(topic.name)
+                                        .font(.bodySmall)
+                                }
+                                .foregroundStyle(Color.textSecondary)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 8)
+                                .background(Color.bgCard)
+                                .clipShape(Capsule())
+                                .overlay(
+                                    Capsule()
+                                        .stroke(Color.borderDefault, lineWidth: 1)
+                                )
                             }
                         }
                     }
@@ -93,35 +102,26 @@ struct TopicSelectorView: View {
 
 struct TopicChipView: View {
     let topic: Topic
-    let onToggle: () -> Void
     let onRemove: () -> Void
 
     var body: some View {
         HStack(spacing: 6) {
-            Button {
-                onToggle()
-            } label: {
-                Text("\(topic.emoji) \(topic.name)")
-                    .font(.chipLabel)
-                    .foregroundStyle(topic.enabled ? .white : Color.textSecondary)
-            }
+            Text(topic.name)
+                .font(.chipLabel)
+                .foregroundStyle(.white)
 
             Button {
                 onRemove()
             } label: {
                 Image(systemName: "xmark")
-                    .font(.caption2.bold())
-                    .foregroundStyle(topic.enabled ? .white.opacity(0.7) : Color.textMuted)
+                    .font(.system(size: 10, weight: .bold))
+                    .foregroundStyle(.white.opacity(0.7))
             }
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
-        .background(topic.enabled ? Color.accent : Color.bgCard)
+        .background(Color.accent)
         .clipShape(Capsule())
-        .overlay(
-            Capsule()
-                .stroke(topic.enabled ? Color.accentLight : Color.borderDefault, lineWidth: 1)
-        )
     }
 }
 

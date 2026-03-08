@@ -55,16 +55,18 @@ actor APIClient {
         _ method: String,
         path: String,
         body: (any Encodable)? = nil,
-        retries: Int = 2
+        retries: Int = 2,
+        timeoutInterval: TimeInterval? = nil
     ) async throws -> Data {
-        try await performRequest(method, path: path, body: body, retries: retries)
+        try await performRequest(method, path: path, body: body, retries: retries, timeoutInterval: timeoutInterval)
     }
 
     private func performRequest(
         _ method: String,
         path: String,
         body: (any Encodable)?,
-        retries: Int
+        retries: Int,
+        timeoutInterval: TimeInterval? = nil
     ) async throws -> Data {
         guard let url = URL(string: "\(baseURL)\(path)") else {
             throw APIError.badRequest("Invalid URL")
@@ -73,6 +75,9 @@ actor APIClient {
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = method
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        if let timeout = timeoutInterval {
+            urlRequest.timeoutInterval = timeout
+        }
 
         // Attach bearer token if available
         if let token = await AuthManager.shared.token {

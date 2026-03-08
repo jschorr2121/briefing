@@ -40,12 +40,17 @@ struct HomeView: View {
                 heroSection
                     .fadeIn()
 
+                // Free tier usage hint
+                if vm.tier == "free", vm.usageUsed > 0 {
+                    usageHint
+                }
+
                 // Topic selector
                 TopicSelectorView(vm: vm)
                     .fadeIn(delay: 0.1)
 
-                // Generate button
-                GenerateButtonView(vm: vm)
+                // Primary actions row
+                primaryActions
                     .fadeIn(delay: 0.2)
 
                 // Secondary actions
@@ -75,7 +80,7 @@ struct HomeView: View {
                 if vm.isGenerating {
                     LoadingSkeletonView()
                 } else if !vm.briefings.isEmpty {
-                    briefingStats
+                    briefingHeader
                         .fadeIn()
 
                     ForEach(Array(vm.briefings.enumerated()), id: \.element.id) { index, briefing in
@@ -91,12 +96,17 @@ struct HomeView: View {
             .padding(.vertical)
         }
         .background(Color.bgPrimary)
-        .navigationTitle("")
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
-                Text("Briefing")
-                    .font(.sectionTitle)
-                    .foregroundStyle(Color.textPrimary)
+                HStack(spacing: 8) {
+                    Text("Briefing")
+                        .font(.system(size: 20, weight: .bold, design: .rounded))
+                        .foregroundStyle(Color.textPrimary)
+                        .fixedSize()
+
+                    TierBadgeView(tier: vm.tier)
+                }
             }
             ToolbarItem(placement: .topBarTrailing) {
                 HStack(spacing: 12) {
@@ -146,16 +156,51 @@ struct HomeView: View {
 
     private var heroSection: some View {
         VStack(spacing: 8) {
-            Text("Your Daily Briefing")
+            Text("Your Daily News Brief")
                 .font(.heroTitle)
                 .foregroundStyle(Color.textPrimary)
 
-            Text("Select your topics and generate a personalized news briefing")
+            Text("Select topics, generate a personalized briefing, stay informed.")
                 .font(.bodyRegular)
                 .foregroundStyle(Color.textSecondary)
                 .multilineTextAlignment(.center)
         }
         .padding(.horizontal)
+    }
+
+    private var usageHint: some View {
+        HStack(spacing: 4) {
+            Text("\(vm.usageUsed)/\(vm.usageLimit ?? 3) free briefings used today")
+                .font(.caption)
+                .foregroundStyle(Color.textMuted)
+        }
+    }
+
+    private var primaryActions: some View {
+        VStack(spacing: 12) {
+            // Generate button
+            GenerateButtonView(vm: vm)
+
+            // Schedule + Settings row
+            HStack(spacing: 12) {
+                NavigationLink {
+                    ScheduleView()
+                } label: {
+                    Label("Schedule", systemImage: "calendar")
+                        .font(.chipLabel)
+                }
+                .buttonStyle(SecondaryActionStyle())
+
+                Button {
+                    vm.showSettings = true
+                } label: {
+                    Label("Settings", systemImage: "gearshape")
+                        .font(.chipLabel)
+                }
+                .buttonStyle(SecondaryActionStyle())
+            }
+            .padding(.horizontal)
+        }
     }
 
     private var secondaryActions: some View {
@@ -185,35 +230,68 @@ struct HomeView: View {
 
             // Export
             ShareLink(item: vm.exportMarkdown()) {
-                Label("Export", systemImage: "square.and.arrow.up")
+                Label("Export", systemImage: "square.and.arrow.down")
                     .font(.chipLabel)
             }
             .buttonStyle(SecondaryActionStyle())
+
+            #if DEBUG
+            // Dev: full markdown with Perigon search params
+            ShareLink(item: vm.exportFullMarkdown()) {
+                Label("Download MD", systemImage: "arrow.down.doc")
+                    .font(.chipLabel)
+            }
+            .buttonStyle(DevActionStyle())
+            #endif
         }
         .padding(.horizontal)
     }
 
-    private var briefingStats: some View {
-        HStack(spacing: 16) {
-            Label("\(vm.briefings.count) topics", systemImage: "text.justify.left")
-            Label(
-                "\(vm.briefings.flatMap(\.storyList).count) stories",
-                systemImage: "doc.text"
-            )
+    private var briefingHeader: some View {
+        HStack(spacing: 12) {
+            HStack(spacing: 6) {
+                Image(systemName: "newspaper")
+                    .font(.system(size: 16))
+                    .foregroundStyle(Color.accent)
+                Text("Your News Briefing")
+                    .font(.cardTitle)
+                    .foregroundStyle(Color.textPrimary)
+            }
+
+            Spacer()
+
+            // Stats
+            HStack(spacing: 12) {
+                Label("\(vm.briefings.count) topics", systemImage: "text.justify.left")
+                Label(
+                    "\(vm.briefings.flatMap(\.storyList).count) stories",
+                    systemImage: "doc.text"
+                )
+            }
+            .font(.caption)
+            .foregroundStyle(Color.textMuted)
         }
-        .font(.bodySmall)
-        .foregroundStyle(Color.textMuted)
         .padding(.horizontal)
     }
 
     private var emptyState: some View {
         VStack(spacing: 16) {
             Image(systemName: "newspaper")
-                .font(.system(size: 48))
+                .font(.system(size: 40))
                 .foregroundStyle(Color.textMuted)
-            Text("Select topics above and tap Generate")
+                .frame(width: 80, height: 80)
+                .background(Color.bgCard)
+                .clipShape(Circle())
+
+            Text("Ready to get informed?")
+                .font(.cardTitle)
+                .foregroundStyle(Color.textPrimary)
+
+            Text("Select your topics above and tap \"Generate Briefing\" to get your personalized news summary.")
                 .font(.bodyRegular)
                 .foregroundStyle(Color.textSecondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 40)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 48)
@@ -226,13 +304,29 @@ struct SecondaryActionStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .foregroundStyle(Color.textSecondary)
-            .padding(.horizontal, 14)
-            .padding(.vertical, 10)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
             .background(Color.bgCard)
-            .clipShape(RoundedRectangle(cornerRadius: 10))
+            .clipShape(RoundedRectangle(cornerRadius: 12))
             .overlay(
-                RoundedRectangle(cornerRadius: 10)
+                RoundedRectangle(cornerRadius: 12)
                     .stroke(Color.borderDefault, lineWidth: 1)
+            )
+            .scaleEffect(configuration.isPressed ? 0.96 : 1)
+    }
+}
+
+struct DevActionStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .foregroundStyle(Color.warning)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .background(Color.bgCard)
+            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(Color.warning.opacity(0.3), lineWidth: 1)
             )
             .scaleEffect(configuration.isPressed ? 0.96 : 1)
     }
