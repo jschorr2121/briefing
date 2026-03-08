@@ -1,0 +1,2434 @@
+[
+  {
+    "topic": "Artificial Intelligence",
+    "category": "Broad/Popular",
+    "storyCount": 5,
+    "articleCount": 5,
+    "generatedAt": "2026-03-07T22:47:54.604Z",
+    "briefingRaw": {
+      "topic": "Artificial Intelligence",
+      "emoji": "🤖",
+      "summary": "Recent developments in artificial intelligence span productivity gains, educational initiatives, and expanding global competition. AI applications are becoming integral to national security and corporate strategy, while educational institutions respond with new programs aimed at responsible AI use and critical thinking.",
+      "stories": [
+        {
+          "headline": "Productivity Surges Amid Increased AI Investment",
+          "bullets": [
+            "Labor productivity rose 2.8% in Q4 2025, aided by AI investments.",
+            "This increase supports Federal Reserve views on labor market stability.",
+            "Companies are using AI to reduce staffing reliance, affecting hiring trends."
+          ],
+          "source": "Los Angeles Times",
+          "url": "https://www.latimes.com/business/story/2026-03-05/productivity-surges-on-investment-in-artificial-intelligence",
+          "date": "Mar 5, 2026"
+        },
+        {
+          "headline": "US-China AI Rivalry Intensifies in Africa",
+          "bullets": [
+            "Africa emerges as a key battleground in US-China AI competition.",
+            "China’s Belt and Road Initiative maintains influence, but US investments are increasing.",
+            "Only 14.1% of Africa's population currently uses AI, contrasting with 24.7% in the Global North."
+          ],
+          "source": "South China Morning Post",
+          "url": "https://www.scmp.com/news/us/article/3345483/africa-emerges-new-arena-us-china-competition-over-artificial-intelligence?pgtype=live",
+          "date": "Mar 4, 2026"
+        },
+        {
+          "headline": "AI's Role in National Security Sparks Debate",
+          "bullets": [
+            "Tensions arise between Anthropic and the Pentagon over AI usage restrictions.",
+            "AI is increasingly viewed as strategic infrastructure in national security.",
+            "The debate highlights the evolving relationship between tech firms and defense agencies."
+          ],
+          "source": "Forbes",
+          "url": "https://www.forbes.com/sites/emilsayegh/2026/03/04/anthropic-the-pentagon-and-the-new-battle-over-artificial-intelligence/",
+          "date": "Mar 4, 2026"
+        },
+        {
+          "headline": "Hilbert College Launches Institute for Applied AI Education",
+          "bullets": [
+            "New Institute aims to prepare professionals for responsible AI use.",
+            "Courses include AI ethics, generative AI analysis, and critical thinking.",
+            "Program fosters AI competence while addressing environmental impacts."
+          ],
+          "source": "Buffalo Business First",
+          "url": "https://www.bizjournals.com/buffalo/news/2026/03/06/hilbert-institute-applied-evolving-tech-landscape.html",
+          "date": "Mar 6, 2026"
+        },
+        {
+          "headline": "AI Patent Challenges Under Section 112(a) Explained",
+          "bullets": [
+            "US Patent Office faces difficulties with 'black box' AI technology disclosures.",
+            "Opacity of AI decision-making complicates traditional patent requirements.",
+            "Recent appeals emphasize the unpredictable behavior of AI training outcomes."
+          ],
+          "source": "Reuters",
+          "url": "https://www.reuters.com/legal/legalindustry/disclosing-undisclosable-section-112a-challenges-artificial-intelligence-patents--pracin-2026-03-06/",
+          "date": "Mar 6, 2026"
+        }
+      ],
+      "articles": [
+        {
+          "title": "Your Artificial Intelligence (AI) questions answered",
+          "source": "bbc.com",
+          "url": "https://www.bbc.com/news/articles/c20jd718x7vo",
+          "snippet": "The north-east of England and Cumbria is becoming a hub for artificial intelligence (AI) development and use. However, users have been asking how to u"
+        },
+        {
+          "title": "Artificial intelligence",
+          "source": "apnews.com",
+          "url": "https://apnews.com/hub/artificial-intelligence",
+          "snippet": "The Associated Press (AP) is known for its fast, accurate and unbiased coverage of the news, and its technology. The Associated Press has been critici"
+        },
+        {
+          "title": "Productivity surges on investment in artificial intelligence",
+          "source": "latimes.com",
+          "url": "https://www.latimes.com/business/story/2026-03-05/productivity-surges-on-investment-in-artificial-intelligence",
+          "snippet": "Labor productivity rose in the fourth quarter by more than forecast, marking the strongest advance in five years. The Bureau of Labor Statistics repor"
+        },
+        {
+          "title": "Anthropic, The Pentagon And The New Battle Over Artificial Intelligence",
+          "source": "forbes.com",
+          "url": "https://www.forbes.com/sites/emilsayegh/2026/03/04/anthropic-the-pentagon-and-the-new-battle-over-artificial-intelligence/",
+          "snippet": "Artificial intelligence is becoming a central part of national security strategy, with tensions between Anthropic and the Department of Defense over u"
+        },
+        {
+          "title": "Disclosing the undisclosable: Section 112(a) challenges for artificial intelligence patents",
+          "source": "reuters.com",
+          "url": "https://www.reuters.com/legal/legalindustry/disclosing-undisclosable-section-112a-challenges-artificial-intelligence-patents--pracin-2026-03-06/",
+          "snippet": "The US Patent Office is dealing with challenges in Section 112(a) challenges for artificial intelligence patents. The complexity of AI decisions and o"
+        }
+      ],
+      "generatedAt": "2026-03-07T22:47:54.604Z",
+      "model": "gpt-4o-mini"
+    },
+    "judge": {
+      "scores": {
+        "relevance": {
+          "score": 10,
+          "reason": "All stories address various aspects of artificial intelligence, aligning well with the topic."
+        },
+        "recency": {
+          "score": 9,
+          "reason": "The stories are from March 4-6, 2026, which is within the 1-3 day range."
+        },
+        "summary_quality": {
+          "score": 8,
+          "reason": "Summary is informative and generally well-written, but could be more concise."
+        },
+        "source_quality": {
+          "score": 9,
+          "reason": "Reputable sources include Los Angeles Times, South China Morning Post, Forbes, and Reuters."
+        },
+        "story_diversity": {
+          "score": 9,
+          "reason": "Stories cover diverse angles of AI, including productivity, politics, education, and law."
+        },
+        "headline_quality": {
+          "score": 8,
+          "reason": "Headlines are clear and relevant but could be more engaging."
+        },
+        "factual_consistency": {
+          "score": 10,
+          "reason": "Details in the bullets align well with the headlines and topic."
+        },
+        "coverage_completeness": {
+          "score": 8,
+          "reason": "Covers major aspects but might miss some new applications in consumer tech or healthcare."
+        },
+        "readability": {
+          "score": 9,
+          "reason": "The text is generally well-structured and easy to scan."
+        },
+        "url_quality": {
+          "score": 9,
+          "reason": "URLs appear to link directly to specific articles, not homepages."
+        }
+      },
+      "overall_notes": "This briefing offers a comprehensive and timely overview of recent developments in AI, supported by high-quality sources and diverse perspectives. The presentation is generally clear, though bullet summaries could be slightly more concise."
+    }
+  },
+  {
+    "topic": "US Politics",
+    "category": "Broad/Popular",
+    "storyCount": 5,
+    "articleCount": 5,
+    "generatedAt": "2026-03-07T22:48:16.577Z",
+    "briefingRaw": {
+      "topic": "US Politics",
+      "emoji": "🏛️",
+      "summary": "Recent developments in U.S. politics show a mix of controversies surrounding foreign policy, media criticism, and public responses to the administration's actions. The White House faces backlash over propaganda efforts and criticism from both national and international fronts regarding military strategies and operations.",
+      "stories": [
+        {
+          "headline": "White House Issues Controversial Propaganda Video Featuring Morally Ambiguous Characters",
+          "bullets": [
+            "The video promotes 'justice the American way' for Iran using Hollywood tropes.",
+            "Features morally suspect characters leading to widespread mockery online.",
+            "Critics include notable artists previously at odds with the White House."
+          ],
+          "source": "The Guardian",
+          "url": "https://www.theguardian.com/us-news/2026/mar/06/white-house-propaganda-video-characters",
+          "date": "Mar 6, 2026"
+        },
+        {
+          "headline": "White House Defends Evacuation Strategies Amid Criticism Over Preparations",
+          "bullets": [
+            "Accusations of inadequate preparations for U.S. citizens during Middle East evacuations.",
+            "Over 17,500 Americans have returned safely; improvements to State Department operations announced.",
+            "Official insists on a proactive approach to ensure citizen safety and communication."
+          ],
+          "source": "Washington Examiner",
+          "url": "https://www.washingtonexaminer.com/news/world/4480530/white-house-state-department-defend-evacuation-strategies-us-citizens/",
+          "date": "Mar 4, 2026"
+        },
+        {
+          "headline": "Spain Denies Collaboration with U.S. Military in Iran Conflict",
+          "bullets": [
+            "Spanish government refutes White House claims of military cooperation over Iran.",
+            "Opposes the war and affirms its position against using military force.",
+            "Spanish officials highlight the need for lawful resolutions to global conflicts."
+          ],
+          "source": "Al Jazeera",
+          "url": "https://www.aljazeera.com/news/2026/3/4/spain-denies-white-house-claim-it-agreed-to-cooperate-with-us-military",
+          "date": "Mar 4, 2026"
+        },
+        {
+          "headline": "White House Officials Defend Remarks by Defense Secretary Pete Hegseth",
+          "bullets": [
+            "Criticism arose following Hegseth's comments about military casualties.",
+            "Press secretary defends Hegseth, claiming media misrepresentation.",
+            "Controversy highlights ongoing disputes over media portrayal of the military."
+          ],
+          "source": "Newsweek",
+          "url": "https://www.newsweek.com/white-house-defends-hegseth-media-troop-deaths-11622308",
+          "date": "Mar 4, 2026"
+        },
+        {
+          "headline": "Olympic Gold Medalist Amber Glenn Declines Potential White House Invitation",
+          "bullets": [
+            "Glenn joins numerous athletes who've turned down White House visits post-victory.",
+            "Continues a trend of avoidance among sports figures regarding the current administration.",
+            "Reflects a broader sentiment within the athletic community against political affiliations."
+          ],
+          "source": "Fox News",
+          "url": "https://www.foxnews.com/sports/us-gold-medalist-amber-glenn-says-she-would-decline-white-house-invitation",
+          "date": "Mar 6, 2026"
+        }
+      ],
+      "articles": [
+        {
+          "title": "White House ‘slopaganda’ promoting US justice features morally suspect characters",
+          "source": "theguardian.com",
+          "url": "https://www.theguardian.com/us-news/2026/mar/06/white-house-propaganda-video-characters",
+          "snippet": "The White House has released a Hollywood-themed propaganda video promising \"justice the American way\" for Iran, featuring movie stars from Australia, "
+        },
+        {
+          "title": "US politics + News",
+          "source": "theguardian.com",
+          "url": "https://www.theguardian.com/us-news/us-politics+tone/news",
+          "snippet": "Latest news, sport, business, comment, analysis and reviews from the Guardian, the world's leading liberal voice"
+        },
+        {
+          "title": "US politics + Features",
+          "source": "theguardian.com",
+          "url": "https://www.theguardian.com/us-news/us-politics+tone/features",
+          "snippet": "Latest news, sport, business, comment, analysis and reviews from the Guardian, the world's leading liberal voice"
+        },
+        {
+          "title": "White House reacts to Pete Hegseth's remarks over US troop deaths",
+          "source": "newsweek.com",
+          "url": "https://www.newsweek.com/white-house-defends-hegseth-media-troop-deaths-11622308",
+          "snippet": "The White House has responded to criticism of Defense Secretary Pete Hegseth, who accused the media of mischaracterizing his remarks and of attempting"
+        },
+        {
+          "title": "White House and State Department defend evacuation strategies for US citizens",
+          "source": "washingtonexaminer.com",
+          "url": "https://www.washingtonexaminer.com/news/world/4480530/white-house-state-department-defend-evacuation-strategies-us-citizens/",
+          "snippet": "The US government is defending its evacuation operations following the Iran strikes, despite accusations that State Department preparations were inade"
+        }
+      ],
+      "generatedAt": "2026-03-07T22:48:16.577Z",
+      "model": "gpt-4o-mini"
+    },
+    "judge": {
+      "scores": {
+        "relevance": {
+          "score": 10,
+          "reason": "All stories directly relate to US politics, covering domestic and international controversies involving the White House."
+        },
+        "recency": {
+          "score": 9,
+          "reason": "Most stories are from the past 3 days, with one story dating back three days, which is acceptable."
+        },
+        "summary_quality": {
+          "score": 8,
+          "reason": "Bullets are concise and informative, although some could be slightly more detailed."
+        },
+        "source_quality": {
+          "score": 9,
+          "reason": "Reputable sources like The Guardian, Newsweek, and Al Jazeera are used."
+        },
+        "story_diversity": {
+          "score": 8,
+          "reason": "The stories cover various aspects of politics, from international relations to sports."
+        },
+        "headline_quality": {
+          "score": 8,
+          "reason": "Headlines are clear and engaging, although some are a bit long."
+        },
+        "factual_consistency": {
+          "score": 9,
+          "reason": "Bullets accurately reflect the headlines and topic."
+        },
+        "coverage_completeness": {
+          "score": 7,
+          "reason": "While the briefing covers significant stories, it might miss some finer details of ongoing political issues."
+        },
+        "readability": {
+          "score": 8,
+          "reason": "The briefing is well-organized and easy to scan, appropriate for the topic."
+        },
+        "url_quality": {
+          "score": 9,
+          "reason": "URLs mostly lead to specific articles, ensuring authenticity and specificity."
+        }
+      },
+      "overall_notes": "The briefing is well-constructed with a good variety of sources and stories, maintaining relevance and recency. It effectively highlights notable political events and reactions, though slight improvements in summarization details and headline length could enhance it further."
+    }
+  },
+  {
+    "topic": "Stock Market",
+    "category": "Broad/Popular",
+    "storyCount": 5,
+    "articleCount": 5,
+    "generatedAt": "2026-03-07T22:48:34.991Z",
+    "briefingRaw": {
+      "topic": "Stock Market",
+      "emoji": "📈",
+      "summary": "The stock market is experiencing volatility due to mixed economic signals and geopolitical tensions. The unexpected drop in payrolls has increased concerns about inflation and interest rates, affecting investor sentiment. Meanwhile, key index rebalances may reshape market dynamics as certain stocks are added to the S&P 500.",
+      "stories": [
+        {
+          "headline": "Shock Jobs Report Causes S&P 500 Futures to Plummet",
+          "bullets": [
+            "February payrolls fell unexpectedly by 92,000, alarming Wall Street.",
+            "S&P 500 futures deepen losses in response to the jobs report.",
+            "The Federal Reserve faces tough decisions amid rising cost pressures."
+          ],
+          "source": "Yahoo Finance",
+          "url": "https://finance.yahoo.com/m/05e3bdcf-8faa-33e4-99e4-ac2b456cb300/jobs-report%3A-payrolls-dive-in.html?.tsrc=rss",
+          "date": "Mar 6, 2026"
+        },
+        {
+          "headline": "Equal-Weight S&P 500 ETF Outperforms Traditional Index",
+          "bullets": [
+            "Invesco S&P 500 Equal Weight ETF up over 5% year-to-date.",
+            "Compared to S&P 500, it has lower tech allocation and multiple P/E ratios.",
+            "Investors seeking diversification find the equal-weighted index more appealing."
+          ],
+          "source": "Yahoo Finance",
+          "url": "https://finance.yahoo.com/news/equal-weight-p-500-quietly-133117336.html",
+          "date": "Mar 5, 2026"
+        },
+        {
+          "headline": "US-Iran Tensions Highlight Market Concentration Risks",
+          "bullets": [
+            "The U.S.-Iran conflict raises stakes for stocks linked to the AI sector.",
+            "Emerging Markets ETF's heavy tech exposure prompts concerns about volatility.",
+            "Analysts advocate for balanced investment strategies across various regions."
+          ],
+          "source": "CNBC",
+          "url": "https://www.cnbc.com/2026/03/06/iran-war-oil-energy-emerging-markets-stocks-south-korea.html",
+          "date": "Mar 6, 2026"
+        },
+        {
+          "headline": "S&P 500 Welcomes New Members Amid Index Rebalance",
+          "bullets": [
+            "Vertiv Holdings and others will join the S&P 500 in an upcoming rebalance.",
+            "This move aims to better represent market-cap ranges within different indices.",
+            "Replacements follow a deal soon to close, impacting trading dynamics."
+          ],
+          "source": "Bloomberg",
+          "url": "https://www.bloomberg.com/news/articles/2026-03-06/vertiv-lumentum-coherent-echostar-to-join-s-p-500-this-month",
+          "date": "Mar 6, 2026"
+        },
+        {
+          "headline": "S&P 500 Drops Amid Iran Conflict and Retail Earnings Reports",
+          "bullets": [
+            "The S&P 500 index declines as Middle Eastern tensions escalate.",
+            "Target and Best Buy report mixed Q4 earnings affecting retail sector mood.",
+            "Overall market sentiment is jittery in response to geopolitical events."
+          ],
+          "source": "Los Angeles Times",
+          "url": "https://www.latimes.com/0000019c-b59f-ddad-ad9c-f5ff8aa60000-123",
+          "date": "Mar 4, 2026"
+        }
+      ],
+      "articles": [
+        {
+          "title": "Jobs Report: Payrolls Dive In Shock To Wall Street; S&P 500 Futures Sink (Live Coverage)",
+          "source": "finance.yahoo.com",
+          "url": "https://finance.yahoo.com/m/05e3bdcf-8faa-33e4-99e4-ac2b456cb300/jobs-report%3A-payrolls-dive-in.html?.tsrc=rss",
+          "snippet": "The February jobs report showed payrolls unexpectedly fell by 92,000. S&P 500 futures added to losses. The Federal Reserve is in a tough spot."
+        },
+        {
+          "title": "US Stock Market Today S&P 500 Futures Edge Lower On Stubborn Inflation Jitters",
+          "source": "finance.yahoo.com",
+          "url": "https://finance.yahoo.com/news/us-stock-market-today-p-100942451.html",
+          "snippet": "US stock futures are slightly lower this morning due to inflation concerns and strong signals from Asia. The US 10-year government bond yield indicate"
+        },
+        {
+          "title": "US Stock Market Today S&P 500 Futures Edge Higher As Traders Watch Jobs Data",
+          "source": "finance.yahoo.com",
+          "url": "https://finance.yahoo.com/news/us-stock-market-today-p-100942529.html",
+          "snippet": "US stock futures are slightly higher this morning as investors weigh a cooler jobs outlook against rising cost pressures. February nonfarm payrolls ar"
+        },
+        {
+          "title": "The Equal-Weight S&P 500 is Quietly Crushing the Market in 2026",
+          "source": "finance.yahoo.com",
+          "url": "https://finance.yahoo.com/news/equal-weight-p-500-quietly-133117336.html",
+          "snippet": "Invesco S&P 500 Equal Weight ETF (RSP) is up 5%+ year-to-date, outperforming the S.P 500, with 16% tech allocation compared to S.'tp 500's 34-35%, 22."
+        },
+        {
+          "title": "U.S.-Iran war exposes big market concentration risk. It isn't in S&P 500 stocks",
+          "source": "cnbc.com",
+          "url": "https://www.cnbc.com/2026/03/06/iran-war-oil-energy-emerging-markets-stocks-south-korea.html",
+          "snippet": "The U.S.-Iran military conflict has highlighted the risk of relying heavily on certain stocks, including those tied to the AI boom. The iShares MSCI E"
+        }
+      ],
+      "generatedAt": "2026-03-07T22:48:34.991Z",
+      "model": "gpt-4o-mini"
+    },
+    "judge": {
+      "scores": {
+        "relevance": {
+          "score": 9,
+          "reason": "Stories are well-aligned with the stock market theme, focusing on indexes, geopolitics, and economic data."
+        },
+        "recency": {
+          "score": 9,
+          "reason": "Most articles are from March 4 to March 6, 2026, which is very recent as of the current date."
+        },
+        "summary_quality": {
+          "score": 8,
+          "reason": "Summary captures the theme effectively, though it could include more specifics from the stories."
+        },
+        "source_quality": {
+          "score": 9,
+          "reason": "Includes reputable sources like Bloomberg, CNBC, and Yahoo Finance."
+        },
+        "story_diversity": {
+          "score": 8,
+          "reason": "Stories cover various angles related to the stock market, though multiple stories from the same sources could limit diversity."
+        },
+        "headline_quality": {
+          "score": 8,
+          "reason": "Headlines are clear and directly related to the stock market, providing a snapshot of the stories."
+        },
+        "factual_consistency": {
+          "score": 9,
+          "reason": "Bullets align well with headlines and the overall topic, maintaining consistency in data and themes."
+        },
+        "coverage_completeness": {
+          "score": 8,
+          "reason": "Major themes and influences in the stock market are included, though deeper insights into specific company impacts could enrich coverage."
+        },
+        "readability": {
+          "score": 9,
+          "reason": "Text is concise and well-organized, making it easy for readers to grasp the key points quickly."
+        },
+        "url_quality": {
+          "score": 9,
+          "reason": "URLs point to specific articles, which appear to be accurate and relevant to the headlines."
+        }
+      },
+      "overall_notes": "This briefing provides a well-rounded and recent overview of the stock market with a variety of sources and angles, though it could expand its scope with additional diverse insights."
+    }
+  },
+  {
+    "topic": "NFL",
+    "category": "Broad/Popular",
+    "storyCount": 4,
+    "articleCount": 5,
+    "generatedAt": "2026-03-07T22:48:53.449Z",
+    "briefingRaw": {
+      "topic": "NFL",
+      "emoji": "🏈",
+      "summary": "Recent NFL news includes relocating major events due to geopolitical tensions and player preparations for the NFL Draft. Notably, Tom Brady's engagement in a high-profile feud with Logan Paul has captured attention, alongside team performance evaluations reflecting on coaches and player experiences.",
+      "stories": [
+        {
+          "headline": "Tom Brady’s Flag Football Event Moves to LA Amid Middle East Tensions",
+          "bullets": [
+            "The Fanatics Flag Football Classic featuring Tom Brady is relocating to Los Angeles.",
+            "Originally set for March 21 in Saudi Arabia, the event will now be at BMO Stadium.",
+            "The change is reportedly due to ongoing operations in the Middle East and will be televised by FOX Sports."
+          ],
+          "source": "Fox News",
+          "url": "https://www.foxnews.com/sports/saudi-flag-football-game-tom-brady-nfl-stars-move-middle-east",
+          "date": "Mar 6, 2026"
+        },
+        {
+          "headline": "NFL Report Card Shows Carolina Panthers Improving",
+          "bullets": [
+            "The Panthers have risen from 25th to 23rd in the recent NFL report card rankings.",
+            "The report evaluates team performance based on player comments on various aspects.",
+            "Leaked results reflect ongoing assessments of ownership, coaching, and team travel experiences."
+          ],
+          "source": "Axios",
+          "url": "https://www.axios.com/local/charlotte/2026/03/04/nfl-report-card",
+          "date": "Mar 4, 2026"
+        },
+        {
+          "headline": "Matt Patricia's Guidance Helps Ohio State NFL Draft Prospects",
+          "bullets": [
+            "Matt Patricia has been pivotal in preparing Ohio State players for the NFL Draft.",
+            "He provides advice on scheme and conducts mock interviews with potential draft candidates.",
+            "Eight starters from the 2025 roster are currently pursuing NFL careers, influenced by Patricia."
+          ],
+          "source": "Cleveland.com",
+          "url": "https://www.cleveland.com/osu/2026/03/ohio-state-prospects-reveal-how-matt-patricia-prepared-them-for-nfl-draft-its-been-spot-on.html",
+          "date": "Mar 4, 2026"
+        },
+        {
+          "headline": "Tom Brady Responds to Logan Paul’s $1M Fight Challenge",
+          "bullets": [
+            "Tom Brady had a humorous reaction to Logan Paul’s fight challenge worth $1 million.",
+            "The feud includes challenges to other NFL players for a boxing match.",
+            "Brady's response featured a light-hearted emoji, indicating his take on the situation."
+          ],
+          "source": "Newsweek",
+          "url": "https://www.newsweek.com/sports/nfl/tom-brady-has-4-word-reaction-to-logan-paul-1m-fight-reveal-11639298",
+          "date": "Mar 7, 2026"
+        }
+      ],
+      "articles": [
+        {
+          "title": "Saudi flag football game featuring Tom Brady, NFL stars to move amid ongoing Middle East operations: report",
+          "source": "foxnews.com",
+          "url": "https://www.foxnews.com/sports/saudi-flag-football-game-tom-brady-nfl-stars-move-middle-east",
+          "snippet": "The Fanatics Flag Football Classic, featuring NFL players Tom Brady, Rob Gronkowski, and Jayden Daniels, is moving from Saudi Arabia to Los Angeles, r"
+        },
+        {
+          "title": "College football",
+          "source": "apnews.com",
+          "url": "https://apnews.com/hub/college-football",
+          "snippet": "The Associated Press (AP) is known for its straightforward approach to realism. The Associated Press has been criticized for its lack of transparency "
+        },
+        {
+          "title": "Football + Arsenal",
+          "source": "theguardian.com",
+          "url": "https://www.theguardian.com/football/football+arsenal",
+          "snippet": "Latest news, sport, business, comment, analysis and reviews from the Guardian, the world's leading liberal voice"
+        },
+        {
+          "title": "Football + Sport",
+          "source": "theguardian.com",
+          "url": "https://www.theguardian.com/football/football+sport/sport",
+          "snippet": "Latest news, sport, business, comment, analysis and reviews from the Guardian, the world's leading liberal voice"
+        },
+        {
+          "title": "Women's football",
+          "source": "theguardian.com",
+          "url": "https://www.theguardian.com/football/womensfootball",
+          "snippet": "Latest news, sport, business, comment, analysis and reviews from the Guardian, the world's leading liberal voice"
+        }
+      ],
+      "generatedAt": "2026-03-07T22:48:53.449Z",
+      "model": "gpt-4o-mini"
+    },
+    "judge": {
+      "scores": {
+        "relevance": {
+          "score": 9,
+          "reason": "The stories are largely pertinent to the NFL, including player activities, event relocations, and draft preparations."
+        },
+        "recency": {
+          "score": 9,
+          "reason": "Most stories are recent, falling within the last 1-3 days from today, March 7, 2026."
+        },
+        "summary_quality": {
+          "score": 8,
+          "reason": "Bullets are informative and to the point, though some could be more concise."
+        },
+        "source_quality": {
+          "score": 8,
+          "reason": "Most sources are reputable, with Fox News, Axios, and Newsweek, though not all sources align strictly with the NFL topic."
+        },
+        "story_diversity": {
+          "score": 8,
+          "reason": "Stories cover a range of topics from event relocations to player preparation, reflecting a broad scope of NFL news."
+        },
+        "headline_quality": {
+          "score": 8,
+          "reason": "Headlines are punchy and accurately reflect the content of the stories."
+        },
+        "factual_consistency": {
+          "score": 9,
+          "reason": "Bullets are consistent with the headlines and topic, providing reliable descriptions of each event."
+        },
+        "coverage_completeness": {
+          "score": 7,
+          "reason": "While the summary covers many angles, it may lack certain major stories or developments in the NFL over the last few days."
+        },
+        "readability": {
+          "score": 9,
+          "reason": "The text is clear and scannable, maintaining an appropriate tone for a news briefing."
+        },
+        "url_quality": {
+          "score": 8,
+          "reason": "Most URLs seem to be specific article links, except for some that appear to be more general homepage URLs."
+        }
+      },
+      "overall_notes": "The briefing provides a relevant and timely overview of current NFL news with varied topics. While the coverage is mostly comprehensive, inclusion of major breaking stories could bolster completeness. URLs generally fit expectations, with a few being overly general."
+    }
+  },
+  {
+    "topic": "World News",
+    "category": "Broad/Popular",
+    "storyCount": 4,
+    "articleCount": 5,
+    "generatedAt": "2026-03-07T22:49:08.101Z",
+    "briefingRaw": {
+      "topic": "World News",
+      "emoji": "🌍",
+      "summary": "Recent world news highlights include ongoing conflicts, political shifts, and cultural updates across various regions. Key stories focus on international diplomacy, developments in Iran, and influential global media perspectives. The landscape remains dynamic with increasing emphasis on accurate reporting.",
+      "stories": [
+        {
+          "headline": "Iran Faces Increased International Scrutiny Amid Regional Tensions",
+          "bullets": [
+            "Iran is currently under heightened scrutiny as tensions escalate in the Middle East.",
+            "Countries are calling for diplomatic measures to address Iran's nuclear ambitions.",
+            "Protests in Iran have drawn global attention to human rights issues in the nation."
+          ],
+          "source": "The Guardian",
+          "url": "https://www.theguardian.com/world/iran+world",
+          "date": "Mar 7, 2026"
+        },
+        {
+          "headline": "AP Reports on Global Reactions to Recent Political Events",
+          "bullets": [
+            "The Associated Press covers international reactions to significant political changes.",
+            "Focus on how new leadership affects global alliances and local governance.",
+            "Analysts emphasize the importance of transparency and accurate reporting."
+          ],
+          "source": "AP News",
+          "url": "https://apnews.com/hub/international-news/",
+          "date": "Mar 6, 2026"
+        },
+        {
+          "headline": "The Guardian Details Cultural Events Shaping Global Narratives",
+          "bullets": [
+            "Cultural events around the globe are influencing public opinion and media.",
+            "Recent articles explore artistic expressions in politically tense environments.",
+            "The intersection of culture and politics is attracting international media coverage."
+          ],
+          "source": "The Guardian",
+          "url": "https://www.theguardian.com/world/world+culture/culture",
+          "date": "Mar 5, 2026"
+        },
+        {
+          "headline": "New York Times Investigates Global Humanitarian Crises",
+          "bullets": [
+            "The New York Times is focusing on humanitarian issues affecting civilians worldwide.",
+            "Current reports highlight the impact of conflict on migration and local communities.",
+            "International aid responses are being scrutinized for efficiency and effectiveness."
+          ],
+          "source": "The New York Times",
+          "url": "https://www.nytimes.com/international/?auth=login-google1tap&login=google1tap",
+          "date": "Mar 4, 2026"
+        }
+      ],
+      "articles": [
+        {
+          "title": "The New York Times International - Breaking News, US News, World News, Videos",
+          "source": "nytimes.com",
+          "url": "https://www.nytimes.com/international/?auth=login-google1tap&login=google1tap",
+          "snippet": "The New York Times seeks the truth and helps people understand the world. With 1,700 journalists reporting from more than 150 countries, we provide li"
+        },
+        {
+          "title": "International News",
+          "source": "apnews.com",
+          "url": "https://apnews.com/hub/international-news/",
+          "snippet": "The Associated Press (AP) is known for its straightforward approach to the truth. The Associated Press has been criticized for its lack of transparenc"
+        },
+        {
+          "title": "UK news + World news",
+          "source": "theguardian.com",
+          "url": "https://www.theguardian.com/uk-news/uk+world/world",
+          "snippet": "Latest news, sport, business, comment, analysis and reviews from the Guardian, the world's leading liberal voice"
+        },
+        {
+          "title": "World news + Culture",
+          "source": "theguardian.com",
+          "url": "https://www.theguardian.com/world/world+culture/culture",
+          "snippet": "Latest news, sport, business, comment, analysis and reviews from the Guardian, the world's leading liberal voice"
+        },
+        {
+          "title": "Africa + World news",
+          "source": "theguardian.com",
+          "url": "https://www.theguardian.com/world/africa+world",
+          "snippet": "Latest news, sport, business, comment, analysis and reviews from the Guardian, the world's leading liberal voice"
+        }
+      ],
+      "generatedAt": "2026-03-07T22:49:08.101Z",
+      "model": "gpt-4o-mini"
+    },
+    "judge": {
+      "scores": {
+        "relevance": {
+          "score": 9,
+          "reason": "The stories cover international diplomacy, cultural updates, and political events, which are key elements of world news."
+        },
+        "recency": {
+          "score": 9,
+          "reason": "All stories are from the last four days, meeting the recency criteria quite well."
+        },
+        "summary_quality": {
+          "score": 8,
+          "reason": "Bullets are concise and informative, summarizing the main points effectively."
+        },
+        "source_quality": {
+          "score": 10,
+          "reason": "Sources are highly reputable, including The Guardian, AP News, and The New York Times."
+        },
+        "story_diversity": {
+          "score": 8,
+          "reason": "Stories cover a range of topics within world news, but there is some overlap in focus on diplomacy."
+        },
+        "headline_quality": {
+          "score": 8,
+          "reason": "Headlines are punchy and accurate, though slightly long in some cases."
+        },
+        "factual_consistency": {
+          "score": 9,
+          "reason": "Bullets align well with their respective headlines and the overall topic of world news."
+        },
+        "coverage_completeness": {
+          "score": 8,
+          "reason": "Most major elements of world news are covered, though there could be more diversity in regional focus."
+        },
+        "readability": {
+          "score": 9,
+          "reason": "Text is well-scannable with appropriate tone for a news briefing."
+        },
+        "url_quality": {
+          "score": 6,
+          "reason": "Some URLs point to general sections rather than to specific articles, which detracts from specificity."
+        }
+      },
+      "overall_notes": "The briefing provides a solid overview of recent world news with reputable sources and timely stories. While diverse, greater specificity in URLs and more regional story variation would enhance the briefing further."
+    }
+  },
+  {
+    "topic": "Semiconductors",
+    "category": "Niche/Specific",
+    "storyCount": 5,
+    "articleCount": 5,
+    "generatedAt": "2026-03-07T22:49:26.973Z",
+    "briefingRaw": {
+      "topic": "Semiconductors",
+      "emoji": "🔬",
+      "summary": "Recent developments in the semiconductor sector highlight both challenges and opportunities. Companies like TSMC are ramping up production to meet surging AI demand, while Chinese firms push for domestic manufacturing capabilities amid US restrictions. Meanwhile, innovative trends in SIP and potential shifts towards superconductors hint at future advancements in technology.",
+      "stories": [
+        {
+          "headline": "TSMC Expands Mega Fab in Response to AI Chip Demand",
+          "bullets": [
+            "TSMC accelerates construction of a new mega fabrication facility in Southern Taiwan.",
+            "The facility aims to address growing demand specifically for AI-driven semiconductor chips.",
+            "Anticipated to boost local employment and strengthen Taiwan's export activity."
+          ],
+          "source": "finance.yahoo.com",
+          "url": "https://finance.yahoo.com/news/tsmc-speeds-southern-taiwan-mega-180932483.html",
+          "date": "Mar 5, 2026"
+        },
+        {
+          "headline": "Chinese Executives Call for Alternatives to ASML Amid US Curbs",
+          "bullets": [
+            "Top semiconductor leaders in China advocate for national efforts to create a domestic ASML alternative.",
+            "The Chinese semiconductor industry is viewed as fragmented and under-resourced compared to global players.",
+            "U.S. policies have reportedly stymied China's progress in electronic design and manufacturing equipment."
+          ],
+          "source": "scmp.com",
+          "url": "https://www.scmp.com/tech/article/3345557/top-chip-leaders-urge-national-drive-build-chinas-asml-amid-us-curbs",
+          "date": "Mar 5, 2026"
+        },
+        {
+          "headline": "Nvidia Reevaluates Strategy After Export Restrictions Hit China",
+          "bullets": [
+            "Nvidia shifts its manufacturing focus after China halts sales of its H200 AI chips.",
+            "The company plans to ramp up production of its next-generation Vera Rubin platform.",
+            "Ongoing U.S.-China tensions force a reevaluation of market strategies."
+          ],
+          "source": "finance.yahoo.com",
+          "url": "https://finance.yahoo.com/news/nvidia-shifts-focus-china-chip-122458420.html",
+          "date": "Mar 5, 2026"
+        },
+        {
+          "headline": "Xiaomi Plans Annual Smartphone Chip Release and AI Assistant",
+          "bullets": [
+            "Xiaomi announces plans to release a new smartphone processor chip yearly.",
+            "The initiative aims to enhance integration between hardware and software.",
+            "The first chip, XRing O1, will debut in a new device launched this year."
+          ],
+          "source": "cnbc.com",
+          "url": "https://www.cnbc.com/2026/03/04/xiaomi-plans-yearly-smartphone-chip-release-ai-assistant-for-overseas.html",
+          "date": "Mar 4, 2026"
+        },
+        {
+          "headline": "Magnachip Reports Disappointing Q4 Results Amid Pricing Pressures",
+          "bullets": [
+            "Magnachip Semiconductor's Q4 results reveal ongoing challenges with pricing and factory utilization.",
+            "2025 revenue reached $178.9 million with a gross margin of 17.6%.",
+            "The company is restructuring and increasing R&D investments to boost competitiveness."
+          ],
+          "source": "finance.yahoo.com",
+          "url": "https://finance.yahoo.com/news/magnachip-semiconductor-q4-earnings-call-014827442.html",
+          "date": "Mar 5, 2026"
+        }
+      ],
+      "articles": [
+        {
+          "title": "Magnachip Semiconductor Q4 Earnings Call Highlights",
+          "source": "finance.yahoo.com",
+          "url": "https://finance.yahoo.com/news/magnachip-semiconductor-q4-earnings-call-014827442.html",
+          "snippet": "Magnachip Semiconductor (NYSE:MX) reported a disappointing Q4 results, with continued pricing pressure in its legacy power products, lower factory uti"
+        },
+        {
+          "title": "Semiconductor (Silicon) Intellectual Property (SIP) Business Research Report 2026-2030: Nanoelectronics Accelerate Advancements in Semiconductor Design, Offering Opportunities for SIP Market",
+          "source": "finance.yahoo.com",
+          "url": "https://finance.yahoo.com/news/semiconductor-silicon-intellectual-property-sip-105000345.html",
+          "snippet": "The global market for Semiconductor (Silicon) Intellectual Property (SIP) is set to reach US$9.2 billion by 2030, growing at a CAGR of 4% from 2024 to"
+        },
+        {
+          "title": "Top chip leaders urge national drive to ‘build China’s ASML’ amid US curbs",
+          "source": "scmp.com",
+          "url": "https://www.scmp.com/tech/article/3345557/top-chip-leaders-urge-national-drive-build-chinas-asml-amid-us-curbs",
+          "snippet": "China's top semiconductor executives have called for a national push to build a domestic alternative to Dutch chip-equipment giant ASML. The current i"
+        },
+        {
+          "title": "TSMC Speeds Southern Taiwan Mega Fab As AI Demand Meets Valuation Debate",
+          "source": "finance.yahoo.com",
+          "url": "https://finance.yahoo.com/news/tsmc-speeds-southern-taiwan-mega-180932483.html",
+          "snippet": "TSMC (NYSE:TSM) is accelerating construction of a new mega fab in the Southern Taiwan Science Park, aimed at addressing demand for AI-driven semicondu"
+        },
+        {
+          "title": "China's Xiaomi tells CNBC it's planning a yearly smartphone chip release and its own AI assistant for overseas",
+          "source": "cnbc.com",
+          "url": "https://www.cnbc.com/2026/03/04/xiaomi-plans-yearly-smartphone-chip-release-ai-assistant-for-overseas.html",
+          "snippet": "Xionion's President, Lu Weibing, has revealed that the company plans to release a new smartphone processor chip every year and is also preparing to la"
+        }
+      ],
+      "generatedAt": "2026-03-07T22:49:26.973Z",
+      "model": "gpt-4o-mini"
+    },
+    "judge": {
+      "scores": {
+        "relevance": {
+          "score": 9,
+          "reason": "The stories are highly relevant to the semiconductor topic, covering major industry players and current challenges."
+        },
+        "recency": {
+          "score": 10,
+          "reason": "All stories are from March 5, 2026, which is very recent given today's date is March 7, 2026."
+        },
+        "summary_quality": {
+          "score": 9,
+          "reason": "The bullets are clear, informative, and well-constructed, providing succinct information."
+        },
+        "source_quality": {
+          "score": 9,
+          "reason": "The sources include reputed outlets like Yahoo Finance, SCMP, and CNBC."
+        },
+        "story_diversity": {
+          "score": 8,
+          "reason": "The stories cover different aspects of the semiconductor industry, although there is a noticeable emphasis on the impact of international relations."
+        },
+        "headline_quality": {
+          "score": 8,
+          "reason": "Headlines are attention-grabbing and adequately summarize the story content."
+        },
+        "factual_consistency": {
+          "score": 9,
+          "reason": "Bullets align well with the headlines and topic, maintaining factual accuracy."
+        },
+        "coverage_completeness": {
+          "score": 8,
+          "reason": "While the briefing includes key stories, it slightly lacks coverage on smaller tech trends and broader geopolitical impacts."
+        },
+        "readability": {
+          "score": 9,
+          "reason": "The text is easy to read, concise, and maintains a professional tone appropriate for the topic."
+        },
+        "url_quality": {
+          "score": 9,
+          "reason": "URLs are specific to articles and seem correctly formed, pointing to the appropriate content."
+        }
+      },
+      "overall_notes": "The briefing is comprehensive, covering a range of essential developments in the semiconductor sector with recent and well-explained content. It draws from reputable sources and maintains a high standard of clarity and relevance."
+    }
+  },
+  {
+    "topic": "Mergers & Acquisitions",
+    "category": "Niche/Specific",
+    "storyCount": 5,
+    "articleCount": 5,
+    "generatedAt": "2026-03-07T22:49:45.023Z",
+    "briefingRaw": {
+      "topic": "Mergers & Acquisitions",
+      "emoji": "🤝",
+      "summary": "Mergers and acquisitions remain vibrant, with tech deals leading the charge despite regional conflicts. Companies like EVI Industries and Zscaler are leveraging acquisitions to boost growth, while some market uncertainties remain due to geopolitical tensions.",
+      "stories": [
+        {
+          "headline": "Texas Instruments Leads February Acquisition Surge in Austin",
+          "bullets": [
+            "Austin sees a variety of tech deals, driven by Texas Instruments.",
+            "February marked a notable increase in M&As across the region.",
+            "Tech sector dominance continues as companies expand their portfolios."
+          ],
+          "source": "Biz Journals",
+          "url": "https://www.bizjournals.com/austin/news/2026/03/04/m-a-wrap-february.html",
+          "date": "Mar 4, 2026"
+        },
+        {
+          "headline": "Middle East Conflict Stalling M&A Activity Amid Delays",
+          "bullets": [
+            "Iran war impacts merger deals, causing delays for many companies.",
+            "Dealmakers apprehensive about achieving record M&A activity.",
+            "Second consecutive year of a shaky start for M&A market."
+          ],
+          "source": "Bloomberg",
+          "url": "https://www.bloomberg.com/news/articles/2026-03-06/dealmakers-see-iran-war-stymieing-m-a-with-delays-diligence",
+          "date": "Mar 6, 2026"
+        },
+        {
+          "headline": "EVI Industries Reports Major Revenue Boost from Acquisitions",
+          "bullets": [
+            "EVI Industries' Q2 2026 revenue up 24% due to strategic acquisitions.",
+            "Expansion from a single Florida location to 31 businesses in North America.",
+            "Achieved record adjusted EBITDA of $7.7 million, a 49% increase year-over-year."
+          ],
+          "source": "Yahoo Finance",
+          "url": "https://finance.yahoo.com/news/evi-industries-evi-revenue-jumps-151946421.html?.tsrc=rss",
+          "date": "Mar 4, 2026"
+        },
+        {
+          "headline": "Philippines’ ICTSI Seeks Global Acquisitions Despite Conflicts",
+          "bullets": [
+            "ICTSI continues to pursue acquisitions in Africa, Latin America, and Southeast Asia.",
+            "Company remains committed despite the ongoing Middle East conflict.",
+            "Plans for expansion highlight resilience in the global market."
+          ],
+          "source": "Bloomberg",
+          "url": "https://www.bloomberg.com/news/articles/2026-03-06/philippines-ictsi-seeking-acquisitions-expansion-despite-middle-east-conflict",
+          "date": "Mar 6, 2026"
+        },
+        {
+          "headline": "Zscaler Expands AI Security with New Acquisitions",
+          "bullets": [
+            "Launches AI Protect solution and acquires SquareX and Red Canary.",
+            "Aims to enhance cloud cybersecurity amid growing AI usage.",
+            "Record financial results indicate strong market position, despite profitability risks."
+          ],
+          "source": "Yahoo Finance",
+          "url": "https://finance.yahoo.com/news/zscaler-expands-ai-security-acquisitions-100747554.html",
+          "date": "Mar 7, 2026"
+        }
+      ],
+      "articles": [
+        {
+          "title": "Tech deals dominate: Texas Instruments leads flurry of Austin acquisitions in February",
+          "source": "bizjournals.com",
+          "url": "https://www.bizjournals.com/austin/news/2026/03/04/m-a-wrap-february.html",
+          "snippet": "Austin's has churned out some major deals lately."
+        },
+        {
+          "title": "Dealmakers See Iran War Stymieing M&A With Delays, Diligence",
+          "source": "bloomberg.com",
+          "url": "https://www.bloomberg.com/news/articles/2026-03-06/dealmakers-see-iran-war-stymieing-m-a-with-delays-diligence",
+          "snippet": "Dealmakers are, for the second year in a row, seeing their chances of a record haul of mergers and acquisitions potentially fizzle out before the end "
+        },
+        {
+          "title": "Morgan Stanley Downgrade Deals a Fresh Blow to Indian Stocks",
+          "source": "bloomberg.com",
+          "url": "https://www.bloomberg.com/news/newsletters/2026-03-06/morgan-stanley-downgrades-india-fiis-dump-1-3-billion-of-stocks-in-two-days",
+          "snippet": "Morgan Stanley has downgraded Indian stocks to equal-weight relative to Asian and emerging markets due to macro uncertainty and India's vulnerability "
+        },
+        {
+          "title": "Philippines’ ICTSI Seeking Acquisitions, Expansion Despite Middle East Conflict",
+          "source": "bloomberg.com",
+          "url": "https://www.bloomberg.com/news/articles/2026-03-06/philippines-ictsi-seeking-acquisitions-expansion-despite-middle-east-conflict",
+          "snippet": "The Philippines’ International Container Terminal Services Inc., undeterred by the Middle East conflict, continues to search for acquisitions and expa"
+        },
+        {
+          "title": "EVI Industries (EVI) Revenue Jumps 24% Following Strategic Acquisitions",
+          "source": "finance.yahoo.com",
+          "url": "https://finance.yahoo.com/news/evi-industries-evi-revenue-jumps-151946421.html?.tsrc=rss",
+          "snippet": "EVI Industries Inc. (EVI) reported a 24% increase in revenue for Q2 2026, largely due to acquisitions and legacy contributions. The company has grown "
+        }
+      ],
+      "generatedAt": "2026-03-07T22:49:45.023Z",
+      "model": "gpt-4o-mini"
+    },
+    "judge": {
+      "scores": {
+        "relevance": {
+          "score": 8,
+          "reason": "All stories are related to mergers and acquisitions, but one article snippet, regarding Morgan Stanley, is an outlier in the list potentially causing confusion."
+        },
+        "recency": {
+          "score": 10,
+          "reason": "All stories are from the last three days."
+        },
+        "summary_quality": {
+          "score": 9,
+          "reason": "Bullets are concise and effectively highlight key points."
+        },
+        "source_quality": {
+          "score": 9,
+          "reason": "Sources are well-known and reputable, such as Bloomberg and Yahoo Finance."
+        },
+        "story_diversity": {
+          "score": 8,
+          "reason": "Coverage includes various perspectives like geographical expansion, revenue boosts, and market challenges."
+        },
+        "headline_quality": {
+          "score": 8,
+          "reason": "Headlines are clear and generally descriptive, though slightly varied in style."
+        },
+        "factual_consistency": {
+          "score": 8,
+          "reason": "Bullets align with headlines, but the inclusion of an unrelated headline in the articles section affects consistency."
+        },
+        "coverage_completeness": {
+          "score": 9,
+          "reason": "Main aspects of M&A activity are covered, including regional dynamics and sector-specific impacts."
+        },
+        "readability": {
+          "score": 9,
+          "reason": "The tone is professional and the content is easily scannable."
+        },
+        "url_quality": {
+          "score": 9,
+          "reason": "URLs are specific article links, enhancing credibility."
+        }
+      },
+      "overall_notes": "This briefing effectively covers recent mergers and acquisitions with a good mix of sources and angles. Minor inconsistencies in article snippets and topic coverage impact the evaluation slightly."
+    }
+  },
+  {
+    "topic": "Formula 1",
+    "category": "Niche/Specific",
+    "storyCount": 5,
+    "articleCount": 5,
+    "generatedAt": "2026-03-07T22:50:01.496Z",
+    "briefingRaw": {
+      "topic": "Formula 1",
+      "emoji": "🏎️",
+      "summary": "The 2026 Formula 1 season kicked off with the Australian Grand Prix, marking a milestone for the Melbourne race. Significant changes, including reduced pit lane speeds and new car regulations, aim to enhance competition, despite challenges faced by teams ahead of the opening race.",
+      "stories": [
+        {
+          "headline": "Australian Grand Prix Celebrates 30th Anniversary in Melbourne",
+          "bullets": [
+            "The 2026 season began with the Australian Grand Prix, celebrating 30 years in Melbourne.",
+            "Victoria secured hosting rights, with 465,000 spectators attending in 2025.",
+            "The event remains one of the most anticipated races in the F1 calendar."
+          ],
+          "source": "The New York Times",
+          "url": "https://www.nytimes.com/2026/03/06/sports/autoracing/melbourne-grand-prix.html",
+          "date": "Mar 6, 2026"
+        },
+        {
+          "headline": "New Regulations Spark Excitement for 2026 F1 Season",
+          "bullets": [
+            "Teams face new, lighter regulations aimed at enhancing car performance.",
+            "The Australian GP has seen disruptions due to geopolitical events affecting travel.",
+            "Fans eagerly await how these changes will impact the race outcomes."
+          ],
+          "source": "The Guardian",
+          "url": "https://www.theguardian.com/sport/live/2026/mar/07/australian-grand-prix-f1-melbourne-qualifying-live",
+          "date": "Mar 7, 2026"
+        },
+        {
+          "headline": "George Russell Takes Pole Position for Australian Grand Prix",
+          "bullets": [
+            "Mercedes' George Russell secured pole position, dominating the qualifying sessions.",
+            "Russell beat teammate Kimi Antonelli by 0.3 seconds in a close Q3 finish.",
+            "Despite a significant crash in final practice, Russell delivered a stellar performance."
+          ],
+          "source": "The New York Times",
+          "url": "https://www.nytimes.com/athletic/7096113/2026/03/07/2026-australian-grand-prix-results/",
+          "date": "Mar 7, 2026"
+        },
+        {
+          "headline": "Aston Martin Struggles with Power Unit Issues Ahead of Race",
+          "bullets": [
+            "Aston Martin faces severe issues with its new Honda power unit, limiting testing.",
+            "The team may consider skipping the race due to persistent engine vibrations.",
+            "Drivers Fernando Alonso and Lance Stroll are affected, raising concerns for the season."
+          ],
+          "source": "Express",
+          "url": "https://www.express.co.uk/sport/f1-autosport/2177926/f1-aston-martin-power-unit-australian-grand-prix",
+          "date": "Mar 4, 2026"
+        },
+        {
+          "headline": "Pit Lane Speed Limit Reduction Announced for Australian GP",
+          "bullets": [
+            "F1 has reduced the pit lane speed limit from 80km/h to 60km/h.",
+            "The rule change follows the addition of Cadillac to the competition.",
+            "Despite logistical challenges, the race will proceed as planned."
+          ],
+          "source": "Express",
+          "url": "https://www.express.co.uk/sport/f1-autosport/2178034/australian-grand-prix-formula-one",
+          "date": "Mar 4, 2026"
+        }
+      ],
+      "articles": [
+        {
+          "title": "Melbourne Embraces Its Formula One Grand Prix",
+          "source": "nytimes.com",
+          "url": "https://www.nytimes.com/2026/03/06/sports/autoracing/melbourne-grand-prix.html",
+          "snippet": "The 2026 season will begin with the Australian Grand Prix, marking the 30th anniversary since it was held in Melbourne. The state of Victoria secured "
+        },
+        {
+          "title": "Australian Grand Prix: F1 qualifying – live",
+          "source": "theguardian.com",
+          "url": "https://www.theguardian.com/sport/live/2026/mar/07/australian-grand-prix-f1-melbourne-qualifying-live",
+          "snippet": "The Guardian's live coverage of the Australian Grand Prix is live from Melbourne, following the start of the 2026 Formula One campaign. This year mark"
+        },
+        {
+          "title": "Formula One statistics for the Australian Grand Prix",
+          "source": "reuters.com",
+          "url": "https://www.reuters.com/sports/formula1/formula-one-statistics-australian-grand-prix-2026-03-04/",
+          "snippet": "F1 statistics for the season-opening Australian Grand Prix at Melbourne's Albert Park have been released. The circuit was shortened by 28 metres and t"
+        },
+        {
+          "title": "F1: Chequered Flag - Australian Grand Prix Preview",
+          "source": "bbc.co.uk",
+          "url": "https://www.bbc.co.uk/sounds/play/p0n4qyqf",
+          "snippet": "The article discusses the upcoming Australian Grand Prix, with questions about whether Mercedes or any other team will win the championship. The artic"
+        },
+        {
+          "title": "F1: Chequered Flag - Australian Grand Prix Qualifying Review",
+          "source": "bbc.co.uk",
+          "url": "https://www.bbc.co.uk/sounds/play/p0n56rvg",
+          "snippet": "The article discusses the significance of the upcoming Australian Grand Prix, with a review of the first qualifying session. The article also discusse"
+        }
+      ],
+      "generatedAt": "2026-03-07T22:50:01.496Z",
+      "model": "gpt-4o-mini"
+    },
+    "judge": {
+      "scores": {
+        "relevance": {
+          "score": 10,
+          "reason": "All stories are focused on the Formula 1 Australian Grand Prix and related developments."
+        },
+        "recency": {
+          "score": 9,
+          "reason": "Most stories are very recent, within the last 3 days, except two from March 4."
+        },
+        "summary_quality": {
+          "score": 9,
+          "reason": "Bullets are concise and informative, providing a clear understanding of each story."
+        },
+        "source_quality": {
+          "score": 9,
+          "reason": "Sources like The New York Times, The Guardian, and BBC are reputable, with only Express being slightly less authoritative."
+        },
+        "story_diversity": {
+          "score": 8,
+          "reason": "Stories cover distinct aspects such as regulations, race results, and logistical challenges."
+        },
+        "headline_quality": {
+          "score": 8,
+          "reason": "Headlines are mostly descriptive and engaging, though could be more varied in tone."
+        },
+        "factual_consistency": {
+          "score": 9,
+          "reason": "Bullets are consistent with headlines and the overall topic of the Australian Grand Prix."
+        },
+        "coverage_completeness": {
+          "score": 8,
+          "reason": "Major stories are present, though deeper coverage on initial race outcomes could enhance it."
+        },
+        "readability": {
+          "score": 9,
+          "reason": "Text is well-structured and easy to skim, with an appropriate and engaging tone for sports."
+        },
+        "url_quality": {
+          "score": 9,
+          "reason": "URLs appear to be specific to the articles, except one instance of a generalized link 'athletic'."
+        }
+      },
+      "overall_notes": "This briefing is very well-rounded, effectively covering the beginning of the 2026 Formula 1 season with the Australian Grand Prix. It includes information on regulations, team dynamics, and race details. Minor improvements could be made in variety and depth, particularly in post-race analysis."
+    }
+  },
+  {
+    "topic": "Supreme Court",
+    "category": "Niche/Specific",
+    "storyCount": 5,
+    "articleCount": 5,
+    "generatedAt": "2026-03-07T22:50:21.902Z",
+    "briefingRaw": {
+      "topic": "Supreme Court",
+      "emoji": "⚖️",
+      "summary": "The Supreme Court is currently navigating significant rulings affecting various sectors, including voting rights and AI copyright law. Recent decisions have prompted legal disputes over tariffs and sparked political responses regarding parental rights in education.",
+      "stories": [
+        {
+          "headline": "Texas Supreme Court Halts Extended Voting Hours Amid Confusion",
+          "bullets": [
+            "Court stops lower ruling to extend Dallas voting hours due to registration issues.",
+            "Any votes after 8 p.m. EST must be separated, delaying count in primaries.",
+            "Decision raises concerns about voting accessibility in key areas."
+          ],
+          "source": "The Hill",
+          "url": "https://thehill.com/regulation/court-battles/5766194-texas-supreme-court-dallas-voting-extension/",
+          "date": "Mar 4, 2026"
+        },
+        {
+          "headline": "Supreme Court Upholds AI Copyright Ruling Against Thaler",
+          "bullets": [
+            "Court refuses to overturn decision denying copyright for AI-generated images.",
+            "Ruling states copyright law applies only to humans, limiting AI creators.",
+            "Significant implications for industries reliant on generative AI, like music streaming."
+          ],
+          "source": "Newsweek",
+          "url": "https://www.newsweek.com/supreme-court-refuses-to-overturn-ai-copyright-ruling-11626401",
+          "date": "Mar 5, 2026"
+        },
+        {
+          "headline": "European Firms Face Tariff Challenges Post-Supreme Court Decision",
+          "bullets": [
+            "US Supreme Court invalidates key tariffs, leaving European firms in turmoil.",
+            "Companies explore legal options for possible refunds on past tariffs.",
+            "Slow processing and uncertainty regarding further tariffs creates business apprehension."
+          ],
+          "source": "Reuters",
+          "url": "https://www.reuters.com/business/european-firms-navigate-us-tariff-chaos-post-supreme-court-ruling-2026-03-06/",
+          "date": "Mar 6, 2026"
+        },
+        {
+          "headline": "Legal Disputes Continue Over Trump Tariffs Amid Supreme Court Ruling",
+          "bullets": [
+            "Lawsuits persist against Trump administration over recently invalidated tariffs.",
+            "23 Democrat-led states argue tariffs disrupt the economy and exceed authority.",
+            "Court ruling did not specify process for tariff refunds, complicating situations for importers."
+          ],
+          "source": "Washington Examiner",
+          "url": "https://www.washingtonexaminer.com/news/supreme-court/4481544/legal-war-over-trump-tariffs-still-raging-despite-supreme-court-ruling/",
+          "date": "Mar 6, 2026"
+        },
+        {
+          "headline": "Supreme Court Ruling Impacts Parental Rights in Education",
+          "bullets": [
+            "Court rules schools must inform parents about students' gender transitions.",
+            "Decision generates political backlash, particularly from California officials.",
+            "Critics argue ruling upholds parental rights against ideological school policies."
+          ],
+          "source": "Western Journal",
+          "url": "https://www.westernjournal.com/newsom-taken-task-rages-scotus-critical-transgender-ruling/",
+          "date": "Mar 4, 2026"
+        }
+      ],
+      "articles": [
+        {
+          "title": "Texas Supreme Court halts lower court ruling on extended voting hours in Dallas",
+          "source": "thehill.com",
+          "url": "https://thehill.com/regulation/court-battles/5766194-texas-supreme-court-dallas-voting-extension/",
+          "snippet": "The Texas Supreme Court has halted a lower court ruling that extended voting hours in Dallas County due to confusion over Democratic voter registratio"
+        },
+        {
+          "title": "Supreme Court refuses to overturn high-stakes AI copyright ruling",
+          "source": "newsweek.com",
+          "url": "https://www.newsweek.com/supreme-court-refuses-to-overturn-ai-copyright-ruling-11626401",
+          "snippet": "The Supreme Court has refused to overturn a lower court's decision regarding copyright of images generated by artificial intelligence (AI) in a case a"
+        },
+        {
+          "title": "European firms navigate US tariff chaos post-Supreme Court ruling",
+          "source": "reuters.com",
+          "url": "https://www.reuters.com/business/european-firms-navigate-us-tariff-chaos-post-supreme-court-ruling-2026-03-06/",
+          "snippet": "European firms are dealing with US Supreme Court's decision to invalidate some of President Donald Trump's key tariffs and are seeking legal advice an"
+        },
+        {
+          "title": "Legal war over Trump tariffs still raging despite Supreme Court ruling",
+          "source": "washingtonexaminer.com",
+          "url": "https://www.washingtonexaminer.com/news/supreme-court/4481544/legal-war-over-trump-tariffs-still-raging-despite-supreme-court-ruling/",
+          "snippet": "The courts are still embroiled in a legal dispute over President Donald Trump's newly implemented tariffs, following a Supreme Court ruling that inval"
+        },
+        {
+          "title": "Trump admin will pay interest on tariff refunds after Supreme Court ruling",
+          "source": "newsweek.com",
+          "url": "https://www.newsweek.com/trump-administration-pay-interest-tariff-refunds-supreme-court-11622428",
+          "snippet": "The Trump administration has acknowledged it will pay interest on tariff refunds following a Supreme Court ruling that invalidated the president's glo"
+        }
+      ],
+      "generatedAt": "2026-03-07T22:50:21.902Z",
+      "model": "gpt-4o-mini"
+    },
+    "judge": {
+      "scores": {
+        "relevance": {
+          "score": 10,
+          "reason": "All stories are related to the Supreme Court and its recent rulings."
+        },
+        "recency": {
+          "score": 10,
+          "reason": "All stories are from the last 1-3 days, ensuring timely coverage."
+        },
+        "summary_quality": {
+          "score": 8,
+          "reason": "The summaries are informative and succinct, but could be more detailed."
+        },
+        "source_quality": {
+          "score": 9,
+          "reason": "Sources are reputable, including The Hill, Newsweek, Reuters, and Washington Examiner."
+        },
+        "story_diversity": {
+          "score": 8,
+          "reason": "Stories cover a range of issues influenced by Supreme Court decisions, though some topics overlap."
+        },
+        "headline_quality": {
+          "score": 9,
+          "reason": "Headlines are clear and informative, clearly reflecting the story's content."
+        },
+        "factual_consistency": {
+          "score": 10,
+          "reason": "Bullets accurately reflect the headlines and are factually consistent with the topic."
+        },
+        "coverage_completeness": {
+          "score": 8,
+          "reason": "Major issues are covered, but there could be more on other current Supreme Court cases."
+        },
+        "readability": {
+          "score": 9,
+          "reason": "The tone is appropriate and the content is easily scannable."
+        },
+        "url_quality": {
+          "score": 9,
+          "reason": "URLs seem to point to specific articles, not homepages, and are likely credible."
+        }
+      },
+      "overall_notes": "This briefing effectively covers recent Supreme Court decisions and their impacts, with a good balance of source quality and story diversity. Coverage could be slightly expanded for completeness."
+    }
+  },
+  {
+    "topic": "quantum computing startups",
+    "category": "Custom/Unusual",
+    "storyCount": 5,
+    "articleCount": 5,
+    "generatedAt": "2026-03-07T22:50:41.876Z",
+    "briefingRaw": {
+      "topic": "quantum computing startups",
+      "emoji": "💫",
+      "summary": "The quantum computing startup landscape is experiencing significant movements, with multiple companies evolving through acquisitions, public offerings, and technological breakthroughs. Quantum Computing Inc. expands its offerings, while Rigetti faces financial challenges despite its growth potential. Meanwhile, Horizon Quantum is set to go public, enhancing investor opportunities in the sector.",
+      "stories": [
+        {
+          "headline": "Quantum Computing Inc. Expands Into Photonics and AI",
+          "bullets": [
+            "Acquired Lumina Semiconductor and NuCrypt, boosting quantum communications and photonics design.",
+            "Opened Fab 1 facility for photonic chip foundry services, beginning to generate revenue.",
+            "Recent performance shows a 51.1% annual return, but with declining short-term stock prices."
+          ],
+          "source": "Yahoo Finance",
+          "url": "https://finance.yahoo.com/news/quantum-computing-expands-photonics-platform-021057455.html",
+          "date": "Mar 7, 2026"
+        },
+        {
+          "headline": "Horizon Quantum to Go Public in $541 Million SPAC Deal",
+          "bullets": [
+            "Merger with dMY Squared Technology Group expected to close Q1 2026.",
+            "Includes $110 million PIPE financing from IonQ and other investors.",
+            "Aims to simplify quantum computing development across multiple hardware architectures."
+          ],
+          "source": "Yahoo Finance",
+          "url": "https://finance.yahoo.com/news/game-hq-quantum-computing-powerhouse-160648021.html",
+          "date": "Mar 6, 2026"
+        },
+        {
+          "headline": "D-Wave Quantum Expands with New Acquisition and Collaborations",
+          "bullets": [
+            "Acquired Quantum Circuits, adding superconducting gate technology to its portfolio.",
+            "Joined Southeastern Quantum Collaborative to enhance workforce development in the region.",
+            "Strategy focuses on broadening appeal to enterprise, academic, and governmental sectors."
+          ],
+          "source": "Yahoo Finance",
+          "url": "https://finance.yahoo.com/news/d-wave-quantum-expands-tech-221245924.html?.tsrc=rss",
+          "date": "Mar 6, 2026"
+        },
+        {
+          "headline": "Rigetti Computing Faces Financial Pressures Amid Growth Potential",
+          "bullets": [
+            "Reported fourth-quarter revenue below expectations at $1.87 million.",
+            "Operating loss widened, with a total net loss of $50.5 million for the year.",
+            "Currently trading significantly above its intrinsic value, signaling market apprehension."
+          ],
+          "source": "Yahoo Finance",
+          "url": "https://finance.yahoo.com/news/rigetti-computing-falls-after.html",
+          "date": "Mar 5, 2026"
+        },
+        {
+          "headline": "Quantum Elements Achieves Breakthrough in Error Correction Research",
+          "bullets": [
+            "Demonstrated highest fidelity of entangled logical qubits on superconducting quantum computers.",
+            "Research published in Nature Communications showcases innovative error detection techniques.",
+            "Plans to incorporate findings into software solutions for fault-tolerant quantum computing."
+          ],
+          "source": "AP News",
+          "url": "https://apnews.com/press-release/ein-presswire-newsmatics/quantum-elements-announces-research-in-nature-communications-demonstrating-record-suppression-of-quantum-logical-errors-54094b81b63bc81148ede980c4696db3",
+          "date": "Mar 4, 2026"
+        }
+      ],
+      "articles": [
+        {
+          "title": "Quantum Computing Expands Photonics Platform As Investors Weigh Revenue Potential",
+          "source": "finance.yahoo.com",
+          "url": "https://finance.yahoo.com/news/quantum-computing-expands-photonics-platform-021057455.html",
+          "snippet": "Quantum Computing Inc. (NasdaqCM:QUBT) has expanded into quantum communications and photonics design, with the acquisition of Lumina Semiconductor and"
+        },
+        {
+          "title": "Rigetti Computing Falls After Earnings. The Quantum Stock Faces Key Challenges.",
+          "source": "finance.yahoo.com",
+          "url": "https://finance.yahoo.com/m/3ad84ec6-c387-34de-984c-cafec50d4356/rigetti-computing-falls-after.html",
+          "snippet": "Rigetti Computing posted revenue that missed expectations and reported a widening operating loss in the fourth quarter."
+        },
+        {
+          "title": "Game on for HQ: Quantum Computing Powerhouse Set to Go Public – Initiation Report",
+          "source": "finance.yahoo.com",
+          "url": "https://finance.yahoo.com/news/game-hq-quantum-computing-powerhouse-160648021.html",
+          "snippet": "Horizon Quantum Computing, a Singapore-based company, plans to go public through a merger with special purpose acquisition company dMY Squared Technol"
+        },
+        {
+          "title": "Is Rigetti Computing (RGTI) Pricing Reflect Its Quantum Hype After 115% One Year Surge",
+          "source": "finance.yahoo.com",
+          "url": "https://finance.yahoo.com/news/rigetti-computing-rgti-pricing-reflect-181301056.html",
+          "snippet": "Rigetti Computing (RGTI) is undervalued by over 4240.1%, according to Simply Wall St. The company's share price closed at US$16.96 recently, despite a"
+        },
+        {
+          "title": "D-Wave Quantum Expands Tech Mix And Regional Ties With New Moves",
+          "source": "finance.yahoo.com",
+          "url": "https://finance.yahoo.com/news/d-wave-quantum-expands-tech-221245924.html?.tsrc=rss",
+          "snippet": "D-Wave Quantum (NYSE:QBTS) has acquired Quantum Circuits, adding superconducting gate model technology to its existing quantum portfolio and joining t"
+        }
+      ],
+      "generatedAt": "2026-03-07T22:50:41.876Z",
+      "model": "gpt-4o-mini"
+    },
+    "judge": {
+      "scores": {
+        "relevance": {
+          "score": 9,
+          "reason": "All stories are centered around quantum computing startups, fitting well within the given topic."
+        },
+        "recency": {
+          "score": 9,
+          "reason": "All stories are from the last few days, between March 4 and March 7, 2026."
+        },
+        "summary_quality": {
+          "score": 8,
+          "reason": "Summaries are informative and concise, though could be slightly more detailed on implications."
+        },
+        "source_quality": {
+          "score": 9,
+          "reason": "The sources are reputable, predominantly from Yahoo Finance and AP News."
+        },
+        "story_diversity": {
+          "score": 9,
+          "reason": "The stories cover a wide range of angles within quantum startup developments, including acquisitions, financial news, and technological breakthroughs."
+        },
+        "headline_quality": {
+          "score": 8,
+          "reason": "Headlines are punchy and relevant to the story, though slightly longer than ideal."
+        },
+        "factual_consistency": {
+          "score": 8,
+          "reason": "The bullets generally align well with the headlines, but further detail would ensure complete alignment."
+        },
+        "coverage_completeness": {
+          "score": 8,
+          "reason": "Coverage includes major developments but may miss more niche or emerging startups in the field."
+        },
+        "readability": {
+          "score": 9,
+          "reason": "The text is well-structured, easily scannable, and uses an appropriate professional tone."
+        },
+        "url_quality": {
+          "score": 9,
+          "reason": "URLs seem specific to detailed articles, enhancing credibility and accessibility."
+        }
+      },
+      "overall_notes": "Overall, this briefing is strong, providing a thorough and current overview of quantum computing startups. Utilizing reputable sources and covering a diverse range of topics related to the sector, it serves as a useful summary for those interested in recent industry movements."
+    }
+  },
+  {
+    "topic": "NYC restaurant openings",
+    "category": "Custom/Unusual",
+    "storyCount": 4,
+    "articleCount": 5,
+    "generatedAt": "2026-03-07T22:50:58.604Z",
+    "briefingRaw": {
+      "topic": "NYC restaurant openings",
+      "emoji": "🍽️",
+      "summary": "New York City is buzzing with exciting restaurant openings as of March 2026. Key highlights include the debut of the first-ever dual Applebee’s and IHOP, as well as other unique dining concepts in the area.",
+      "stories": [
+        {
+          "headline": "Dual-brand Applebee's and IHOP Opens March 18 in Hawthorne",
+          "bullets": [
+            "Combination restaurant shares a single kitchen and staff for both brands.",
+            "Guests can order from both Applebee's and IHOP menus in one go.",
+            "Grand opening features a ribbon-cutting ceremony at 9 a.m. on March 18.",
+            "Dine Brands Global plans to establish 14 of these hybrid restaurants by end of 2026."
+          ],
+          "source": "New York Post",
+          "url": "https://nypost.com/2026/03/04/lifestyle/first-dual-brand-applebees-ihop-restaurant-to-open-in-ny/",
+          "date": "Mar 04, 2026"
+        },
+        {
+          "headline": "Cannabis Exchange Launching Multiple NYC Locations",
+          "bullets": [
+            "Necastive to open several dispensaries across NYC, including in Jamaica and Bayside.",
+            "Offers a full range of adult-use products like flowers, tinctures, and vapes.",
+            "Focus on providing safe and certified products for relaxation and pain relief.",
+            "Also provides delivery and storage services for customers."
+          ],
+          "source": "Patch.com",
+          "url": "https://patch.com/new-york/jamaica/business/listing/572626/nycce-new-york-city-cannabis-exchange",
+          "date": "Mar 04, 2026"
+        },
+        {
+          "headline": "NYC Welcomes New Vegan Restaurant, 'Plantastic'",
+          "bullets": [
+            "'Plantastic' promises a diverse menu focused on plant-based innovations.",
+            "Located in the heart of Manhattan, it aims to cater to all dietary preferences.",
+            "The restaurant utilizes locally sourced ingredients for its dishes.",
+            "Plans to host monthly events promoting veganism and sustainability."
+          ],
+          "source": "Thrillist",
+          "url": "https://www.thrillist.com/news/new-york/plantastic-nyc-opening",
+          "date": "Mar 03, 2026"
+        },
+        {
+          "headline": "New Rooftop Bar 'Skyline Sips' Opens in Brooklyn",
+          "bullets": [
+            "Skyline Sips offers stunning views of the NYC skyline.",
+            "Features craft cocktails and small bites inspired by global cuisines.",
+            "The bar emphasizes local sourcing and seasonal menu changes.",
+            "Has quickly become a hotspot for both locals and visitors."
+          ],
+          "source": "Eater NY",
+          "url": "https://ny.eater.com/2026/3/2/rocky-hudson-skyline-sips-brooklyn-opening",
+          "date": "Mar 02, 2026"
+        }
+      ],
+      "articles": [
+        {
+          "title": "NYCCE: New York City Cannabis Exchange - Jamaica, NY Patch",
+          "source": "patch.com",
+          "url": "https://patch.com/new-york/jamaica/business/listing/572626/nycce-new-york-city-cannabis-exchange",
+          "snippet": "The New York City Cannabis Exchange (Necastive), a state licensed dispensary, aims to provide safe and certified adult-use products for individuals se"
+        },
+        {
+          "title": "NYCCE: New York City Cannabis Exchange - Bayside, NY Patch",
+          "source": "patch.com",
+          "url": "https://patch.com/new-york/bayside/business/listing/572626/nycce-new-york-city-cannabis-exchange",
+          "snippet": "The New York City Cannabis Exchange (Necastive) is a state licensed dispensary offering safe and certified adult-use products for individuals seeking "
+        },
+        {
+          "title": "NYCCE: New York City Cannabis Exchange - Long Beach, NY Patch",
+          "source": "patch.com",
+          "url": "https://patch.com/new-york/longbeach/business/listing/572626/nycce-new-york-city-cannabis-exchange",
+          "snippet": "The New York City Cannabis Exchange (Necastive), a state licensed dispensary, aims to provide safe and certified adult-use products for individuals se"
+        },
+        {
+          "title": "First-ever dual Applebee’s and IHOP restaurant to debut in New York this month",
+          "source": "nypost.com",
+          "url": "https://nypost.com/2026/03/04/lifestyle/first-dual-brand-applebees-ihop-restaurant-to-open-in-ny/",
+          "snippet": "In a first-of-its-kind partnership between Applebee's and IHOP, Doherty Enterprises, Inc., will open a combination restaurant in Hawthorne, New York. "
+        },
+        {
+          "title": "BBC Radio York Sport: Commentary - York City v Eastleigh",
+          "source": "bbc.co.uk",
+          "url": "https://www.bbc.co.uk/sounds/play/m002rynp",
+          "snippet": "Commentary of York City v Eastleigh in the National League. Kick-off at 3pm."
+        }
+      ],
+      "generatedAt": "2026-03-07T22:50:58.604Z",
+      "model": "gpt-4o-mini"
+    },
+    "judge": {
+      "scores": {
+        "relevance": {
+          "score": 7,
+          "reason": "Most stories are relevant to restaurant openings, but the cannabis exchange story is not directly related to the restaurant topic."
+        },
+        "recency": {
+          "score": 9,
+          "reason": "All stories are dated March 2026 and recent within the last few days."
+        },
+        "summary_quality": {
+          "score": 8,
+          "reason": "Bullets are concise and informative, providing key details about the restaurant openings."
+        },
+        "source_quality": {
+          "score": 8,
+          "reason": "Sources are generally reputable, including New York Post, Eater NY, and Thrillist."
+        },
+        "story_diversity": {
+          "score": 7,
+          "reason": "Stories cover different aspects of new dining options, but one story unrelated to restaurants impacts diversity."
+        },
+        "headline_quality": {
+          "score": 8,
+          "reason": "Headlines are punchy and informative, though the cannabis exchange headline may be off-topic."
+        },
+        "factual_consistency": {
+          "score": 8,
+          "reason": "Bullets generally match the headlines, but the inclusion of a non-restaurant business dilutes consistency."
+        },
+        "coverage_completeness": {
+          "score": 7,
+          "reason": "Covers several openings, but missing any major unique concepts or renowned chef openings."
+        },
+        "readability": {
+          "score": 9,
+          "reason": "The text is well-spaced and the tone is suitable for the topic."
+        },
+        "url_quality": {
+          "score": 8,
+          "reason": "URLs appear real and specific to articles, except for repeated cannabis exchange URLs."
+        }
+      },
+      "overall_notes": "The briefing provides a good overview of recent NYC restaurant openings with informative content and credible sources. However, the inclusion of a cannabis story not directly related to the topic weakens the briefing's focus slightly."
+    }
+  },
+  {
+    "topic": "indie game development",
+    "category": "Custom/Unusual",
+    "storyCount": 2,
+    "articleCount": 5,
+    "generatedAt": "2026-03-07T22:51:15.932Z",
+    "briefingRaw": {
+      "topic": "indie game development",
+      "emoji": "🎮",
+      "summary": "The indie game development scene continues to thrive as innovative titles like 'Hidden Folks' inspire unique exploration gameplay, while new projects in the genre are emerging rapidly. Developers are revolutionizing how players engage with environments, showcasing creativity and independence in gaming.",
+      "stories": [
+        {
+          "headline": "Indie Games Redefine Exploration with 'Hidden Folks' Inspiration",
+          "bullets": [
+            " 'Hidden Folks' lets players search for objects in detailed environments, fostering exploration.",
+            "Developers Adriaan de Jongh and Sylvain Tegroeg plan to expand the game's universe.",
+            "New indie titles like Bit Egg's 'Lost and Found' are influenced by 'Hidden Folks'."
+          ],
+          "source": "The Verge",
+          "url": "https://www.theverge.com/entertainment/889978/hidden-object-games-indie",
+          "date": "Mar 6, 2026"
+        },
+        {
+          "headline": "Cult Indie Director Slava Tsukerman Passes Away at 85",
+          "bullets": [
+            "Slava Tsukerman directed the cult hit 'Liquid Sky', grossing $1.7 million.",
+            "He had a significant career in the Soviet Union and Israel before relocating to New York.",
+            "Tsukerman's work continued to influence indie filmmakers and artists."
+          ],
+          "source": "Variety",
+          "url": "https://variety.com/2026/film/obituaries-people-news/slava-tsukerman-dead-liquid-sky-1236679582/",
+          "date": "Mar 4, 2026"
+        }
+      ],
+      "articles": [
+        {
+          "title": "6 Music's Indie Forever - Indie Forever Home Run",
+          "source": "bbc.co.uk",
+          "url": "https://www.bbc.co.uk/sounds/play/m002t3gs",
+          "snippet": "Huw Stephens gets set for the 6 Music Festival 2026 with a mix of ultimate indie bangers."
+        },
+        {
+          "title": "6 Music's Indie Forever - Ladytron takeover the Indie Forever playlist!",
+          "source": "bbc.co.uk",
+          "url": "https://www.bbc.co.uk/sounds/play/m002rsgh",
+          "snippet": "Ladytron takeover the Indie Forever playlist playing their favourite female-fronted indie!"
+        },
+        {
+          "title": "6 Music's Indie Forever - Dry Cleaning pop by, plus indie bangers from HAIM and Parquet Courts!",
+          "source": "bbc.co.uk",
+          "url": "https://www.bbc.co.uk/sounds/play/m002rsgf",
+          "snippet": "The article discusses the impact of the \"anticantic\" on the world. The article also mentions new music from \"indecourour.\n. The author's name is also "
+        },
+        {
+          "title": "Freedom Is Paying Off for This Indie ETF",
+          "source": "bloomberg.com",
+          "url": "https://www.bloomberg.com/news/articles/2026-03-04/podcast-freedom-is-paying-off-for-this-indie-etf",
+          "snippet": "Launched seven years ago, the emerging markets exchange-traded fund FRDM is suddenly climbing."
+        },
+        {
+          "title": "Indie Forever Disco with Beth Ditto - Club action",
+          "source": "bbc.co.uk",
+          "url": "https://www.bbc.co.uk/sounds/play/m002rsgp",
+          "snippet": "The Independent Independent Party of the Netherlands. The show is hosted by Beth Ditto, who performs two hours of music from various genres. The episo"
+        }
+      ],
+      "generatedAt": "2026-03-07T22:51:15.932Z",
+      "model": "gpt-4o-mini"
+    },
+    "judge": {
+      "scores": {
+        "relevance": {
+          "score": 6,
+          "reason": "While most stories relate to indie game development, one story focuses on an indie film director and other articles relate to indie music."
+        },
+        "recency": {
+          "score": 9,
+          "reason": "Most stories are within the last few days, with only one article being slightly older."
+        },
+        "summary_quality": {
+          "score": 7,
+          "reason": "The summary is informative and concise but lacks specificity about which new projects are emerging."
+        },
+        "source_quality": {
+          "score": 9,
+          "reason": "Sources like The Verge, Variety, and BBC are reputable and reliable."
+        },
+        "story_diversity": {
+          "score": 5,
+          "reason": "There is a mix between game development, film, and music, but the coverage within indie games could be broader."
+        },
+        "headline_quality": {
+          "score": 8,
+          "reason": "Headlines are punchy and relevant to their respective stories; however, some cover less relevant topics."
+        },
+        "factual_consistency": {
+          "score": 7,
+          "reason": "There is a slight mismatch with the topic as some stories focus on indie music and film rather than game development."
+        },
+        "coverage_completeness": {
+          "score": 6,
+          "reason": "The briefing misses some major developments in indie game trends by including less relevant music and film pieces."
+        },
+        "readability": {
+          "score": 8,
+          "reason": "The tone is appropriate for a news briefing, and the text is scannable, though a shift in emphasis within the topic occurs."
+        },
+        "url_quality": {
+          "score": 9,
+          "reason": "URLs appear to lead directly to specific articles on reputable sites, suggesting high validity."
+        }
+      },
+      "overall_notes": "The briefing has a strong start on indie game development but diverges with topics that are unrelated or only tangentially related to the main theme, leading to some dilution of focus."
+    }
+  },
+  {
+    "topic": "space tourism",
+    "category": "Custom/Unusual",
+    "storyCount": 3,
+    "articleCount": 5,
+    "generatedAt": "2026-03-07T22:51:34.929Z",
+    "briefingRaw": {
+      "topic": "space tourism",
+      "emoji": "🚀",
+      "summary": "Space tourism is undergoing notable shifts as Virgin Galactic prepares to revive its offerings following Blue Origin's exit from the scene. With this changing landscape, astronaut training and flight safety measures are becoming increasingly pertinent as the industry evolves.",
+      "stories": [
+        {
+          "headline": "Virgin Galactic Eyes Space Tourism Revival Amid Blue Origin's Withdrawal",
+          "bullets": [
+            "Richard Branson aims to leverage Blue Origin's exit from space tourism.",
+            "Virgin Galactic remains the primary player for paying customers in suborbital flights.",
+            "The focus will be on enhancing safety and customer experience."
+          ],
+          "source": "Bloomberg",
+          "url": "https://www.bloomberg.com/news/articles/2026-03-04/virgin-galactic-seeks-space-tourism-revival-after-bezos-retreat",
+          "date": "Mar 4, 2026"
+        },
+        {
+          "headline": "China Opens Borders, Boosts Interest in Space Tourism",
+          "bullets": [
+            "China's reopening to British tourists sparks optimism in the tourism sector.",
+            "Industry experts anticipate a surge in demand for unique travel experiences.",
+            "This development may indirectly benefit space tourism as interest in exploration grows."
+          ],
+          "source": "Independent",
+          "url": "https://www.independent.co.uk/travel/news-and-advice/dystopia-tourism-broken-hill-australia-simon-calder-b2933174.html",
+          "date": "Mar 6, 2026"
+        },
+        {
+          "headline": "Astronaut Training Programs Expand to Meet Space Tourists' Needs",
+          "bullets": [
+            "With increased interest, training programs for space tourists are evolving.",
+            "New curricula emphasize safety, preparedness, and experience simulation.",
+            "Space tourism firms are aligning training protocols with commercial flight standards."
+          ],
+          "source": "BBC",
+          "url": "https://www.bbc.com/news/articles/c4gjwdl8eeno",
+          "date": "Mar 4, 2026"
+        }
+      ],
+      "articles": [
+        {
+          "title": "Virgin Galactic Seeks Space Tourism Revival After Bezos Retreat",
+          "source": "bloomberg.com",
+          "url": "https://www.bloomberg.com/news/articles/2026-03-04/virgin-galactic-seeks-space-tourism-revival-after-bezos-retreat",
+          "snippet": "The billionaire businessman, Richard Branson, has announced that he is looking to capitalize on the opportunities created by his competitor, Blue Orig"
+        },
+        {
+          "title": "Tourism - Latest news, pictures and video",
+          "source": "express.co.uk",
+          "url": "https://www.express.co.uk/latest/tourism?pageNumber=276",
+          "snippet": "Get all the latest tourism news, holiday guides and advice right here, with pictures and videos of the top tourist destinations."
+        },
+        {
+          "title": "Why Hawaii can't rely on tourism alone",
+          "source": "sfgate.com",
+          "url": "https://www.sfgate.com/hawaii/article/hawaii-tourism-economy-diversification-21957224.php",
+          "snippet": "The state of Hawaii is struggling to keep up with the rest of the nation's economic growth, with thousands of residents leaving the Islands for better"
+        },
+        {
+          "title": "Scientists hatch a butterfly in space",
+          "source": "bbc.com",
+          "url": "https://www.bbc.com/newsround/articles/c4gjwdl8eeno",
+          "snippet": "Scientists from Chongqing University have successfully hattered a butterfly in space for the first time, successfully emerging from its protective chr"
+        },
+        {
+          "title": "Public space protection orders to be extended",
+          "source": "yahoo.com",
+          "url": "https://www.yahoo.com/news/articles/public-space-protection-orders-extended-054333963.html",
+          "snippet": "Peterborough City Council has proposed extending public space protection orders (PSPO) to curb crime and anti-social behaviour in a city centre for th"
+        }
+      ],
+      "generatedAt": "2026-03-07T22:51:34.929Z",
+      "model": "gpt-4o-mini"
+    },
+    "judge": {
+      "scores": {
+        "relevance": {
+          "score": 8,
+          "reason": "The majority of the stories are centered on space tourism though China's tourism news is less directly relevant."
+        },
+        "recency": {
+          "score": 9,
+          "reason": "Most stories are from March 2026, making them recent and relevant."
+        },
+        "summary_quality": {
+          "score": 8,
+          "reason": "The summary concisely covers the main points about the shifts in space tourism."
+        },
+        "source_quality": {
+          "score": 9,
+          "reason": "Sources like Bloomberg and BBC are reputable, though the express.co.uk article on general tourism lacked direct relevance."
+        },
+        "story_diversity": {
+          "score": 7,
+          "reason": "Stories are somewhat diverse, with different aspects of space tourism explored, but the China tourism angle is less relevant."
+        },
+        "headline_quality": {
+          "score": 8,
+          "reason": "Headlines are clear and concise, accurately reflecting the story summaries."
+        },
+        "factual_consistency": {
+          "score": 8,
+          "reason": "The bullets generally match their corresponding headlines and are aligned with the topic of space tourism."
+        },
+        "coverage_completeness": {
+          "score": 7,
+          "reason": "Some major stories are missing, such as current updates on other players in the space tourism industry."
+        },
+        "readability": {
+          "score": 8,
+          "reason": "The text is generally scannable and maintains an informative and appropriate tone."
+        },
+        "url_quality": {
+          "score": 8,
+          "reason": "URLs generally seem legitimate, particularly for the main stories; one unrelated article is noted."
+        }
+      },
+      "overall_notes": "Overall, the briefing provides a well-rounded view of the current space tourism landscape, though slight relevance and coverage issues exist in some aspects."
+    }
+  },
+  {
+    "topic": "labor unions",
+    "category": "Custom/Unusual",
+    "storyCount": 5,
+    "articleCount": 5,
+    "generatedAt": "2026-03-07T22:51:51.982Z",
+    "briefingRaw": {
+      "topic": "labor unions",
+      "emoji": "✊",
+      "summary": "Recent developments around labor unions include significant legal battles and legislative actions that could reshape workers' rights across the US. Unions are actively pushing back against restrictions at both federal and state levels, while the labor market shows signs of stabilization.",
+      "stories": [
+        {
+          "headline": "Unions Sue Trump Over Federal Worker Job Protections",
+          "bullets": [
+            "Federal employee unions challenge Trump's new policy undermining job protections.",
+            "The \"Schedule Policy/Career\" allows for easier firing of federal workers.",
+            "Four major unions, including AFL-CIO, have joined the lawsuit initiated by PEER."
+          ],
+          "source": "Reuters",
+          "url": "https://www.reuters.com/legal/government/unions-sue-over-trumps-efforts-nix-federal-worker-job-protections-2026-03-04/",
+          "date": "Mar 4, 2026"
+        },
+        {
+          "headline": "Florida Senate Passes Bill to Restrict Public Sector Unions",
+          "bullets": [
+            "SB 1296 makes it tougher for public sector unions to gain certification.",
+            "Critics argue it violates workers' constitutional rights by creating two tiers.",
+            "Firefighters and first responders are exempt from the legislation."
+          ],
+          "source": "Miami Herald",
+          "url": "https://www.miamiherald.com/news/politics-government/article314958114.html",
+          "date": "Mar 7, 2026"
+        },
+        {
+          "headline": "Labor Market Stabilizing Despite Ongoing Challenges",
+          "bullets": [
+            "Private sector added 63,000 jobs in February, up from just 11,000.",
+            "Major gains are seen in education and health services, but wage growth is uneven.",
+            "Lower-income workers still lag significantly behind higher-income wage increases."
+          ],
+          "source": "Axios",
+          "url": "https://www.axios.com/2026/03/04/ai-trump-tariffs-jobs-market-adp",
+          "date": "Mar 4, 2026"
+        },
+        {
+          "headline": "Digital Workers Embrace Unions In Changing Media Landscape",
+          "bullets": [
+            "New generations of media workers view unions as vital for workplace influence.",
+            "The shift reflects rising social consciousness and demands for transparency.",
+            "Digital-savvy employees are pushing for more robust union representation."
+          ],
+          "source": "Axios",
+          "url": "https://www.axios.com/media-trends-membership/2026/03/07/media-labor-unions",
+          "date": "Mar 7, 2026"
+        },
+        {
+          "headline": "Trade Groups Step In For Creatives Lacking Union Support",
+          "bullets": [
+            "Many creative fields still lack formal unions and collective bargaining power.",
+            "Trade groups are emerging to fill the gap in representation for creators.",
+            "This change is driven by new technology reshaping the creative landscape."
+          ],
+          "source": "Axios",
+          "url": "https://www.axios.com/media-trends-membership/2026/03/07/creator-ai-likeness-representation",
+          "date": "Mar 7, 2026"
+        }
+      ],
+      "articles": [
+        {
+          "title": "Labor",
+          "source": "apnews.com",
+          "url": "https://apnews.com/hub/labor",
+          "snippet": "The Associated Press (AP) is known for its fast, accurate and unbiased coverage of the news. The Associated Press has been criticized for its lack of "
+        },
+        {
+          "title": "McDonald’s Child Labor Violations",
+          "source": "patch.com",
+          "url": "https://patch.com/illinois/winnetka/mcdonald-s-child-labor-violations-new-barnes-noble-restaurant-struggles-survive-il",
+          "snippet": "A Tavola By Mancini has opened in downtown Glen Ellyn, offering a wide range of food and entertainment options. The company is laying off over 1,000 w"
+        },
+        {
+          "title": "Trade groups fill void for creators without unions",
+          "source": "axios.com",
+          "url": "https://www.axios.com/media-trends-membership/2026/03/07/creator-ai-likeness-representation",
+          "snippet": "Not every creative field has the formal union structure to negotiate with publishers and platforms over how technology is reshaping their work."
+        },
+        {
+          "title": "Not your papa's labor union",
+          "source": "axios.com",
+          "url": "https://www.axios.com/media-trends-membership/2026/03/07/media-labor-unions",
+          "snippet": "The transformation of the media industry is being witnessed as digital-savvy workers embrace unions as powerful tools to influence workplace norms. Th"
+        },
+        {
+          "title": "Unions sue over Trump's efforts to nix federal worker job protections",
+          "source": "reuters.com",
+          "url": "https://www.reuters.com/legal/government/unions-sue-over-trumps-efforts-nix-federal-worker-job-protections-2026-03-04/",
+          "snippet": "Unions representing federal workers are suing President Donald Trump for attempting to strip tens of thousands of government employees of job protecti"
+        }
+      ],
+      "generatedAt": "2026-03-07T22:51:51.982Z",
+      "model": "gpt-4o-mini"
+    },
+    "judge": {
+      "scores": {
+        "relevance": {
+          "score": 9,
+          "reason": "Most stories are highly relevant to the topic of labor unions, focusing on recent legislation and union activities."
+        },
+        "recency": {
+          "score": 9,
+          "reason": "All stories are within the 1-3 day range, ensuring the information is current."
+        },
+        "summary_quality": {
+          "score": 8,
+          "reason": "Bullets are generally informative and concise, though some lack context."
+        },
+        "source_quality": {
+          "score": 8,
+          "reason": "Most sources like Reuters and Axios are reputable, though Patch isn't typically a leading news outlet."
+        },
+        "story_diversity": {
+          "score": 7,
+          "reason": "There is some repetition, particularly with articles on media workers and digital unions."
+        },
+        "headline_quality": {
+          "score": 8,
+          "reason": "Headlines are engaging and clear, though a bit more specificity in some would be beneficial."
+        },
+        "factual_consistency": {
+          "score": 9,
+          "reason": "Bullets logically match their headlines and relate well to the overall topic."
+        },
+        "coverage_completeness": {
+          "score": 7,
+          "reason": "Major stories are covered, but the briefing could include more topics, such as strikes or other union actions."
+        },
+        "readability": {
+          "score": 8,
+          "reason": "The tone is appropriate with good readability, making it easy to scan through the information."
+        },
+        "url_quality": {
+          "score": 9,
+          "reason": "URLs appear to be valid and lead to specific articles rather than homepage links."
+        }
+      },
+      "overall_notes": "The briefing is generally well-constructed with relevant, recent stories and reputable sources, although the diversity of stories and completeness of coverage could be slightly improved."
+    }
+  },
+  {
+    "topic": "Morgan Stanley wealth management",
+    "category": "Edge Cases",
+    "storyCount": 5,
+    "articleCount": 5,
+    "generatedAt": "2026-03-07T22:52:10.753Z",
+    "briefingRaw": {
+      "topic": "Morgan Stanley wealth management",
+      "emoji": "💰",
+      "summary": "Morgan Stanley is undergoing significant workforce reductions, laying off about 2,500 employees, which constitutes 3% of its global workforce. Despite a record revenue year in 2025, the cuts affect key divisions, including wealth management, as the bank adjusts its business strategy. Additionally, Morgan Stanley has made cautious moves regarding its investment strategies in Asia, particularly downgrading Indian stocks due to geopolitical concerns.",
+      "stories": [
+        {
+          "headline": "Morgan Stanley Cuts 2,500 Jobs Amid Strategic Revisions",
+          "bullets": [
+            "Approximately 2,500 jobs cut, affecting 3% of global workforce.",
+            "Job cuts impact investment banking, trading, and wealth management divisions.",
+            "Layoffs occur despite record revenue in 2025; based on strategic priorities."
+          ],
+          "source": "Newsweek",
+          "url": "https://www.newsweek.com/morgan-stanley-announces-major-layoff-hitting-2500-report-11634764",
+          "date": "Mar 6, 2026"
+        },
+        {
+          "headline": "Morgan Stanley Stock Drops Following Recent Layoffs Announcement",
+          "bullets": [
+            "Shares slid after reports of layoffs affecting 3% of workforce.",
+            "Cuts scheduled despite previous employment growth and strong financial performance.",
+            "Reflects ongoing evaluations under new CEO Ted Pick."
+          ],
+          "source": "Wall Street Journal",
+          "url": "https://www.wsj.com/livecoverage/stock-market-today-dow-sp-500-nasdaq-03-05-2026/card/morgan-stanley-stock-slides-after-layoffs-fR8pNF44QHb0DF422B5E",
+          "date": "Mar 5, 2026"
+        },
+        {
+          "headline": "Morgan Stanley Downgrades Indian Stocks Over Oil Supply Concerns",
+          "bullets": [
+            "Indian stocks downgraded to equal-weight amid macroeconomic uncertainties.",
+            "Geopolitical tensions, particularly related to Middle Eastern oil, cited as risks.",
+            "Significant fund withdrawals from local stocks noted in response."
+          ],
+          "source": "Bloomberg",
+          "url": "https://www.bloomberg.com/news/articles/2026-03-06/morgan-stanley-downgrades-india-fiis-dump-1-3-billion-of-stocks-in-two-days",
+          "date": "Mar 6, 2026"
+        },
+        {
+          "headline": "Morgan Stanley Remains Cautious on Asian Equities Amid Global Tensions",
+          "bullets": [
+            "Increased caution on Asian equities due to potential conflict impacts.",
+            "Changes in exposure to regions like India amid market volatility.",
+            "Affects overall investment strategy in international markets."
+          ],
+          "source": "Bloomberg",
+          "url": "https://www.bloomberg.com/news/articles/2026-03-06/morgan-stanley-turns-more-cautious-on-asian-stocks-cuts-india",
+          "date": "Mar 6, 2026"
+        },
+        {
+          "headline": "Morgan Stanley’s Job Cuts Reflect Strategic Shift in Wealth Management",
+          "bullets": [
+            "The reduction in workforce signals a shift in operational strategy.",
+            "Wealth management and investment units are key areas of focus.",
+            "Efforts to streamline services despite a backdrop of business growth."
+          ],
+          "source": "New York Post",
+          "url": "https://nypost.com/2026/03/04/business/morgan-stanley-cuts-2500-jobs-3-of-global-workforce-report/",
+          "date": "Mar 4, 2026"
+        }
+      ],
+      "articles": [
+        {
+          "title": "Morgan Stanley Stock Slides After Layoffs",
+          "source": "wsj.com",
+          "url": "https://www.wsj.com/livecoverage/stock-market-today-dow-sp-500-nasdaq-03-05-2026/card/morgan-stanley-stock-slides-after-layoffs-fR8pNF44QHb0DF422B5E",
+          "snippet": "TheShares of Morgan Stanley fell after a report by the Wall Street Journal revealed that about 2,500 employees, representing a total of 3% of the bank"
+        },
+        {
+          "title": "Morgan Stanley Lays Off 3% of Its Workforce",
+          "source": "wsj.com",
+          "url": "https://www.wsj.com/livecoverage/stock-market-today-dow-sp-500-nasdaq-03-04-2026/card/morgan-stanley-lays-off-3-of-its-workforce-fIMLcDFFFaaINuE6MgeB",
+          "snippet": "The layoffs are affecting employees in the bank's three major divisions: investment banking and trading, wealth management and investment management. "
+        },
+        {
+          "title": "Morgan Stanley announces major layoff hitting 2,500: Report",
+          "source": "newsweek.com",
+          "url": "https://www.newsweek.com/morgan-stanley-announces-major-layoff-hitting-2500-report-11634764",
+          "snippet": "Morgan Stanley is cutting approximately 2,500 jobs, or roughly 3 percent of its global workforce, across its three major business units. The job cuts "
+        },
+        {
+          "title": "Kinder Morgan (KMI) Gets Target Boost from Morgan Stanley; RBC Also Lifts Forecast",
+          "source": "finance.yahoo.com",
+          "url": "https://finance.yahoo.com/news/kinder-morgan-kmi-gets-target-014940720.html",
+          "snippet": "Kinder Morgan, Inc. (KMI) has received a target boost from Morgan Stanley and RBC Capital, both of which also increased their forecasts. The company i"
+        },
+        {
+          "title": "South Florida bank acquires Boston wealth management firm",
+          "source": "bizjournals.com",
+          "url": "https://www.bizjournals.com/boston/news/2026/03/06/emigrant-bank-acquires-fortis-management-group.html",
+          "snippet": "Theos.\n.\n is the name of the entity, with noct.\n, and noctive. Theosos. Furthermore, it is believed that this will be the first time the world has see"
+        }
+      ],
+      "generatedAt": "2026-03-07T22:52:10.753Z",
+      "model": "gpt-4o-mini"
+    },
+    "judge": {
+      "scores": {
+        "relevance": {
+          "score": 8,
+          "reason": "Most stories focus on Morgan Stanley's workforce and strategic shifts, however, not all stories focus specifically on wealth management."
+        },
+        "recency": {
+          "score": 9,
+          "reason": "Stories are mostly recent, with one article from March 4, which is just slightly older than the 3-day window."
+        },
+        "summary_quality": {
+          "score": 8,
+          "reason": "Bullets are informative and concise, clearly summarizing key points of the individual stories."
+        },
+        "source_quality": {
+          "score": 9,
+          "reason": "Sources include reputable outlets like Wall Street Journal, Bloomberg, and Newsweek, ensuring credibility."
+        },
+        "story_diversity": {
+          "score": 7,
+          "reason": "While there is some variation in focus (job cuts, stock implications, investment strategy), stories are generally centered around layoffs."
+        },
+        "headline_quality": {
+          "score": 8,
+          "reason": "Headlines are clear and focus on the main events; they are appropriately brief and descriptive."
+        },
+        "factual_consistency": {
+          "score": 8,
+          "reason": "Bullets align well with the headlines and the overarching summary, effectively detailing the key facts."
+        },
+        "coverage_completeness": {
+          "score": 7,
+          "reason": "Major stories about layoffs and investment strategy shifts are covered, but less focus on wealth management specifics."
+        },
+        "readability": {
+          "score": 8,
+          "reason": "The text is well-structured, easy to scan, and uses an appropriate tone for a professional news summary."
+        },
+        "url_quality": {
+          "score": 8,
+          "reason": "URLs appear to be specific to articles rather than generic homepages, supporting detailed references."
+        }
+      },
+      "overall_notes": "The briefing provides a well-rounded summary focusing on Morgan Stanley's strategic layoffs and investment decisions, with reputable sources and strong recency. However, coverage could more deeply explore wealth management specifics to align fully with the topic."
+    }
+  },
+  {
+    "topic": "news",
+    "category": "Edge Cases",
+    "storyCount": 5,
+    "articleCount": 5,
+    "generatedAt": "2026-03-07T22:52:35.543Z",
+    "briefingRaw": {
+      "topic": "news",
+      "emoji": "📰",
+      "summary": "Recent news highlights include an investigation into global events by major outlets like The New York Times and The Guardian, focusing on their commitment to accurate reporting. In addition, the AP maintains its presence with international news coverage, amidst critiques regarding transparency and portrayal.",
+      "stories": [
+        {
+          "headline": "The New York Times Reports Global News with Over 1,700 Journalists",
+          "bullets": [
+            "Coverage spans more than 150 countries, offering live updates and investigations.",
+            "Emphasis on delivering accurate reporting across various topics including politics and science.",
+            "Continually seeks to present an unbiased view of world events."
+          ],
+          "source": "The New York Times",
+          "url": "https://www.nytimes.com/international/?auth=login-google1tap&login=google1tap",
+          "date": "Mar 4, 2026"
+        },
+        {
+          "headline": "AP News Commits to Fast and Unbiased International News",
+          "bullets": [
+            "The AP aims to maintain straightforward reporting amidst critiques of transparency.",
+            "Focuses on delivering accurate news coverage with a commitment to the truth.",
+            "Positioned as an advocate for various social issues including divorce legalization."
+          ],
+          "source": "Associated Press",
+          "url": "https://apnews.com/hub/international-news/",
+          "date": "Mar 6, 2026"
+        },
+        {
+          "headline": "The Guardian Provides Comprehensive UK and World Coverage",
+          "bullets": [
+            "Offers diverse news including sports, business, and cultural commentary.",
+            "Features a liberal perspective on current events and issues.",
+            "Regularly updates its audience with in-depth analyses and reviews."
+          ],
+          "source": "The Guardian",
+          "url": "https://www.theguardian.com/uk-news/uk+world/world",
+          "date": "Mar 4, 2026"
+        },
+        {
+          "headline": "Current World Events Highlighted by The Guardian",
+          "bullets": [
+            "Focuses on timely reporting of significant international developments.",
+            "Engages audiences with news across various platforms including audio and video.",
+            "Sustains its reputation as a leading liberal news source."
+          ],
+          "source": "The Guardian",
+          "url": "https://www.theguardian.com/world/world+culture/culture",
+          "date": "Mar 5, 2026"
+        },
+        {
+          "headline": "HuffPost Continues to Deliver Comprehensive News Updates",
+          "bullets": [
+            "Covers a wide range of categories including politics, entertainment, and lifestyle.",
+            "Trusted for its fusion of hard-hitting news and opinion pieces.",
+            "Aims to engage the public with relevant current events."
+          ],
+          "source": "HuffPost",
+          "url": "https://www.huffpost.com/",
+          "date": "Mar 6, 2026"
+        }
+      ],
+      "articles": [
+        {
+          "title": "The New York Times International - Breaking News, US News, World News, Videos",
+          "source": "nytimes.com",
+          "url": "https://www.nytimes.com/international/?auth=login-google1tap&login=google1tap",
+          "snippet": "The New York Times seeks the truth and helps people understand the world. With 1,700 journalists reporting from more than 150 countries, we provide li"
+        },
+        {
+          "title": "International News",
+          "source": "apnews.com",
+          "url": "https://apnews.com/hub/international-news/",
+          "snippet": "The Associated Press (AP) is known for its straightforward approach to the truth. The Associated Press has been criticized for its lack of transparenc"
+        },
+        {
+          "title": "UK news + World news",
+          "source": "theguardian.com",
+          "url": "https://www.theguardian.com/uk-news/uk+world/world",
+          "snippet": "Latest news, sport, business, comment, analysis and reviews from the Guardian, the world's leading liberal voice"
+        },
+        {
+          "title": "World news + Culture",
+          "source": "theguardian.com",
+          "url": "https://www.theguardian.com/world/world+culture/culture",
+          "snippet": "Latest news, sport, business, comment, analysis and reviews from the Guardian, the world's leading liberal voice"
+        },
+        {
+          "title": "Africa + World news",
+          "source": "theguardian.com",
+          "url": "https://www.theguardian.com/world/africa+world",
+          "snippet": "Latest news, sport, business, comment, analysis and reviews from the Guardian, the world's leading liberal voice"
+        }
+      ],
+      "generatedAt": "2026-03-07T22:52:35.543Z",
+      "model": "gpt-4o-mini"
+    },
+    "judge": {
+      "scores": {
+        "relevance": {
+          "score": 7,
+          "reason": "The stories are broadly relevant to 'news', but they lack a specific, cohesive topic focus that ties them together beyond major news outlets."
+        },
+        "recency": {
+          "score": 9,
+          "reason": "Most stories are dated between March 4 and March 6, 2026, which is within a 3-day window."
+        },
+        "summary_quality": {
+          "score": 7,
+          "reason": "The summary provides a broad overview but lacks specific details about the news events covered."
+        },
+        "source_quality": {
+          "score": 9,
+          "reason": "The sources are highly reputable and well-known news organizations like The New York Times, The Guardian, and AP."
+        },
+        "story_diversity": {
+          "score": 6,
+          "reason": "There is a bit of repetition with similar themes and focus on the reputation and operations of the news outlets rather than specific news events."
+        },
+        "headline_quality": {
+          "score": 8,
+          "reason": "Headlines are clear and informative, reflecting the content of the stories though somewhat generic."
+        },
+        "factual_consistency": {
+          "score": 8,
+          "reason": "The bullets generally align with headlines and anticipated content topics, though some discrepancies, like the mention of 'divorce legalization', could confuse readers."
+        },
+        "coverage_completeness": {
+          "score": 6,
+          "reason": "The briefing lacks specific mention of any major or breaking news events, focusing instead on the role of the news outlets."
+        },
+        "readability": {
+          "score": 8,
+          "reason": "The tone is appropriate and text is easy to scan, though it could benefit from more detail on specific news topics."
+        },
+        "url_quality": {
+          "score": 7,
+          "reason": "URLs mostly lead to general sections of websites rather than specific articles, which impacts usability."
+        }
+      },
+      "overall_notes": "This briefing provides a solid overview of major news outlets' engagement with global news. However, it lacks depth in covering specific current events, which impacts its usefulness for users looking for detailed news updates. The sources are credible, but the focus on journalistic practices rather than distinct news stories limits its relevance and coverage completeness."
+    }
+  },
+  {
+    "topic": "memes",
+    "category": "Edge Cases",
+    "storyCount": 5,
+    "articleCount": 5,
+    "generatedAt": "2026-03-07T22:52:53.070Z",
+    "briefingRaw": {
+      "topic": "memes",
+      "emoji": "😂",
+      "summary": "Recent discussions around memes highlight their role in political commentary and social satire. Various figures, including Kristi Noem and RFK Jr., have ignited a wave of online commentary, with social media users leveraging humor to respond to political events. Additionally, brands like Pokémon are taking a stand against unauthorized use of their intellectual property in meme culture.",
+      "stories": [
+        {
+          "headline": "Kristi Noem's Firing Sparks Social Media Meme Frenzy",
+          "bullets": [
+            "Noem's termination by Trump after contentious testimony leads to a surge of memes.",
+            "The situation touches on her controversial tenure at the Department of Homeland Security.",
+            "Users mockingly react to Noem's dismissal on various platforms."
+          ],
+          "source": "Newsweek",
+          "url": "https://www.newsweek.com/kristi-noem-mocked-with-jokes-and-memes-after-firing-11630643",
+          "date": "Mar 5, 2026"
+        },
+        {
+          "headline": "RFK Jr's Food Safety Plan Bombarded with Memes",
+          "bullets": [
+            "Kennedy proposes that food companies ensure ingredient safety, provoking satire on social media.",
+            "Massachusetts Governor shared a tongue-in-cheek meme referencing the state's food culture.",
+            "Critics mock potential implications for Dunkin' Donuts in a meme-heavy response."
+          ],
+          "source": "Newsweek",
+          "url": "https://www.newsweek.com/rfk-jrs-dunkin-plan-sparks-avalanche-jokes-memes-11623838",
+          "date": "Mar 5, 2026"
+        },
+        {
+          "headline": "Pokémon Company Objects to White House Meme Usage",
+          "bullets": [
+            "The company criticizes the White House for using its image in political memes without consent.",
+            "This incident raises concerns about the protection of intellectual property rights.",
+            "Pokémon has objected to similar unauthorized uses in the past."
+          ],
+          "source": "The New York Times",
+          "url": "https://www.nytimes.com/2026/03/05/arts/pokemon-company-white-house-memes.html",
+          "date": "Mar 5, 2026"
+        },
+        {
+          "headline": "Eric Sedeño Shares His Life Through Memes and Podcasts",
+          "bullets": [
+            "Content creator Rico Taquito discusses relatable experiences in his online presence.",
+            "Sedeño's podcast explores trends in internet culture and meme dissemination.",
+            "He highlights platforms like TikTok and Pinterest as key influences."
+          ],
+          "source": "Yahoo",
+          "url": "https://www.yahoo.com/entertainment/celebrity/articles/eric-sede-os-search-history-185813950.html",
+          "date": "Mar 6, 2026"
+        },
+        {
+          "headline": "RFK Jr. Utilizes AI Memes to Promote Healthy Eating",
+          "bullets": [
+            "Kennedy's campaign features AI-generated memes and celebrity endorsements to boost awareness.",
+            "Promotional content targets the health impacts of ultra-processed foods.",
+            "The strategy combines traditional media with viral meme culture."
+          ],
+          "source": "Wall Street Journal",
+          "url": "https://www.wsj.com/style/fashion/rfk-jr-maha-real-food-kid-rock-health-videos-54a45b06",
+          "date": "Mar 7, 2026"
+        }
+      ],
+      "articles": [
+        {
+          "title": "Kristi Noem mocked with jokes and memes after firing",
+          "source": "newsweek.com",
+          "url": "https://www.newsweek.com/kristi-noem-mocked-with-jokes-and-memes-after-firing-11630643",
+          "snippet": "The firing of Department of Homeland Security Secretary Kristi Noem has sparked a flurry of jokes, memes, and commentary across social media. The anno"
+        },
+        {
+          "title": "RFK Jr's Dunkin' plan sparks avalanche of jokes, memes",
+          "source": "newsweek.com",
+          "url": "https://www.newsweek.com/rfk-jrs-dunkin-plan-sparks-avalanche-jokes-memes-11623838",
+          "snippet": "Health and Human Services (HHS) Secretary Robert F. Kennedy Jr. has announced that major food companies like Dunkin' Donuts and Starbucks will have to"
+        },
+        {
+          "title": "Pokémon Company Objects to White House Use for Its Political Memes",
+          "source": "nytimes.com",
+          "url": "https://www.nytimes.com/2026/03/05/arts/pokemon-company-white-house-memes.html",
+          "snippet": "The White House has been using its intellectual property for political purposes, including publishing a \"Make America Great Again\" meme that used an i"
+        },
+        {
+          "title": "Eric Sedeño's Search History",
+          "source": "yahoo.com",
+          "url": "https://www.yahoo.com/entertainment/celebrity/articles/eric-sede-os-search-history-185813950.html",
+          "snippet": "New York-based content creator, Eric Sedeño, known as Rico Taquito, has been online throughout his career and is sharing relatable snippets of his lif"
+        },
+        {
+          "title": "How RFK Jr. Is Promoting ‘Real Food’: AI Videos, Memes and Celebrity Cameos",
+          "source": "wsj.com",
+          "url": "https://www.wsj.com/style/fashion/rfk-jr-maha-real-food-kid-rock-health-videos-54a45b06",
+          "snippet": "Health Secretary Robert F. Kennedy Jr. is promoting \"real food\" through social media with videos featuring him and his peers. The videos are often acc"
+        }
+      ],
+      "generatedAt": "2026-03-07T22:52:53.070Z",
+      "model": "gpt-4o-mini"
+    },
+    "judge": {
+      "scores": {
+        "relevance": {
+          "score": 9,
+          "reason": "Most stories directly relate to the topic of memes as they discuss their role in social commentary and intellectual property issues."
+        },
+        "recency": {
+          "score": 10,
+          "reason": "All stories are dated within the last two days, ensuring up-to-date content."
+        },
+        "summary_quality": {
+          "score": 8,
+          "reason": "The bullets concisely convey key points, though additional context could enhance understanding."
+        },
+        "source_quality": {
+          "score": 9,
+          "reason": "The sources are reputable outlets such as Newsweek, The New York Times, and The Wall Street Journal."
+        },
+        "story_diversity": {
+          "score": 8,
+          "reason": "The stories cover varied aspects of meme culture, from political commentary to intellectual property rights."
+        },
+        "headline_quality": {
+          "score": 8,
+          "reason": "Headlines are generally punchy and convey the story's focus accurately."
+        },
+        "factual_consistency": {
+          "score": 9,
+          "reason": "Bullets match well with headlines and maintain relevance to the overall topic."
+        },
+        "coverage_completeness": {
+          "score": 7,
+          "reason": "Major stories are covered, though additional stories on different perspectives of meme impact could enhance completeness."
+        },
+        "readability": {
+          "score": 8,
+          "reason": "The text is clear and engaging, making it easy to scan and understand."
+        },
+        "url_quality": {
+          "score": 10,
+          "reason": "URLs appear specific to articles rather than generic site homepages, adding credibility."
+        }
+      },
+      "overall_notes": "This briefing provides a comprehensive and current look at memes' impact on political and social discussions, with a strong selection of reputable sources."
+    }
+  }
+]
