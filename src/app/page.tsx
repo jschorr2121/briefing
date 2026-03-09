@@ -300,7 +300,7 @@ export default function Home() {
       md += `---\n\n## ${briefing.emoji ? briefing.emoji + ' ' : ''}${briefing.topic}\n\n`;
 
       // Dev mode: Perigon search parameters
-      const debug = (briefing as Record<string, unknown>).debugInfo as {
+      const debug = (briefing as unknown as Record<string, unknown>).debugInfo as {
         queries?: { type: string; query: string; vectorQuery?: string }[];
         articleCount?: number;
         cascadeStep?: string;
