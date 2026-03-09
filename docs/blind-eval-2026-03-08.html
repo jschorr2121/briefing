@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blind Evaluation: Briefing App — March 8, 2026</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f0f0f; color: #e0e0e0; line-height: 1.7; padding: 2rem 1rem; }
+  .container { max-width: 780px; margin: 0 auto; }
+  h1 { font-size: 2rem; font-weight: 700; margin-bottom: 0.25rem; color: #fff; }
+  h2 { font-size: 1.35rem; font-weight: 700; color: #fff; margin-top: 2.5rem; margin-bottom: 1rem; border-bottom: 1px solid #2a2a2a; padding-bottom: 0.5rem; }
+  h3 { font-size: 1.05rem; font-weight: 600; color: #ccc; margin-top: 1.5rem; margin-bottom: 0.5rem; }
+  p, li { color: #b0b0b0; }
+  .subtitle { color: #666; font-size: 0.95rem; margin-bottom: 2rem; }
+  .badge { display: inline-block; background: #2563eb; color: #fff; font-size: 0.75rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 4px; margin-right: 0.5rem; }
+  .badge.red { background: #dc2626; }
+  .badge.yellow { background: #d97706; color: #000; }
+  .badge.green { background: #059669; }
+  .badge.gray { background: #444; }
+
+  .score-card { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 1rem; }
+  .score-card .criterion { font-weight: 600; color: #fff; font-size: 1rem; }
+  .score-card .score { float: right; font-size: 1.5rem; font-weight: 800; }
+  .score-card .score.high { color: #059669; }
+  .score-card .score.mid { color: #d97706; }
+  .score-card .score.low { color: #dc2626; }
+  .score-card .detail { margin-top: 0.5rem; font-size: 0.9rem; }
+
+  .overall-box { background: linear-gradient(135deg, #1a1a2e, #16213e); border: 2px solid #2563eb; border-radius: 16px; padding: 2rem; text-align: center; margin: 2rem 0; }
+  .overall-score { font-size: 4rem; font-weight: 800; color: #2563eb; }
+  .overall-label { font-size: 1.1rem; color: #888; }
+
+  .bug-list { list-style: none; padding: 0; }
+  .bug-list li { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 8px; padding: 0.75rem 1rem; margin-bottom: 0.5rem; font-size: 0.9rem; }
+  .bug-list li::before { content: ''; }
+
+  .pro-con { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0; }
+  .pro-con > div { background: #1a1a1a; border-radius: 10px; padding: 1rem 1.25rem; border: 1px solid #2a2a2a; }
+  .pro-con h4 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.75rem; }
+  .pro-con ul { list-style: none; padding: 0; }
+  .pro-con li { font-size: 0.88rem; margin-bottom: 0.4rem; padding-left: 1.2rem; position: relative; }
+  .pro-con .pros h4 { color: #059669; }
+  .pro-con .pros li::before { content: '✓'; position: absolute; left: 0; color: #059669; font-weight: 700; }
+  .pro-con .cons h4 { color: #dc2626; }
+  .pro-con .cons li::before { content: '✗'; position: absolute; left: 0; color: #dc2626; font-weight: 700; }
+
+  .crit { color: #dc2626; font-weight: 600; }
+  .callout { background: #1e1e2e; border-left: 3px solid #2563eb; padding: 1rem 1.25rem; border-radius: 0 8px 8px 0; margin: 1rem 0; font-size: 0.92rem; }
+  @media (max-width: 600px) { .pro-con { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>🔍 Blind Evaluation: Briefing</h1>
+<p class="subtitle">Independent assessment · March 8, 2026 · Evaluator had no prior context about the product</p>
+
+<div class="callout">
+  <strong>⚠️ Critical Finding:</strong> The intended URL <code>briefing.jakeschorr.com</code> returns <strong>NXDOMAIN</strong> — DNS is not configured. The app is only reachable at <code>briefing-five.vercel.app</code>. Any user who receives the custom domain link gets a dead page. This is a showstopper for distribution.
+</div>
+
+<h2>Methodology</h2>
+<p>I approached this as a cold user: no knowledge of the product, its stack, or goals. I explored the deployed app at <code>briefing-five.vercel.app</code>, reviewed the source code for anything the JS-rendered UI couldn't show me via fetch, and examined every user-facing feature, page, and flow. I devised 10 evaluation criteria that I believe capture what makes a news briefing product worth using.</p>
+
+<h2>Evaluation Criteria & Scores</h2>
+
+<!-- 1 -->
+<div class="score-card">
+  <span class="criterion">1. First Impression & Accessibility</span>
+  <span class="score low">3/10</span>
+  <p class="detail">The custom domain is broken (NXDOMAIN). Users hitting <code>briefing.jakeschorr.com</code> see nothing. The Vercel URL (<code>briefing-five.vercel.app</code>) works but is not memorable or brandable. Once you do reach the app, you're immediately hit with a Google OAuth login wall — no way to preview the product, see a demo, or understand the value before committing credentials. For a product with zero brand recognition, this is a conversion killer. No landing page, no screenshots, no social proof.</p>
+</div>
+
+<!-- 2 -->
+<div class="score-card">
+  <span class="criterion">2. Onboarding Flow</span>
+  <span class="score high">8/10</span>
+  <p class="detail">Once past auth, the onboarding is genuinely well-done. The 3-step flow (welcome → topic picker → auto-generate) is clean and intuitive. 42 curated topics organized by category with emoji headers, plus custom topic input. Progress dots, smooth animations, and auto-generating the first briefing after selection is a smart move — reduces friction to first value. The only miss: no explanation of what a "briefing" actually looks like before you commit to topics.</p>
+</div>
+
+<!-- 3 -->
+<div class="score-card">
+  <span class="criterion">3. Core Value Delivery (Briefing Quality)</span>
+  <span class="score mid">7/10</span>
+  <p class="detail">The briefing generation pipeline is solid: Perigon API for structured news data + GPT-5-nano for synthesis + semantic search for niche topics. The story card format with headlines, bullet points, sources, and dates is excellent for scanability. Each briefing card shows reading time, story count, and search provider — nice transparency. Summaries support bold formatting. The horizontal story carousel is a clever UI pattern. However, the quality depends entirely on the AI model and Perigon data — there's no editorial layer, no fact-checking indicator, no confidence scoring. Users must trust the output blindly.</p>
+</div>
+
+<!-- 4 -->
+<div class="score-card">
+  <span class="criterion">4. Design & Visual Polish</span>
+  <span class="score high">8/10</span>
+  <p class="detail">Clean, modern design. The light theme with blue accent (#2563eb) is professional and readable. Custom CSS variables make theming consistent. Good use of cards, rounded corners, subtle gradients, and micro-animations (fadeIn, shimmer loading states). The loading skeleton is particularly well-crafted — it mirrors the actual card layout. Safe area insets for notched devices show mobile awareness. However: no dark mode toggle (the CSS has dark-theme variables but no user control visible), and the <code>userScalable: false</code> viewport setting is an accessibility anti-pattern that prevents pinch-to-zoom.</p>
+</div>
+
+<!-- 5 -->
+<div class="score-card">
+  <span class="criterion">5. Feature Richness</span>
+  <span class="score high">8/10</span>
+  <p class="detail">Impressive feature set for what appears to be a solo-dev product: topic selection (42 curated + custom), on-demand generation, TTS with 12 voice options and speed control, email delivery, markdown export, shareable links, briefing history (last 10), scheduled daily emails, keyboard shortcuts, copy/share per story, and a full pricing/subscription system. This is genuinely feature-complete. The voice picker popup is a nice touch. Missing: search/filter within briefings, bookmarking individual stories, and reading preferences beyond length/tone.</p>
+</div>
+
+<!-- 6 -->
+<div class="score-card">
+  <span class="criterion">6. Trust & Source Transparency</span>
+  <span class="score mid">7/10</span>
+  <p class="detail">Every story card shows its source and links to the original article — this is essential and well-executed. The "via perigon" badge on briefing cards adds transparency about data provenance. Source pills at the bottom of each section are clickable. However, there's no indication of how many sources were consulted, no diversity-of-perspective indicator, no "last updated" timestamp on individual stories, and no way to verify the AI didn't hallucinate details. For a news product, trust is everything — more signals would help.</p>
+</div>
+
+<!-- 7 -->
+<div class="score-card">
+  <span class="criterion">7. Mobile Experience</span>
+  <span class="score mid">7/10</span>
+  <p class="detail">The app is responsive with mobile-aware CSS (safe-area insets, snap scrolling, swipe hints on story cards, responsive grid breakpoints). The story carousel with "Swipe for more stories" hint shows mobile-first thinking. There's even a native iOS app (SwiftUI) and Android shell (Capacitor). However, the horizontal scroll cards can be finicky on mobile, and the button-heavy action bar (Generate, Schedule, Settings, Listen, Email, Export, Share) could overwhelm on small screens. The <code>userScalable: false</code> is hostile to accessibility users.</p>
+</div>
+
+<!-- 8 -->
+<div class="score-card">
+  <span class="criterion">8. Monetization & Pricing</span>
+  <span class="score mid">6/10</span>
+  <p class="detail">Clear freemium model: 3 daily briefings free, Pro at $6.99/mo or $49.99/yr. Feature gating makes sense (unlimited topics, audio TTS, scheduled delivery for Pro). The pricing page is well-designed with a billing toggle and FAQ. However: Stripe isn't configured on the production deployment (checkout shows "Coming soon"), which means there's no actual way to pay. The upgrade modal and usage counter work, but lead to a dead end. This creates a frustrating bait-and-switch experience for users who want to upgrade.</p>
+</div>
+
+<!-- 9 -->
+<div class="score-card">
+  <span class="criterion">9. Retention & Habit Formation</span>
+  <span class="score mid">5/10</span>
+  <p class="detail">The scheduled email feature is the strongest retention mechanism — if it works. Daily emails create habit loops. Briefing history lets users revisit past briefings. But there's no push notification system (for web), no "streak" or engagement gamification, no personalization that improves over time, no "briefing digest" showing what you missed. The app is entirely pull-based (you come to it) with a single push mechanism (scheduled email). For a daily news product, this isn't enough. Users will forget it exists within a week unless the emails are exceptional.</p>
+</div>
+
+<!-- 10 -->
+<div class="score-card">
+  <span class="criterion">10. Differentiation & Market Position</span>
+  <span class="score mid">6/10</span>
+  <p class="detail">The core differentiator — user-defined topics instead of algorithmic curation — is genuinely valuable and clearly articulated. No other app lets you pick from 42 curated topics + custom topics and generate on-demand briefings. The combination of on-demand + scheduled + audio + export is unique. However: the "AI news summary" space is increasingly crowded (Particle, Concise, Yahoo News Digest, Arc Search, Perplexity Discover). The app lacks editorial voice, community features, or any network effect that would create a moat. It's a utility, not a destination.</p>
+</div>
+
+<h2>Overall Score</h2>
+<div class="overall-box">
+  <div class="overall-score">6.5<span style="font-size:1.5rem;color:#666">/10</span></div>
+  <div class="overall-label">Solid foundation, significant gaps in go-to-market readiness</div>
+</div>
+
+<h2>Bugs & Issues</h2>
+<ul class="bug-list">
+  <li><span class="badge red">CRITICAL</span> <code>briefing.jakeschorr.com</code> DNS not configured — NXDOMAIN. App unreachable at intended URL.</li>
+  <li><span class="badge red">CRITICAL</span> Stripe not configured on production — "Coming soon" on checkout. Users can't actually pay.</li>
+  <li><span class="badge yellow">UX</span> No pre-auth landing page or product preview. Google OAuth wall with zero context for new users.</li>
+  <li><span class="badge yellow">A11Y</span> <code>userScalable: false</code> in viewport meta — prevents pinch-to-zoom, violates WCAG 2.1.</li>
+  <li><span class="badge yellow">UX</span> No dark mode toggle despite having CSS variables for it (the CSS shows a light theme as default — but the layout references dark-theme card colors via variables).</li>
+  <li><span class="badge gray">MINOR</span> OG/meta URLs reference <code>briefing-five.vercel.app</code> — should be the custom domain once DNS is fixed.</li>
+  <li><span class="badge gray">MINOR</span> The Vercel slug "briefing-five" suggests this is the 5th attempt at the project name — not confidence-inspiring if users notice the URL.</li>
+  <li><span class="badge gray">MINOR</span> Story card horizontal scroll hardcodes 340px card width in JS scroll calculations — could misalign on unusual viewport widths.</li>
+  <li><span class="badge gray">MINOR</span> Email validation uses simple <code>.includes('@')</code> — will accept invalid emails like <code>@</code>.</li>
+</ul>
+
+<h2>What Would Make Me Come Back vs. Abandon</h2>
+
+<div class="pro-con">
+  <div class="pros">
+    <h4>Why I'd Come Back</h4>
+    <ul>
+      <li>The onboarding-to-first-briefing flow is genuinely fast and satisfying</li>
+      <li>Topic customization is exactly what I want — no algorithmic guessing</li>
+      <li>Audio briefings with voice selection could replace my podcast time</li>
+      <li>If daily scheduled emails are good, it becomes a habit</li>
+      <li>Clean, non-overwhelming design</li>
+      <li>Export/share features feel thoughtful</li>
+    </ul>
+  </div>
+  <div class="cons">
+    <h4>Why I'd Abandon</h4>
+    <ul>
+      <li>No landing page — I can't evaluate the product before signing in</li>
+      <li>Can't pay even if I want to (Stripe broken)</li>
+      <li>No way to know if briefings improve over time or learn my preferences</li>
+      <li>No breaking news alerts — I'd still need another app for that</li>
+      <li>3 free briefings/day is stingy for evaluating the product</li>
+      <li>No community or social proof — feels like a side project</li>
+    </ul>
+  </div>
+</div>
+
+<h2>Top 5 Recommendations (Priority Order)</h2>
+
+<h3>1. Fix the DNS (5 minutes, massive impact)</h3>
+<p>Add a CNAME record for <code>briefing.jakeschorr.com</code> → <code>cname.vercel-dns.com</code> and add the domain in Vercel project settings. Without this, the product literally doesn't exist for anyone you give the URL to.</p>
+
+<h3>2. Build a pre-auth landing page (1-2 days)</h3>
+<p>Show what the product does before requiring Google sign-in. Include: a demo briefing, screenshots, value proposition, and social proof. The current OAuth wall kills 90%+ of potential users. Consider letting people generate one briefing without signing in.</p>
+
+<h3>3. Configure Stripe on production (30 minutes)</h3>
+<p>Set the Stripe env vars on Vercel. Until users can pay, there's no business. The pricing page exists, the checkout flow is built — it just needs env vars.</p>
+
+<h3>4. Add a "how fresh is this?" signal (few hours)</h3>
+<p>Show when articles were published (not just "Today" or "Yesterday" — show hours). For a news product, freshness is credibility. Also consider showing how many sources were scanned to produce each briefing.</p>
+
+<h3>5. Web push notifications for scheduled briefings (1-2 days)</h3>
+<p>Email is good but easy to ignore. Service worker + push notifications would dramatically improve retention. "Your morning briefing is ready" at 7am creates a daily habit.</p>
+
+<h2>The Blunt Assessment</h2>
+<p>Briefing is a well-built product with a clear value proposition that is <strong>not ready for distribution</strong>. The engineering is solid — the code is clean, the features are thoughtful, the UX flows are polished. But the go-to-market fundamentals are broken: the custom domain doesn't resolve, payments don't work, and there's no way to evaluate the product without committing to Google OAuth. These aren't hard problems to fix — they're configuration tasks, not engineering challenges.</p>
+
+<p>The core idea is good: user-defined topics + AI generation + multiple delivery formats. The 42 curated topics with semantic search for custom topics is a genuine differentiator. The audio feature with 12 voices is a smart play for commuters. But the product needs to answer one question that it currently doesn't: <strong>"Why should I use this instead of asking ChatGPT/Perplexity to summarize today's news?"</strong></p>
+
+<p>The answer should be: scheduling, curation memory, audio delivery, and the topic engine. But those advantages are invisible behind an auth wall. Fix the distribution basics, build a landing page that sells the dream, and this could be a real product. Right now it's a great prototype that nobody can find or pay for.</p>
+
+<p style="color:#666;margin-top:2rem;font-size:0.85rem;text-align:center;">Generated by blind evaluation · March 8, 2026</p>
+
+</div>
+</body>
+</html>
