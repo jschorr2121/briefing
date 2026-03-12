@@ -119,13 +119,14 @@ export interface ArticleSearchParams {
   language?: string[];
   country?: string[];
   medium?: string[];
+  companyName?: string;
 }
 
 export async function searchArticlesAll(opts: ArticleSearchParams): Promise<PerigonArticlesResponse> {
   const defaults = {
     sortBy: 'relevance',
     size: 15,
-    from: daysAgo(3),
+    from: daysAgo(5),
     sourceGroup: ['top100'],
     excludeLabel: ['Non-news', 'Opinion', 'Paid News'],
     showReprints: false,
@@ -153,6 +154,7 @@ export async function searchArticlesAll(opts: ArticleSearchParams): Promise<Peri
   if (opts.category) for (const cat of opts.category) params.append('category', cat);
   if (opts.topic) for (const t of opts.topic) params.append('topic', t);
   if (opts.country) for (const c of opts.country) params.append('country', c);
+  if (opts.companyName) params.set('companyName', opts.companyName);
 
   const url = `${PERIGON_BASE}/articles/all?${params}`;
   const res = await fetch(url, { signal: createAbortSignal() });
@@ -198,6 +200,61 @@ export async function vectorSearchArticles(opts: {
     numResults: raw.results?.length ?? 0,
     articles: (raw.results || []).map(r => r.data),
   };
+}
+
+// ─── Stories Search (pre-clustered article groups) ───────────────────
+// Uses GET /v1/stories/all for discovering related article clusters.
+
+export interface PerigonStory {
+  id: string;
+  title: string;
+  summary?: string;
+  uniqueSources: number;
+  updatedAt: string;
+  createdAt: string;
+  articles: PerigonArticle[];
+}
+
+export interface PerigonStoriesResponse {
+  status: number;
+  numResults: number;
+  results: PerigonStory[];
+}
+
+export async function searchStories(opts: {
+  q: string;
+  size?: number;
+  from?: string;
+  sourceGroup?: string[];
+  sortBy?: string;
+  language?: string[];
+  category?: string[];
+  topic?: string[];
+  minUniqueSources?: number;
+}): Promise<PerigonStoriesResponse> {
+  const params = new URLSearchParams({
+    apiKey: getApiKey(),
+    q: opts.q,
+    sortBy: opts.sortBy ?? 'updatedAt',
+    size: String(opts.size ?? 10),
+  });
+
+  if (opts.from) params.set('from', opts.from);
+  if (opts.minUniqueSources) params.set('minUniqueSources', String(opts.minUniqueSources));
+  for (const sg of opts.sourceGroup ?? []) params.append('sourceGroup', sg);
+  for (const lang of opts.language ?? ['en']) params.append('language', lang);
+  if (opts.category) for (const cat of opts.category) params.append('category', cat);
+  if (opts.topic) for (const t of opts.topic) params.append('topic', t);
+
+  const url = `${PERIGON_BASE}/stories/all?${params}`;
+  const res = await fetch(url, { signal: createAbortSignal() });
+
+  if (!res.ok) {
+    const body = await res.text().catch(() => '');
+    throw new Error(`Perigon stories search failed (${res.status}): ${body}`);
+  }
+
+  return res.json() as Promise<PerigonStoriesResponse>;
 }
 
 // ─── Search Summarizer ───────────────────────────────────────────────

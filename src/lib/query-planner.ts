@@ -11,6 +11,14 @@ export interface QueryInstruction {
   query: string;
   /** Optional separate prompt for vector when type is "both" */
   vectorQuery?: string;
+  /** Perigon taxonomy category filter (e.g. "Tech", "Sports", "Finance") */
+  perigonCategory?: string;
+  /** Perigon taxonomy topic filter (e.g. "AI", "NFL", "Cryptocurrency") — only use verified values */
+  perigonTopic?: string;
+  /** Company name for Perigon entity search (e.g. "Tesla", "Apple") */
+  companyName?: string;
+  /** Use /v1/stories/all endpoint for pre-clustered results (broad topics only) */
+  useStories?: boolean;
 }
 
 export interface QueryPlan {
@@ -94,36 +102,48 @@ SPLITTING RULES:
   - "science and technology" (as one field) -> single query
 - Use judgment on ambiguous cases.
 
+PERIGON CATEGORY FILTER:
+For each query, optionally include a "perigonCategory" field to filter by Perigon's taxonomy.
+Valid categories (use EXACTLY one of these strings, or omit if none fit):
+Auto, Business, Entertainment, Environment, Finance, Health, Lifestyle, Politics, Science, Sports, Tech, Travel, Weather, World
+
+Only include perigonCategory when you are confident it matches. Omit it for cross-category topics.
+
+COMPANY NAME FILTER:
+If the topic is clearly about a SPECIFIC company (e.g. "Tesla", "Apple", "Goldman Sachs"), include a "companyName" field with the company's official name. This enables precise entity matching. Omit for topics that aren't about a single company.
+
 QUERY OPTIMIZATION:
 - Optimize the query field for search — it does NOT need to match the user's exact wording.
 - Use terms that news headlines would actually contain.
-- Keep queries concise: 1-5 words.
+- Use OR between alternative search terms so articles matching ANY term are returned.
+- Quote multi-word phrases with double quotes.
+- Keep queries to 2-5 terms joined by OR.
 - Examples:
-  - "Claude AI" -> query: "Claude AI Anthropic"
-  - "crypto" -> query: "cryptocurrency bitcoin"
-  - "golf betting" -> query: "golf betting odds PGA"
-  - "Tesla" -> query: "Tesla"
-  - "housing market" -> query: "housing market real estate prices"
+  - "Claude AI" -> query: "\"Claude AI\" OR Anthropic"
+  - "crypto" -> query: "cryptocurrency OR bitcoin OR ethereum"
+  - "golf betting" -> query: "\"golf betting\" OR \"PGA odds\""
+  - "Tesla" -> query: "Tesla OR \"electric vehicles\""
+  - "housing market" -> query: "\"housing market\" OR \"real estate\" OR mortgage"
 
 Output ONLY a valid JSON array. No markdown, no explanation:
 [
   {
     "originalTopic": "AI and Tech",
     "queries": [
-      { "type": "articles", "query": "artificial intelligence AI" },
-      { "type": "articles", "query": "technology" }
+      { "type": "articles", "query": "\"artificial intelligence\" OR AI", "perigonCategory": "Tech" },
+      { "type": "articles", "query": "technology OR startup", "perigonCategory": "Tech" }
     ]
   },
   {
     "originalTopic": "Morgan Stanley wealth management",
     "queries": [
-      { "type": "both", "query": "Morgan Stanley wealth management", "vectorQuery": "Morgan Stanley wealth management division advisory private banking" }
+      { "type": "both", "query": "\"Morgan Stanley\" OR \"wealth management\"", "vectorQuery": "Morgan Stanley wealth management division advisory private banking", "perigonCategory": "Finance" }
     ]
   },
   {
     "originalTopic": "Claude AI",
     "queries": [
-      { "type": "articles", "query": "Claude AI Anthropic" }
+      { "type": "articles", "query": "\"Claude AI\" OR Anthropic", "perigonCategory": "Tech" }
     ]
   }
 ]`;
@@ -196,14 +216,20 @@ async function callQueryPlannerLLM(topicNames: string[]): Promise<QueryPlan[]> {
 // ─── Convert curated config to QueryInstructions ─────────────────────
 
 function curatedToInstructions(config: TopicConfig): QueryInstruction[] {
+  const base: Partial<QueryInstruction> = {};
+  if (config.perigonCategory) base.perigonCategory = config.perigonCategory;
+  if (config.perigonTopic) base.perigonTopic = config.perigonTopic;
+  if (config.type === 'broad') base.useStories = true;
+
   if (config.queryStrategy === 'articles') {
-    return [{ type: 'articles', query: config.keywordQuery }];
+    return [{ type: 'articles', query: config.keywordQuery, ...base }];
   } else {
     // "both" strategy: keyword + semantic search in parallel
     return [{
       type: 'both',
       query: config.keywordQuery,
       vectorQuery: config.vectorPrompt,
+      ...base,
     }];
   }
 }
