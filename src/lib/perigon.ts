@@ -20,6 +20,7 @@ export interface PerigonArticle {
   imageUrl?: string;
   topics?: { name: string }[];
   categories?: { name: string }[];
+  labels?: { name: string }[];
   sentiment?: { positive: number; negative: number; neutral: number };
 }
 

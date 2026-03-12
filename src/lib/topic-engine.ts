@@ -357,9 +357,17 @@ Return ONLY valid JSON (no markdown, no code blocks) with these fields:
   "displayName": "Human Readable Name",
   "type": "broad" or "niche",
   "queryStrategy": "articles" or "both",
-  "keywordQuery": "search keywords for news API",
+  "keywordQuery": "optimized search query using OR between terms",
   "vectorPrompt": "descriptive sentence for semantic search (include key entities, companies, people, subtopics)",
 }
+
+KEYWORD QUERY RULES:
+- Use OR between alternative search terms so articles matching ANY term are returned.
+- Quote multi-word phrases with double quotes.
+- Keep to 2-5 terms joined by OR.
+- Examples: "cybersecurity" -> "cybersecurity OR \\"data breach\\" OR hacking"
+- Examples: "Tesla" -> "Tesla OR \\"electric vehicles\\""
+- Examples: "golf" -> "golf OR PGA OR LPGA"
 
 Choose "broad" + "articles" for well-covered mainstream topics.
 Choose "niche" + "both" for specialized or obscure topics.`;

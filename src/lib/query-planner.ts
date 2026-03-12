@@ -237,7 +237,8 @@ function curatedToInstructions(config: TopicConfig): QueryInstruction[] {
 // ─── Main: resolve topics to query plans ─────────────────────────────
 
 export async function resolveTopics(
-  topics: { name: string }[]
+  topics: { name: string }[],
+  opts?: { skipCache?: boolean },
 ): Promise<ResolvedTopic[]> {
   const resolved: ResolvedTopic[] = [];
   const needsPlanning: { index: number; name: string }[] = [];
@@ -256,8 +257,8 @@ export async function resolveTopics(
       continue;
     }
 
-    // Check Redis cache for plan
-    const cached = await getCachedPlan(name);
+    // Check Redis cache for plan (skip in dev mode)
+    const cached = opts?.skipCache ? null : await getCachedPlan(name);
     if (cached) {
       console.log(`📦 Cached query plan for "${name}"`);
       resolved.push({
