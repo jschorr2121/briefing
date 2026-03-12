@@ -55,6 +55,7 @@ interface GenerateSettings {
   briefingLength: 'short' | 'medium' | 'long';
   includeLinks?: boolean;
   tone: 'casual' | 'professional' | 'technical';
+  skipCache?: boolean;
 }
 
 // ─── Article preparation helpers ─────────────────────────────────────
@@ -146,10 +147,10 @@ function filterVectorResults(articles: PerigonArticle[]): PerigonArticle[] {
       const pubDate = new Date(a.pubDate);
       if (!isNaN(pubDate.getTime()) && pubDate < cutoff) return false;
     }
-    // Filter out excluded labels
-    if (a.categories) {
-      for (const cat of a.categories) {
-        if (EXCLUDED_LABELS.has(cat.name)) return false;
+    // Filter out excluded labels (Perigon returns these in the `labels` field)
+    if (a.labels) {
+      for (const label of a.labels) {
+        if (EXCLUDED_LABELS.has(label.name)) return false;
       }
     }
     return true;
@@ -290,15 +291,17 @@ interface FetchQueryResult {
   cascadeStep: string;
 }
 
-async function fetchQueryArticles(instruction: QueryInstruction): Promise<FetchQueryResult> {
+async function fetchQueryArticles(instruction: QueryInstruction, skipCache = false): Promise<FetchQueryResult> {
   const cacheType = instruction.type;
   const cacheQuery = instruction.query;
 
-  // Check cache
-  const cached = await getCachedQueryArticles(cacheType, cacheQuery);
-  if (cached) {
-    console.log(`📦 Cache hit for query "${cacheQuery}" (${cacheType})`);
-    return { articles: cached.data.articles, cascadeStep: 'cached' };
+  // Check cache (skip in dev mode)
+  if (!skipCache) {
+    const cached = await getCachedQueryArticles(cacheType, cacheQuery);
+    if (cached) {
+      console.log(`📦 Cache hit for query "${cacheQuery}" (${cacheType})`);
+      return { articles: cached.data.articles, cascadeStep: 'cached' };
+    }
   }
 
   // Execute query with cascade fallback
@@ -320,10 +323,10 @@ interface TopicFetchResult {
   debugInfo: DebugInfo;
 }
 
-async function fetchArticlesForTopic(resolved: ResolvedTopic): Promise<TopicFetchResult> {
+async function fetchArticlesForTopic(resolved: ResolvedTopic, skipCache = false): Promise<TopicFetchResult> {
   // Fetch all queries in parallel
   const queryResults = await Promise.all(
-    resolved.queries.map(q => fetchQueryArticles(q))
+    resolved.queries.map(q => fetchQueryArticles(q, skipCache))
   );
 
   // Collect debug info
@@ -435,12 +438,15 @@ export async function generateBriefing(
     tone: settings.tone || 'professional',
   };
 
+  const skipCache = settings.skipCache === true;
+  if (skipCache) console.log('🚫 Cache bypassed (dev mode)');
+
   // 1. Resolve all topics via query planner
-  const resolved = await resolveTopics(topics);
+  const resolved = await resolveTopics(topics, { skipCache });
 
   // 2. Fetch articles for ALL topics in parallel
   const articleResults = await Promise.allSettled(
-    resolved.map(r => fetchArticlesForTopic(r))
+    resolved.map(r => fetchArticlesForTopic(r, skipCache))
   );
 
   // Build debug info from resolved topics (available even when briefing is cached)
@@ -461,7 +467,7 @@ export async function generateBriefing(
   const assemblyTasks = topics.map(async (original, i) => {
     const topicDebugInfo = debugInfoByIndex[i];
     const sectionCacheId = original.name.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
-    const cachedSection = await getCachedSection(sectionCacheId);
+    const cachedSection = skipCache ? null : await getCachedSection(sectionCacheId);
     if (cachedSection) {
       console.log(`📦 Using cached briefing section for "${original.name}"`);
       return {

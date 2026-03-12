@@ -341,7 +341,7 @@ export async function POST(request: NextRequest) {
     // ── Perigon pipeline (default) ────────────────────────────────
     if (NEWS_SOURCE === 'perigon') {
       console.log(`🔄 Using Perigon pipeline for ${cappedTopics.length} topics`);
-      const result = await generateBriefing(cappedTopics, settings);
+      const result = await generateBriefing(cappedTopics, { ...settings, skipCache: devMode });
       return NextResponse.json({ briefings: result.briefings, model: result.model });
     }
 
