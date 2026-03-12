@@ -1,5 +1,5 @@
 import { resolveTopics, type QueryInstruction, type ResolvedTopic } from './query-planner';
-import { searchArticlesAll, vectorSearchArticles, type PerigonArticle } from './perigon';
+import { searchArticlesAll, vectorSearchArticles, searchStories, type PerigonArticle } from './perigon';
 import { getCachedQueryArticles, setCachedQueryArticles, getCachedSection, type PerigonResult } from './perigon-cache';
 import { getOpenAIModel } from './models';
 import { buildPerigonAssemblyPrompt, buildPerigonUserMessage, type PreparedArticle, type BriefingSettings, DEFAULT_SETTINGS } from './prompts';
@@ -130,6 +130,32 @@ function daysAgo(n: number): string {
   return d.toISOString().split('T')[0];
 }
 
+// ─── Vector result post-filter ───────────────────────────────────────
+// Vector search has no server-side filtering, so we filter client-side.
+
+const VECTOR_MAX_AGE_DAYS = 7;
+const EXCLUDED_LABELS = new Set(['Non-news', 'Opinion', 'Paid News', 'Press Release', 'Low Content']);
+
+function filterVectorResults(articles: PerigonArticle[]): PerigonArticle[] {
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - VECTOR_MAX_AGE_DAYS);
+
+  return articles.filter(a => {
+    // Filter out old articles
+    if (a.pubDate) {
+      const pubDate = new Date(a.pubDate);
+      if (!isNaN(pubDate.getTime()) && pubDate < cutoff) return false;
+    }
+    // Filter out excluded labels
+    if (a.categories) {
+      for (const cat of a.categories) {
+        if (EXCLUDED_LABELS.has(cat.name)) return false;
+      }
+    }
+    return true;
+  });
+}
+
 // ─── Cascade fallback for a single QueryInstruction ──────────────────
 
 interface ExecuteQueryResult {
@@ -140,9 +166,16 @@ interface ExecuteQueryResult {
 async function executeQuery(instruction: QueryInstruction): Promise<ExecuteQueryResult> {
   const { type, query, vectorQuery } = instruction;
 
+  // Taxonomy + entity filters (from curated topics or LLM planner)
+  const taxonomyFilters = {
+    ...(instruction.perigonCategory ? { category: [instruction.perigonCategory] } : {}),
+    ...(instruction.perigonTopic ? { topic: [instruction.perigonTopic] } : {}),
+    ...(instruction.companyName ? { companyName: instruction.companyName } : {}),
+  };
+
   if (type === 'vector') {
-    const result = await vectorSearchArticles({ prompt: query, size: 10 });
-    return { articles: result.articles, cascadeStep: 'vector-only' };
+    const result = await vectorSearchArticles({ prompt: query, size: 15 });
+    return { articles: filterVectorResults(result.articles), cascadeStep: 'vector-only' };
   }
 
   if (type === 'both') {
@@ -154,38 +187,75 @@ async function executeQuery(instruction: QueryInstruction): Promise<ExecuteQuery
         excludeLabel: ['Non-news', 'Opinion', 'Paid News'],
         showReprints: false,
         sortBy: 'relevance',
-        size: 10,
-        from: daysAgo(3),
+        size: 15,
+        from: daysAgo(5),
         language: ['en'],
         medium: ['Article'],
+        ...taxonomyFilters,
       }),
-      vectorSearchArticles({ prompt: vectorQuery || query, size: 10 }),
+      vectorSearchArticles({ prompt: vectorQuery || query, size: 15 }),
     ]);
 
     const articles: PerigonArticle[] = [];
     if (articlesResult.status === 'fulfilled') articles.push(...articlesResult.value.articles);
-    if (vectorResult.status === 'fulfilled') articles.push(...vectorResult.value.articles);
+    if (vectorResult.status === 'fulfilled') articles.push(...filterVectorResults(vectorResult.value.articles));
 
     // Deduplicate, preferring articles/all results (listed first, have richer metadata)
     return { articles: deduplicateArticles(articles), cascadeStep: 'both-parallel' };
   }
 
   // type === 'articles': cascade fallback
-  // Step 1: top100 sources, 3-day window
+
+  // Step 0 (broad topics only): try stories endpoint for pre-clustered results
+  if (instruction.useStories) {
+    try {
+      const stories = await searchStories({
+        q: query,
+        size: 8,
+        from: daysAgo(5),
+        sourceGroup: ['top100'],
+        sortBy: 'updatedAt',
+        language: ['en'],
+        ...(instruction.perigonCategory ? { category: [instruction.perigonCategory] } : {}),
+        ...(instruction.perigonTopic ? { topic: [instruction.perigonTopic] } : {}),
+        minUniqueSources: 3,
+      });
+
+      if (stories.results && stories.results.length >= 3) {
+        // Extract the first (best) article from each story cluster
+        const storyArticles: PerigonArticle[] = [];
+        for (const story of stories.results) {
+          if (story.articles && story.articles.length > 0) {
+            storyArticles.push(story.articles[0]);
+          }
+        }
+        if (storyArticles.length >= 3) {
+          console.log(`📰 Stories endpoint returned ${storyArticles.length} clustered articles for "${query}"`);
+          return { articles: storyArticles, cascadeStep: 'stories-clustered' };
+        }
+      }
+      console.log(`📉 Stories returned ${stories.results?.length ?? 0} results for "${query}", falling through to articles...`);
+    } catch (err) {
+      console.warn(`⚠️ Stories endpoint failed for "${query}", falling through:`, err);
+    }
+  }
+
+  // Step 1: top100 sources, 5-day window
   const step1 = await searchArticlesAll({
     q: query,
     sourceGroup: ['top100'],
     excludeLabel: ['Non-news', 'Opinion', 'Paid News'],
     showReprints: false,
     sortBy: 'relevance',
-    size: 15,
-    from: daysAgo(3),
+    size: 20,
+    from: daysAgo(5),
     language: ['en'],
     medium: ['Article'],
+    ...taxonomyFilters,
   });
 
   if (step1.articles.length >= 3) {
-    return { articles: step1.articles, cascadeStep: 'step1-top100-3d' };
+    return { articles: step1.articles, cascadeStep: 'step1-top100-5d' };
   }
   console.log(`📉 Step 1 returned ${step1.articles.length} articles for "${query}", broadening...`);
 
@@ -195,11 +265,12 @@ async function executeQuery(instruction: QueryInstruction): Promise<ExecuteQuery
     excludeLabel: ['Non-news', 'Opinion', 'Paid News'],
     showReprints: false,
     sortBy: 'relevance',
-    size: 15,
+    size: 20,
     from: daysAgo(7),
     sourceGroup: [], // empty = no filter
     language: ['en'],
     medium: ['Article'],
+    ...taxonomyFilters,
   });
 
   if (step2.articles.length >= 3) {
@@ -208,8 +279,8 @@ async function executeQuery(instruction: QueryInstruction): Promise<ExecuteQuery
   console.log(`📉 Step 2 returned ${step2.articles.length} articles for "${query}", falling back to vector...`);
 
   // Step 3: vector search as last resort
-  const step3 = await vectorSearchArticles({ prompt: query, size: 10 });
-  return { articles: step3.articles, cascadeStep: 'step3-vector-fallback' };
+  const step3 = await vectorSearchArticles({ prompt: query, size: 15 });
+  return { articles: filterVectorResults(step3.articles), cascadeStep: 'step3-vector-fallback' };
 }
 
 // ─── Fetch articles for a single QueryInstruction (with caching) ─────
@@ -267,12 +338,12 @@ async function fetchArticlesForTopic(resolved: ResolvedTopic): Promise<TopicFetc
   const rawArticles = queryResults.map(r => r.articles);
   const interleaved = interleaveArticles(rawArticles);
 
-  // Deduplicate and take top 10
+  // Deduplicate and take top 12 (more material for LLM assembly)
   const deduped = deduplicateArticles(interleaved);
-  const top = deduped.slice(0, 10);
+  const top = deduped.slice(0, 12);
 
   return {
-    articles: prepareArticles(top, 10),
+    articles: prepareArticles(top, 12),
     debugInfo: {
       queries: debugQueries,
       articleCount: top.length,
