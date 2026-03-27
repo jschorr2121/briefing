@@ -11,3 +11,11 @@ briefing-ios/Briefing.xcodeproj/xcuserdata/
 briefing-ios/Briefing.xcodeproj/project.xcworkspace/xcuserdata/
 briefing-ios/**/*.xcuserstate
 briefing-ios/DerivedData/
+
+# Debug logs
+logs/
+
+# Playwright
+playwright/.auth/user.json
+playwright-report/
+test-results/

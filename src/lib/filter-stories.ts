@@ -29,3 +29,18 @@ export function filterRecentStories<T extends { headline?: string; date?: string
     return true;
   });
 }
+
+/**
+ * Sort stories by date, newest first.
+ * Stories with missing or unparseable dates are pushed to the end.
+ */
+export function sortStoriesByRecency<T extends { date?: string }>(stories: T[]): T[] {
+  return [...stories].sort((a, b) => {
+    const dateA = a.date ? new Date(a.date).getTime() : 0;
+    const dateB = b.date ? new Date(b.date).getTime() : 0;
+    // NaN check: treat unparseable as 0 (pushed to end)
+    const timeA = isNaN(dateA) ? 0 : dateA;
+    const timeB = isNaN(dateB) ? 0 : dateB;
+    return timeB - timeA;
+  });
+}

@@ -1,7 +1,11 @@
 import Foundation
 
 enum AppConfig {
+    #if DEBUG
+    static let baseURL = "http://localhost:3000"
+    #else
     static let baseURL = "https://briefing-five.vercel.app"
+    #endif
     static let googleClientID = "814427665682-4chioe564tgqo9920satjmciivad2f1c.apps.googleusercontent.com"
 
     static let monthlyProductID = "com.briefing.pro.monthly"

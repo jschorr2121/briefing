@@ -33,9 +33,25 @@ A personalized AI news briefing app. Users choose topics, generate briefings wit
 - `src/app/api/generate/route.ts` — Briefing generation API
 - `src/app/api/cron/generate-briefs/route.ts` — Pre-generate briefings (runs before send)
 - `src/app/api/cron/send-briefs/route.ts` — Send scheduled briefing emails
+- `src/lib/query-planner.ts` — LLM query planner (routes topics to Perigon endpoints)
+- `src/lib/briefing-generator.ts` — Perigon pipeline: query execution, cascade fallback, LLM assembly
+- `src/lib/perigon.ts` — Perigon API client (articles, stories, vector, summarizer)
+- `src/lib/alert.ts` — Email alerts for cron job failures
 - `src/lib/capacitor.ts` — Native bridge utilities
 - `capacitor.config.ts` — Mobile app config
 - `MOBILE_SETUP.md` — Full guide for iOS/Android build + submission
+
+## Perigon API Reference
+Full Perigon API documentation is in `docs/perigon/`:
+- `overview.md` — All endpoints, auth, pagination
+- `articles.md` — `/v1/articles/all` params, query syntax, response schema
+- `stories.md` — `/v1/stories/all` story clusters, when to use
+- `vector-search.md` — `/v1/vector/news/all` semantic search
+- `taxonomy.md` — Categories, topic tags, labels, source groups
+- `summarizer.md` — `/v1/summarize` endpoint
+- `entity-search.md` — Companies, journalists, companyName usage
+
+Refer to these docs when modifying the query planner or Perigon API integration.
 
 ## Deployment
 - Push to master → Vercel auto-deploys (or trigger: `curl -X POST "https://api.vercel.com/v1/integrations/deploy/prj_dDB96HruN79Qm1VQzc1aulyhz0Vz/vIAVZAlqNx"`)
