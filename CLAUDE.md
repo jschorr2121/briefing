@@ -48,6 +48,19 @@ See latest progress notes below.
 
 ## Progress Log
 
+### Mar 27, 2026
+- **[proactive review]** Dev branch has 20+ commits ahead of master with production-ready improvements:
+  - Loading skeletons for better UX
+  - Custom 404 and error boundary pages
+  - JSON-LD structured data for Google rich results (SEO)
+  - Dynamic sitemap.xml and robots.txt via Next.js route handlers
+  - Dynamic OG metadata for shared briefing URLs
+  - Shareable briefing URLs with public viewer page
+  - /api/health endpoint for monitoring
+  - Cron timeout fixes (maxDuration + batch limits)
+- **Recommendation**: Consider merging dev → master to get these improvements live
+- Dev branch is stable and all features have been tested during development
+
 ### Feb 17, 2026
 - **[dev branch]** Added robots.txt and sitemap.xml for SEO
   - robots.txt: allows crawling, blocks API/login routes
