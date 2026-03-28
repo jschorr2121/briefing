@@ -1,4 +1,4 @@
-# Briefing — Competitive Landscape (Feb 2026)
+# Briefing — Competitive Landscape (Updated March 2026)
 
 ## Briefing's Position
 **Fully customizable, topic-based AI news briefings** with audio, email delivery, and scheduled automation. Users choose exactly what they care about — not what an algorithm thinks they want.
@@ -64,5 +64,42 @@ The market splits into two camps:
 
 Briefing sits in the **unoccupied middle**: AI-generated depth with full user control over topics, plus multi-format delivery (web, email, audio). Nobody else lets you say "give me AI, startups, and Jets football" and get a polished briefing with audio every morning.
 
+## March 2026 Update: AI Productivity Tool Trends
+
+### Emerging Competition & Market Context
+The AI productivity space is rapidly consolidating around "full-stack" platforms:
+
+**Rising Tools:**
+- **Cursor + Clarm** — YC portfolio companies positioning as "only two tools needed" (Cursor for building, Clarm for sales/distribution/support)
+- **Teal** — AI-powered CV optimization and job matching gaining traction
+- **WalterWrites** — AI writing + humanization (trending in startup communities)
+- **Bond** — "AI Chief of Staff" for business automation
+- **Notion AI** — Expanding from notes to full productivity suite
+
+**Key Market Shifts:**
+- **Vertical consolidation** — Market favoring platforms that do everything vs. best-of-breed tools
+- **Privacy-first opportunities** — Demand growing for solutions with full data control (no code leaving infrastructure)
+- **Cost-sensitive deployments** — Tools targeting teams spending $500+/month on LLMs
+- **Developer-first GTM** — Successful tools starting with technical users, expanding to prosumers
+
+### Briefing's Position in This Landscape
+**Strengths:**
+- **Niche focus** — While competitors chase "full productivity stack," Briefing owns the "personalized news intelligence" niche
+- **Clear value prop** — Not trying to be everything; solves one problem exceptionally well
+- **Low switching cost** — Easy to adopt alongside existing tools (doesn't require migration)
+
+**Strategic Considerations:**
+- Consider vertical expansion (integrate with Notion, Obsidian, Second Brain tools) rather than horizontal expansion
+- Privacy-first positioning could differentiate from algorithm-driven competitors
+- Developer/technical users as early adopters (API access opportunity)
+- Avoid feature bloat chasing "full stack" competitors — stay focused on core value
+
+**Watch Out For:**
+- Risk of commoditization as LLM costs drop and incumbents add similar features
+- Market may consolidate around 2-3 dominant platforms (Notion, Cursor, etc.)
+- Need to establish strong brand/network effects before being subsumed into larger platforms
+
 ## Bottom Line
-Briefing's wedge is **user agency** — you define what matters, AI does the work. The market is moving toward personalization but most apps still use opaque algorithms. Briefing's transparency (you pick topics, you see sources) is a trust advantage. Ship the mobile app and conversational audio to widen the moat.
+Briefing's wedge is **user agency** — you define what matters, AI does the work. The market is moving toward personalization but most apps still use opaque algorithms. Briefing's transparency (you pick topics, you see sources) is a trust advantage. 
+
+**March 2026 strategy:** Stay laser-focused on personalized news intelligence. Don't chase the "full productivity suite" trend — instead, integrate deeply with tools users already love (Notion, Slack, Obsidian). Ship the mobile app and conversational audio to widen the moat. Consider API access to enable developer ecosystem.
