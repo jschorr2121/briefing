@@ -64,6 +64,15 @@ See latest progress notes below.
 
 ## Progress Log
 
+### Mar 29, 2026
+- **Perigon topic pipeline improvements**: Added topic pipeline with OR queries for custom topics
+- **iOS UI improvements**: Enhanced mobile experience
+- **Cron updates**: Improved scheduled briefing reliability
+- **Vector post-filter**: Fixed post-filtering for semantic search results
+- **Dev mode cache bypass**: Improved development workflow
+- **Search quality**: Multiple commits improving Perigon search quality with OR queries, taxonomy filters, stories endpoint
+- **Type fixes**: Fixed debugInfo type errors in production build
+
 ### Feb 4, 2026
 - Removed Hub, health tips from product emails
 - Default topics + topic persistence shipped
