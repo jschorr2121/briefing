@@ -4,6 +4,7 @@ import { getCachedQueryArticles, setCachedQueryArticles, getCachedSection, type 
 import { getOpenAIModel } from './models';
 import { buildPerigonAssemblyPrompt, buildPerigonUserMessage, type PreparedArticle, type BriefingSettings, DEFAULT_SETTINGS } from './prompts';
 import { filterRecentStories } from './filter-stories';
+import { calculateBriefingReadingTime } from './reading-time';
 
 // ─── Types (matching existing frontend contract) ─────────────────────
 
@@ -30,6 +31,7 @@ interface Briefing {
   articles: Article[];
   generatedAt: string;
   model: string;
+  readingTimeMinutes?: number;
 }
 
 export interface BriefingResponse {
@@ -334,14 +336,18 @@ export async function generateBriefing(
     const cachedSection = await getCachedSection(sectionCacheId);
     if (cachedSection) {
       console.log(`📦 Using cached briefing section for "${original.name}"`);
+      const filteredStoriesFromCache = filterRecentStories(cachedSection.stories);
+      const cachedReadingTime = calculateBriefingReadingTime(cachedSection.summary, filteredStoriesFromCache);
+      
       return {
         topic: original.name,
         emoji: original.emoji || '',
         summary: cachedSection.summary,
-        stories: filterRecentStories(cachedSection.stories),
+        stories: filteredStoriesFromCache,
         articles: settings.includeLinks !== false ? cachedSection.articles.slice(0, 5) : [],
         generatedAt: cachedSection.generatedAt,
         model,
+        readingTimeMinutes: cachedReadingTime,
       } as Briefing;
     }
 
@@ -362,6 +368,7 @@ export async function generateBriefing(
       const assembled = await assembleWithLLM(original.name, articles, briefingSettings);
       const filteredStories = filterRecentStories(assembled.stories || []);
       const frontendArticles = toFrontendArticles(articles);
+      const readingTimeMinutes = calculateBriefingReadingTime(assembled.summary || '', filteredStories);
 
       return {
         topic: original.name,
@@ -371,6 +378,7 @@ export async function generateBriefing(
         articles: settings.includeLinks !== false ? frontendArticles.slice(0, 5) : [],
         generatedAt: new Date().toISOString(),
         model,
+        readingTimeMinutes,
       } as Briefing;
     } catch (err) {
       console.error(`❌ LLM assembly failed for "${original.name}":`, err);
@@ -382,6 +390,7 @@ export async function generateBriefing(
         articles: [],
         generatedAt: new Date().toISOString(),
         model,
+        readingTimeMinutes: 1,
       } as Briefing;
     }
   });
