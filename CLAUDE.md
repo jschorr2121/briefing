@@ -101,3 +101,12 @@ See latest progress notes below.
   - Added batch limits: max 3 schedules per generate run, max 5 emails per send run
   - Prevents function timeout on Vercel (requires Pro for >10s timeout)
   - Note: If more than 3 users, will need multiple cron runs or Vercel Pro
+
+### Apr 4, 2026
+- **[dev branch]** Added reading time estimates to briefings
+  - New `reading-time.ts` utility calculates estimated reading time based on word count
+  - Briefing interface now includes `readingTimeMinutes` field
+  - Uses average reading speed of 225 words/minute
+  - Calculated from summary + all story bullets combined
+  - Backend-ready; frontend display can be added when needed
+  - Addresses short-term improvement from RESEARCH.md competitive analysis
