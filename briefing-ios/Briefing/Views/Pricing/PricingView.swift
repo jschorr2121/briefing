@@ -9,13 +9,15 @@ struct PricingView: View {
         ScrollView {
             VStack(spacing: 24) {
                 // Header
-                VStack(spacing: 8) {
+                VStack(spacing: 10) {
+                    KickerText("Subscription", color: .accent)
+
                     Text("Briefing Pro")
                         .font(.heroTitle)
                         .foregroundStyle(Color.textPrimary)
 
                     Text("Unlimited briefings, premium features")
-                        .font(.bodyLarge)
+                        .font(.bodyRegular)
                         .foregroundStyle(Color.textSecondary)
                 }
                 .padding(.top)
@@ -69,7 +71,7 @@ struct PricingView: View {
                     HStack {
                         if vm.isPurchasing {
                             ProgressView()
-                                .tint(.white)
+                                .tint(Color.bgPrimary)
                         } else if vm.purchaseSuccess {
                             Image(systemName: "checkmark.circle.fill")
                             Text("Subscribed!")
@@ -78,11 +80,11 @@ struct PricingView: View {
                         }
                     }
                     .font(.buttonLabel)
-                    .foregroundStyle(.white)
+                    .foregroundStyle(Color.bgPrimary)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
-                    .background(vm.purchaseSuccess ? Color.success : Color.accent)
-                    .clipShape(RoundedRectangle(cornerRadius: 14))
+                    .background(vm.purchaseSuccess ? Color.success : Color.textPrimary)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
                 }
                 .disabled(vm.isPurchasing || vm.purchaseSuccess)
                 .padding(.horizontal)
@@ -101,7 +103,7 @@ struct PricingView: View {
 
                 // FAQ
                 VStack(alignment: .leading, spacing: 16) {
-                    Text("FAQ")
+                    Text("Questions")
                         .font(.sectionTitle)
                         .foregroundStyle(Color.textPrimary)
 
@@ -121,8 +123,13 @@ struct PricingView: View {
                     )
                 }
                 .padding()
+                .frame(maxWidth: .infinity, alignment: .leading)
                 .background(Color.bgCard)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(Color.borderDefault, lineWidth: 1)
+                )
                 .padding(.horizontal)
             }
             .padding(.vertical)
@@ -145,27 +152,27 @@ struct PricingView: View {
         isHighlighted: Bool
     ) -> some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(title)
-                .font(.cardTitle)
-                .foregroundStyle(Color.textPrimary)
+            KickerText(title, color: isHighlighted ? .accent : .textMuted)
 
             HStack(alignment: .firstTextBaseline, spacing: 2) {
                 Text(price)
-                    .font(.sectionTitle)
-                    .foregroundStyle(isHighlighted ? Color.accent : Color.textPrimary)
+                    .font(.system(size: 26, weight: .bold, design: .serif))
+                    .foregroundStyle(Color.textPrimary)
                 Text(period)
                     .font(.bodySmall)
                     .foregroundStyle(Color.textMuted)
             }
 
-            Divider()
-                .background(Color.borderDefault)
+            Rectangle()
+                .fill(Color.borderDefault)
+                .frame(height: 1)
 
             ForEach(features, id: \.self) { feature in
-                HStack(spacing: 6) {
+                HStack(alignment: .top, spacing: 6) {
                     Image(systemName: "checkmark")
                         .font(.caption.bold())
                         .foregroundStyle(isHighlighted ? Color.accent : Color.textMuted)
+                        .padding(.top, 2)
                     Text(feature)
                         .font(.bodySmall)
                         .foregroundStyle(Color.textSecondary)
@@ -176,21 +183,22 @@ struct PricingView: View {
         }
         .padding()
         .background(Color.bgCard)
-        .clipShape(RoundedRectangle(cornerRadius: 14))
+        .clipShape(RoundedRectangle(cornerRadius: 10))
         .overlay(
-            RoundedRectangle(cornerRadius: 14)
-                .stroke(isHighlighted ? Color.accent : Color.borderDefault, lineWidth: isHighlighted ? 2 : 1)
+            RoundedRectangle(cornerRadius: 10)
+                .stroke(isHighlighted ? Color.textPrimary : Color.borderDefault, lineWidth: isHighlighted ? 1.5 : 1)
         )
     }
 
     private func faqItem(q: String, a: String) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(q)
-                .font(.bodyRegular.bold())
+                .font(.headline)
                 .foregroundStyle(Color.textPrimary)
             Text(a)
                 .font(.bodySmall)
                 .foregroundStyle(Color.textSecondary)
+                .lineSpacing(3)
         }
     }
 }

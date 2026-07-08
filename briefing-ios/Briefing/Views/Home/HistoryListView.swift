@@ -22,13 +22,6 @@ struct HistoryListView: View {
                             vm.loadFromHistory(entry)
                         } label: {
                             HStack(spacing: 12) {
-                                Image(systemName: "newspaper")
-                                    .font(.system(size: 14))
-                                    .foregroundStyle(Color.accent)
-                                    .frame(width: 32, height: 32)
-                                    .background(Color.accent.opacity(0.1))
-                                    .clipShape(RoundedRectangle(cornerRadius: 8))
-
                                 VStack(alignment: .leading, spacing: 4) {
                                     // Topic names as title
                                     let topics = entry.topicNames.isEmpty
@@ -36,7 +29,7 @@ struct HistoryListView: View {
                                         : entry.topicNames
 
                                     Text(topics.isEmpty ? "Briefing" : topics.joined(separator: ", "))
-                                        .font(.bodyRegular)
+                                        .font(.headline)
                                         .foregroundStyle(Color.textPrimary)
                                         .lineLimit(1)
 

@@ -6,18 +6,12 @@ struct ScheduleView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
-                // Info banner
-                HStack(spacing: 12) {
-                    Image(systemName: "info.circle.fill")
-                        .foregroundStyle(Color.info)
-                    Text("Schedule automated briefings delivered to your email at the time you choose.")
-                        .font(.bodySmall)
-                        .foregroundStyle(Color.textSecondary)
-                }
-                .padding()
-                .background(Color.info.opacity(0.1))
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-                .padding(.horizontal)
+                // Explainer
+                Text("Automated briefings delivered to your email at the time you choose.")
+                    .font(.bodyRegular)
+                    .foregroundStyle(Color.textSecondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal)
 
                 // Create button
                 Button {
@@ -25,32 +19,31 @@ struct ScheduleView: View {
                 } label: {
                     HStack {
                         Image(systemName: "plus")
-                        Text("Create Schedule")
+                        Text("New Schedule")
                     }
                     .font(.buttonLabel)
-                    .foregroundStyle(Color.accent)
+                    .foregroundStyle(Color.bgPrimary)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
-                    .background(Color.bgCard)
-                    .clipShape(RoundedRectangle(cornerRadius: 14))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 14)
-                            .strokeBorder(Color.accent.opacity(0.5), style: StrokeStyle(lineWidth: 2, dash: [8]))
-                    )
+                    .background(Color.textPrimary)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
                 }
                 .padding(.horizontal)
 
                 // Schedule cards
                 if vm.isLoading {
                     ProgressView()
-                        .tint(Color.accent)
+                        .tint(Color.textPrimary)
                         .padding(.top, 32)
                 } else if vm.schedules.isEmpty {
                     VStack(spacing: 12) {
                         Image(systemName: "clock")
-                            .font(.system(size: 40))
+                            .font(.system(size: 34))
                             .foregroundStyle(Color.textMuted)
                         Text("No schedules yet")
+                            .font(.cardTitle)
+                            .foregroundStyle(Color.textPrimary)
+                        Text("Your daily edition, delivered while the coffee brews.")
                             .font(.bodyRegular)
                             .foregroundStyle(Color.textSecondary)
                     }
@@ -99,17 +92,12 @@ struct ScheduleCardView: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
+                    KickerText("\(schedule.frequency.rawValue) · \(schedule.time)")
+
                     Text(schedule.topics.joined(separator: ", "))
                         .font(.cardTitle)
                         .foregroundStyle(Color.textPrimary)
                         .lineLimit(1)
-
-                    HStack(spacing: 8) {
-                        Label(schedule.time, systemImage: "clock")
-                        Label(schedule.frequency.rawValue.capitalized, systemImage: "calendar")
-                    }
-                    .font(.bodySmall)
-                    .foregroundStyle(Color.textMuted)
                 }
 
                 Spacer()
@@ -119,8 +107,12 @@ struct ScheduleCardView: View {
                     set: { _ in onToggle() }
                 ))
                 .labelsHidden()
-                .tint(Color.accent)
+                .tint(Color.textPrimary)
             }
+
+            Rectangle()
+                .fill(Color.borderDefault)
+                .frame(height: 1)
 
             HStack(spacing: 8) {
                 Text(schedule.email)
@@ -148,9 +140,9 @@ struct ScheduleCardView: View {
         }
         .padding()
         .background(Color.bgCard)
-        .clipShape(RoundedRectangle(cornerRadius: 14))
+        .clipShape(RoundedRectangle(cornerRadius: 10))
         .overlay(
-            RoundedRectangle(cornerRadius: 14)
+            RoundedRectangle(cornerRadius: 10)
                 .stroke(Color.borderDefault, lineWidth: 1)
         )
         .opacity(schedule.enabled ? 1 : 0.6)

@@ -10,15 +10,15 @@ struct AccountView: View {
             VStack(spacing: 20) {
                 // Profile card
                 VStack(spacing: 12) {
-                    // Avatar
+                    // Monogram
                     ZStack {
                         Circle()
-                            .fill(Color.accent.opacity(0.2))
+                            .stroke(Color.textPrimary, lineWidth: 1.5)
                             .frame(width: 72, height: 72)
 
                         Text(initials)
-                            .font(.sectionTitle)
-                            .foregroundStyle(Color.accent)
+                            .font(.system(size: 26, weight: .semibold, design: .serif))
+                            .foregroundStyle(Color.textPrimary)
                     }
 
                     VStack(spacing: 4) {
@@ -36,11 +36,12 @@ struct AccountView: View {
                     TierBadgeView(tier: vm.tier)
                 }
                 .frame(maxWidth: .infinity)
-                .padding()
+                .padding(.vertical, 24)
+                .padding(.horizontal)
                 .background(Color.bgCard)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .clipShape(RoundedRectangle(cornerRadius: 10))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 16)
+                    RoundedRectangle(cornerRadius: 10)
                         .stroke(Color.borderDefault, lineWidth: 1)
                 )
                 .padding(.horizontal)
@@ -48,49 +49,44 @@ struct AccountView: View {
                 // Usage card
                 VStack(alignment: .leading, spacing: 12) {
                     HStack {
-                        Text("Daily Usage")
-                            .font(.cardTitle)
-                            .foregroundStyle(Color.textPrimary)
+                        KickerText("Daily usage")
                         Spacer()
                         Text(vm.usageDisplay)
                             .font(.bodySmall)
+                            .monospacedDigit()
                             .foregroundStyle(Color.textSecondary)
                     }
 
                     GeometryReader { geo in
                         ZStack(alignment: .leading) {
-                            RoundedRectangle(cornerRadius: 4)
+                            Rectangle()
                                 .fill(Color.bgSecondary)
-                                .frame(height: 8)
+                                .frame(height: 6)
 
-                            RoundedRectangle(cornerRadius: 4)
-                                .fill(vm.usagePercentage > 0.8 ? Color.warning : Color.accent)
-                                .frame(width: geo.size.width * min(vm.usagePercentage, 1.0), height: 8)
+                            Rectangle()
+                                .fill(vm.usagePercentage > 0.8 ? Color.accent : Color.textPrimary)
+                                .frame(width: geo.size.width * min(vm.usagePercentage, 1.0), height: 6)
                         }
                     }
-                    .frame(height: 8)
+                    .frame(height: 6)
                 }
                 .padding()
                 .background(Color.bgCard)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .clipShape(RoundedRectangle(cornerRadius: 10))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 16)
+                    RoundedRectangle(cornerRadius: 10)
                         .stroke(Color.borderDefault, lineWidth: 1)
                 )
                 .padding(.horizontal)
 
                 // Subscription card
                 VStack(alignment: .leading, spacing: 12) {
-                    Text("Subscription")
-                        .font(.cardTitle)
-                        .foregroundStyle(Color.textPrimary)
+                    KickerText("Subscription")
 
                     if vm.isPro {
                         HStack {
-                            Image(systemName: "checkmark.seal.fill")
-                                .foregroundStyle(Color.accent)
                             Text("Briefing Pro")
-                                .font(.bodyRegular)
+                                .font(.cardTitle)
                                 .foregroundStyle(Color.textPrimary)
                             Spacer()
                             if let status = vm.subscriptionStatus {
@@ -113,19 +109,19 @@ struct AccountView: View {
                         NavigationLink(destination: PricingView()) {
                             Text("Upgrade to Pro")
                                 .font(.buttonLabel)
-                                .foregroundStyle(.white)
+                                .foregroundStyle(Color.bgPrimary)
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 12)
-                                .background(Color.accent)
-                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                                .background(Color.textPrimary)
+                                .clipShape(RoundedRectangle(cornerRadius: 8))
                         }
                     }
                 }
                 .padding()
                 .background(Color.bgCard)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .clipShape(RoundedRectangle(cornerRadius: 10))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 16)
+                    RoundedRectangle(cornerRadius: 10)
                         .stroke(Color.borderDefault, lineWidth: 1)
                 )
                 .padding(.horizontal)
@@ -139,8 +135,12 @@ struct AccountView: View {
                         .foregroundStyle(Color.danger)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 14)
-                        .background(Color.danger.opacity(0.1))
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .background(Color.bgCard)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(Color.borderLight, lineWidth: 1)
+                        )
                 }
                 .padding(.horizontal)
                 .padding(.top, 8)

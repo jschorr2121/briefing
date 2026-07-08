@@ -5,10 +5,12 @@ struct TopicSelectorView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
+            KickerText("Your topics")
+
             // Input row
             HStack(spacing: 8) {
                 TextField(
-                    vm.atTopicLimit ? "Maximum \(vm.topicLimit) topics reached" : "Add any topics you'd like in your briefing...",
+                    vm.atTopicLimit ? "Maximum \(vm.topicLimit) topics reached" : "Add a topic to your briefing...",
                     text: $vm.newTopicName
                 )
                     .font(.bodyRegular)
@@ -16,10 +18,10 @@ struct TopicSelectorView: View {
                     .padding(.horizontal, 14)
                     .padding(.vertical, 12)
                     .background(Color.bgCard)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
                     .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(Color.borderDefault, lineWidth: 1)
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.borderLight, lineWidth: 1)
                     )
                     .submitLabel(.done)
                     .onSubmit { vm.addTopic() }
@@ -31,9 +33,9 @@ struct TopicSelectorView: View {
                 } label: {
                     Image(systemName: "plus")
                         .font(.system(size: 14, weight: .semibold))
-                        .foregroundStyle(.white)
-                        .frame(width: 32, height: 32)
-                        .background(Color.accent)
+                        .foregroundStyle(Color.bgPrimary)
+                        .frame(width: 36, height: 36)
+                        .background(Color.textPrimary)
                         .clipShape(RoundedRectangle(cornerRadius: 8))
                 }
                 .disabled(vm.newTopicName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || vm.atTopicLimit)
@@ -42,7 +44,7 @@ struct TopicSelectorView: View {
 
             // Topic count
             if vm.topicLimit > 0 {
-                Text("\(vm.topics.count)/\(vm.topicLimit) topics")
+                Text("\(vm.topics.count) of \(vm.topicLimit) topics")
                     .font(.caption)
                     .foregroundStyle(Color.textMuted)
             }
@@ -66,7 +68,7 @@ struct TopicSelectorView: View {
 
             if !remainingSuggestions.isEmpty && !vm.atTopicLimit {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Suggestions:")
+                    Text("Suggestions")
                         .font(.caption)
                         .foregroundStyle(Color.textMuted)
 
@@ -76,8 +78,8 @@ struct TopicSelectorView: View {
                                 vm.addSuggestedTopic(topic)
                             } label: {
                                 HStack(spacing: 4) {
-                                    Text("+")
-                                        .font(.bodySmall)
+                                    Image(systemName: "plus")
+                                        .font(.system(size: 9, weight: .semibold))
                                     Text(topic.name)
                                         .font(.bodySmall)
                                 }
@@ -85,9 +87,9 @@ struct TopicSelectorView: View {
                                 .padding(.horizontal, 12)
                                 .padding(.vertical, 8)
                                 .background(Color.bgCard)
-                                .clipShape(Capsule())
+                                .clipShape(RoundedRectangle(cornerRadius: 6))
                                 .overlay(
-                                    Capsule()
+                                    RoundedRectangle(cornerRadius: 6)
                                         .stroke(Color.borderDefault, lineWidth: 1)
                                 )
                             }
@@ -105,23 +107,23 @@ struct TopicChipView: View {
     let onRemove: () -> Void
 
     var body: some View {
-        HStack(spacing: 6) {
+        HStack(spacing: 8) {
             Text(topic.name)
                 .font(.chipLabel)
-                .foregroundStyle(.white)
+                .foregroundStyle(Color.bgPrimary)
 
             Button {
                 onRemove()
             } label: {
                 Image(systemName: "xmark")
                     .font(.system(size: 10, weight: .bold))
-                    .foregroundStyle(.white.opacity(0.7))
+                    .foregroundStyle(Color.bgPrimary.opacity(0.6))
             }
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
-        .background(Color.accent)
-        .clipShape(Capsule())
+        .background(Color.textPrimary)
+        .clipShape(RoundedRectangle(cornerRadius: 6))
     }
 }
 

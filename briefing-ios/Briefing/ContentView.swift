@@ -8,13 +8,16 @@ struct ContentView: View {
             if authManager.isLoading {
                 ZStack {
                     Color.bgPrimary.ignoresSafeArea()
-                    VStack(spacing: 16) {
-                        Image(systemName: "newspaper.fill")
-                            .font(.system(size: 48))
-                            .foregroundStyle(Color.accent)
+                    VStack(spacing: 14) {
+                        Rectangle()
+                            .fill(Color.textPrimary)
+                            .frame(width: 48, height: 2)
                         Text("Briefing")
-                            .font(.heroTitle)
+                            .font(.system(size: 40, weight: .heavy, design: .serif))
                             .foregroundStyle(Color.textPrimary)
+                        Rectangle()
+                            .fill(Color.textPrimary)
+                            .frame(width: 48, height: 2)
                     }
                 }
             } else if authManager.isSignedIn {

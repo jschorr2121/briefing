@@ -9,9 +9,7 @@ struct SettingsView: View {
                 VStack(alignment: .leading, spacing: 24) {
                     // Length
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("Briefing Length")
-                            .font(.bodySmall)
-                            .foregroundStyle(Color.textMuted)
+                        KickerText("Briefing length")
 
                         Picker("Length", selection: $vm.settings.briefingLength) {
                             ForEach(BriefingLength.allCases) { length in
@@ -23,9 +21,7 @@ struct SettingsView: View {
 
                     // Tone
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("Tone")
-                            .font(.bodySmall)
-                            .foregroundStyle(Color.textMuted)
+                        KickerText("Tone")
 
                         Picker("Tone", selection: $vm.settings.tone) {
                             ForEach(BriefingTone.allCases) { tone in
@@ -46,7 +42,7 @@ struct SettingsView: View {
                                 .foregroundStyle(Color.textMuted)
                         }
                     }
-                    .tint(Color.accent)
+                    .tint(Color.textPrimary)
 
                     // Voice
                     VoicePickerView(selectedVoice: $vm.settings.voice)
@@ -62,7 +58,7 @@ struct SettingsView: View {
                         vm.persistSettings()
                         vm.showSettings = false
                     }
-                    .foregroundStyle(Color.accent)
+                    .foregroundStyle(Color.textPrimary)
                 }
             }
         }

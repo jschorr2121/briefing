@@ -7,17 +7,15 @@ struct UpgradePromptView: View {
 
     var body: some View {
         VStack(spacing: 24) {
-            Image(systemName: "bolt.circle.fill")
-                .font(.system(size: 56))
-                .foregroundStyle(Color.accent)
+            VStack(spacing: 12) {
+                KickerText("Free edition", color: .accent)
 
-            VStack(spacing: 8) {
                 Text("Daily Limit Reached")
                     .font(.sectionTitle)
                     .foregroundStyle(Color.textPrimary)
 
                 if let limit = usageLimit {
-                    Text("You've used \(usageUsed) of \(limit) free briefings today.")
+                    Text("You've read \(usageUsed) of \(limit) free briefings today.")
                         .font(.bodyRegular)
                         .foregroundStyle(Color.textSecondary)
                         .multilineTextAlignment(.center)
@@ -28,11 +26,11 @@ struct UpgradePromptView: View {
                 NavigationLink(destination: PricingView()) {
                     Text("Upgrade to Pro")
                         .font(.buttonLabel)
-                        .foregroundStyle(.white)
+                        .foregroundStyle(Color.bgPrimary)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 14)
-                        .background(Color.accent)
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .background(Color.textPrimary)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
                 }
 
                 Button("Maybe Later") {
@@ -44,7 +42,11 @@ struct UpgradePromptView: View {
         }
         .padding(32)
         .background(Color.bgCard)
-        .clipShape(RoundedRectangle(cornerRadius: 20))
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(Color.borderDefault, lineWidth: 1)
+        )
         .padding(.horizontal, 32)
     }
 }

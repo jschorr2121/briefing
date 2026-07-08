@@ -7,6 +7,11 @@ struct AudioPlayerView: View {
 
     var body: some View {
         VStack(spacing: 14) {
+            HStack {
+                KickerText("Audio edition", color: .accent)
+                Spacer()
+            }
+
             // Progress slider
             VStack(spacing: 4) {
                 Slider(
@@ -21,16 +26,18 @@ struct AudioPlayerView: View {
                 HStack {
                     Text(formatTime(player.currentTime))
                         .font(.caption)
+                        .monospacedDigit()
                         .foregroundStyle(Color.textMuted)
                     Spacer()
                     Text(formatTime(player.duration))
                         .font(.caption)
+                        .monospacedDigit()
                         .foregroundStyle(Color.textMuted)
                 }
             }
 
             // Controls
-            HStack(spacing: 20) {
+            HStack(spacing: 24) {
                 // Skip back
                 Button {
                     player.seekRelative(-15)
@@ -47,7 +54,7 @@ struct AudioPlayerView: View {
                 } label: {
                     Image(systemName: player.isPlaying ? "pause.circle.fill" : "play.circle.fill")
                         .font(.system(size: 44))
-                        .foregroundStyle(Color.accent)
+                        .foregroundStyle(Color.textPrimary)
                 }
 
                 // Skip forward
@@ -71,28 +78,29 @@ struct AudioPlayerView: View {
                             .font(.caption.bold())
                             .foregroundStyle(
                                 player.playbackSpeed == speed
-                                    ? .white
+                                    ? Color.bgPrimary
                                     : Color.textSecondary
                             )
                             .padding(.horizontal, 10)
                             .padding(.vertical, 6)
                             .background(
                                 player.playbackSpeed == speed
-                                    ? Color.accent
+                                    ? Color.textPrimary
                                     : Color.bgSecondary
                             )
-                            .clipShape(Capsule())
+                            .clipShape(RoundedRectangle(cornerRadius: 6))
                     }
                 }
             }
         }
         .padding()
         .background(Color.bgCard)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .clipShape(RoundedRectangle(cornerRadius: 10))
         .overlay(
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: 10)
                 .stroke(Color.borderDefault, lineWidth: 1)
         )
+        .shadow(color: .black.opacity(0.04), radius: 8, y: 2)
     }
 
     private func formatTime(_ time: TimeInterval) -> String {

@@ -1,33 +1,50 @@
 import SwiftUI
+import UIKit
 
+// Editorial ink-and-paper palette. Every token adapts to light/dark so the
+// briefing reads like print by day and a night edition after dark.
 extension Color {
-    // Brand
-    static let accent = Color(hex: "2563eb")
-    static let accentLight = Color(hex: "3b82f6")
-    static let accentDark = Color(hex: "1d4ed8")
+    // Brand — broadsheet red, used sparingly (masthead, live states, links)
+    static let accent = Color(light: "A8201A", dark: "E05252")
+    static let accentLight = Color(light: "C24842", dark: "EC7B7B")
+    static let accentDark = Color(light: "8A1A15", dark: "C93B3B")
 
-    // Backgrounds (light theme matching web)
-    static let bgPrimary = Color(hex: "f8fafc")
-    static let bgSecondary = Color(hex: "f1f5f9")
-    static let bgCard = Color.white
-    static let bgCardHover = Color(hex: "f1f5f9")
+    // Surfaces — warm-neutral paper, never pure white or black
+    static let bgPrimary = Color(light: "FAF9F7", dark: "141312")
+    static let bgSecondary = Color(light: "F1EFEB", dark: "1E1C1A")
+    static let bgCard = Color(light: "FFFFFF", dark: "1B1917")
+    static let bgCardHover = Color(light: "F1EFEB", dark: "242220")
 
-    // Text
-    static let textPrimary = Color(hex: "0f172a")
-    static let textSecondary = Color(hex: "475569")
-    static let textMuted = Color(hex: "94a3b8")
+    // Ink
+    static let textPrimary = Color(light: "1A1815", dark: "EAE8E4")
+    static let textSecondary = Color(light: "55524C", dark: "A8A49C")
+    static let textMuted = Color(light: "8C8880", dark: "6E6A63")
 
     // Semantic
-    static let success = Color(hex: "22c55e")
-    static let warning = Color(hex: "f59e0b")
-    static let danger = Color(hex: "ef4444")
-    static let info = Color(hex: "2563eb")
+    static let success = Color(light: "2E7D46", dark: "5BBF7E")
+    static let warning = Color(light: "B45309", dark: "E8A33D")
+    static let danger = Color(light: "B42318", dark: "E05252")
+    static let info = accent
 
-    // Borders
-    static let borderDefault = Color(hex: "e2e8f0")
-    static let borderLight = Color(hex: "cbd5e1")
+    // Rules — hairlines, the workhorse of editorial layout
+    static let borderDefault = Color(light: "E6E3DD", dark: "2C2A27")
+    static let borderLight = Color(light: "D8D4CC", dark: "3A3733")
+
+    init(light: String, dark: String) {
+        self.init(uiColor: UIColor { traits in
+            traits.userInterfaceStyle == .dark
+                ? UIColor(hex: dark)
+                : UIColor(hex: light)
+        })
+    }
 
     init(hex: String) {
+        self.init(uiColor: UIColor(hex: hex))
+    }
+}
+
+extension UIColor {
+    convenience init(hex: String) {
         let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
         var int: UInt64 = 0
         Scanner(string: hex).scanHexInt64(&int)
@@ -41,11 +58,10 @@ extension Color {
             (a, r, g, b) = (255, 0, 0, 0)
         }
         self.init(
-            .sRGB,
-            red: Double(r) / 255,
-            green: Double(g) / 255,
-            blue: Double(b) / 255,
-            opacity: Double(a) / 255
+            red: CGFloat(r) / 255,
+            green: CGFloat(g) / 255,
+            blue: CGFloat(b) / 255,
+            alpha: CGFloat(a) / 255
         )
     }
 }

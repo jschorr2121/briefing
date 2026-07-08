@@ -5,9 +5,7 @@ struct VoicePickerView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Voice")
-                .font(.bodySmall)
-                .foregroundStyle(Color.textMuted)
+            KickerText("Voice")
 
             LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 3), spacing: 8) {
                 ForEach(AppConfig.Voice.allCases) { voice in
@@ -19,22 +17,22 @@ struct VoicePickerView: View {
                             .font(.chipLabel)
                             .foregroundStyle(
                                 selectedVoice == voice.rawValue
-                                    ? .white
+                                    ? Color.bgPrimary
                                     : Color.textSecondary
                             )
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 10)
                             .background(
                                 selectedVoice == voice.rawValue
-                                    ? Color.accent
-                                    : Color.bgSecondary
+                                    ? Color.textPrimary
+                                    : Color.bgCard
                             )
-                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                            .clipShape(RoundedRectangle(cornerRadius: 6))
                             .overlay(
-                                RoundedRectangle(cornerRadius: 8)
+                                RoundedRectangle(cornerRadius: 6)
                                     .stroke(
                                         selectedVoice == voice.rawValue
-                                            ? Color.accentLight
+                                            ? Color.textPrimary
                                             : Color.borderDefault,
                                         lineWidth: 1
                                     )

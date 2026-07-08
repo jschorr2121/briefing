@@ -7,6 +7,8 @@ struct EmailSheetView: View {
         NavigationStack {
             VStack(spacing: 24) {
                 VStack(alignment: .leading, spacing: 8) {
+                    KickerText("Email delivery", color: .accent)
+
                     Text("Send Briefing via Email")
                         .font(.sectionTitle)
                         .foregroundStyle(Color.textPrimary)
@@ -25,10 +27,10 @@ struct EmailSheetView: View {
                     .autocapitalization(.none)
                     .padding()
                     .background(Color.bgCard)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
                     .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(Color.borderDefault, lineWidth: 1)
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.borderLight, lineWidth: 1)
                     )
 
                 Button {
@@ -37,7 +39,7 @@ struct EmailSheetView: View {
                     HStack {
                         if vm.isSendingEmail {
                             ProgressView()
-                                .tint(.white)
+                                .tint(Color.bgPrimary)
                         } else if vm.emailSent {
                             Image(systemName: "checkmark.circle.fill")
                             Text("Sent!")
@@ -47,11 +49,11 @@ struct EmailSheetView: View {
                         }
                     }
                     .font(.buttonLabel)
-                    .foregroundStyle(.white)
+                    .foregroundStyle(Color.bgPrimary)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
-                    .background(vm.emailSent ? Color.success : Color.accent)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .background(vm.emailSent ? Color.success : Color.textPrimary)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
                 }
                 .disabled(vm.emailAddress.isEmpty || vm.isSendingEmail)
 

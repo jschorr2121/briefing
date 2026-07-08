@@ -8,7 +8,7 @@ struct MainTabView: View {
                 HomeView()
             }
             .tabItem {
-                Label("Briefing", systemImage: "newspaper.fill")
+                Label("Today", systemImage: "newspaper.fill")
             }
 
             NavigationStack {
@@ -25,7 +25,7 @@ struct MainTabView: View {
                 Label("Account", systemImage: "person.crop.circle.fill")
             }
         }
-        .tint(Color.accent)
+        .tint(Color.textPrimary)
     }
 }
 
@@ -36,14 +36,9 @@ struct HomeView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 24) {
-                // Hero
-                heroSection
+                // Dateline
+                dateline
                     .fadeIn()
-
-                // Free tier usage hint
-                if vm.tier == "free", vm.usageUsed > 0 {
-                    usageHint
-                }
 
                 // Topic selector
                 TopicSelectorView(vm: vm)
@@ -52,6 +47,11 @@ struct HomeView: View {
                 // Primary actions row
                 primaryActions
                     .fadeIn(delay: 0.2)
+
+                // Free tier usage hint
+                if vm.tier == "free", vm.usageUsed > 0 {
+                    usageHint
+                }
 
                 // Secondary actions
                 if !vm.briefings.isEmpty {
@@ -101,7 +101,7 @@ struct HomeView: View {
             ToolbarItem(placement: .topBarLeading) {
                 HStack(spacing: 8) {
                     Text("Briefing")
-                        .font(.system(size: 20, weight: .bold, design: .rounded))
+                        .font(.system(size: 24, weight: .heavy, design: .serif))
                         .foregroundStyle(Color.textPrimary)
                         .fixedSize()
 
@@ -154,26 +154,28 @@ struct HomeView: View {
 
     // MARK: - Subviews
 
-    private var heroSection: some View {
-        VStack(spacing: 8) {
-            Text("Your Daily News Brief")
-                .font(.heroTitle)
-                .foregroundStyle(Color.textPrimary)
+    private var dateline: some View {
+        VStack(spacing: 10) {
+            HStack(spacing: 12) {
+                Rectangle()
+                    .fill(Color.borderLight)
+                    .frame(height: 1)
 
-            Text("Select topics, generate a personalized briefing, stay informed.")
-                .font(.bodyRegular)
-                .foregroundStyle(Color.textSecondary)
-                .multilineTextAlignment(.center)
+                KickerText(Date.now.formatted(.dateTime.weekday(.wide).month(.wide).day().year()))
+                    .fixedSize()
+
+                Rectangle()
+                    .fill(Color.borderLight)
+                    .frame(height: 1)
+            }
         }
         .padding(.horizontal)
     }
 
     private var usageHint: some View {
-        HStack(spacing: 4) {
-            Text("\(vm.usageUsed)/\(vm.usageLimit ?? 3) free briefings used today")
-                .font(.caption)
-                .foregroundStyle(Color.textMuted)
-        }
+        Text("\(vm.usageUsed) of \(vm.usageLimit ?? 3) free briefings used today")
+            .font(.caption)
+            .foregroundStyle(Color.textMuted)
     }
 
     private var primaryActions: some View {
@@ -248,28 +250,22 @@ struct HomeView: View {
     }
 
     private var briefingHeader: some View {
-        HStack(spacing: 12) {
-            HStack(spacing: 6) {
-                Image(systemName: "newspaper")
-                    .font(.system(size: 16))
-                    .foregroundStyle(Color.accent)
-                Text("Your News Briefing")
-                    .font(.cardTitle)
+        VStack(spacing: 8) {
+            HStack(alignment: .firstTextBaseline) {
+                Text("Today's Briefing")
+                    .font(.sectionTitle)
                     .foregroundStyle(Color.textPrimary)
+
+                Spacer()
+
+                Text("\(vm.briefings.count) topics · \(vm.briefings.flatMap(\.storyList).count) stories")
+                    .font(.caption)
+                    .foregroundStyle(Color.textMuted)
             }
 
-            Spacer()
-
-            // Stats
-            HStack(spacing: 12) {
-                Label("\(vm.briefings.count) topics", systemImage: "text.justify.left")
-                Label(
-                    "\(vm.briefings.flatMap(\.storyList).count) stories",
-                    systemImage: "doc.text"
-                )
-            }
-            .font(.caption)
-            .foregroundStyle(Color.textMuted)
+            Rectangle()
+                .fill(Color.textPrimary)
+                .frame(height: 2)
         }
         .padding(.horizontal)
     }
@@ -277,17 +273,14 @@ struct HomeView: View {
     private var emptyState: some View {
         VStack(spacing: 16) {
             Image(systemName: "newspaper")
-                .font(.system(size: 40))
+                .font(.system(size: 34))
                 .foregroundStyle(Color.textMuted)
-                .frame(width: 80, height: 80)
-                .background(Color.bgCard)
-                .clipShape(Circle())
 
-            Text("Ready to get informed?")
+            Text("No briefing yet")
                 .font(.cardTitle)
                 .foregroundStyle(Color.textPrimary)
 
-            Text("Select your topics above and tap \"Generate Briefing\" to get your personalized news summary.")
+            Text("Choose your topics above and generate today's edition.")
                 .font(.bodyRegular)
                 .foregroundStyle(Color.textSecondary)
                 .multilineTextAlignment(.center)
@@ -298,21 +291,22 @@ struct HomeView: View {
     }
 }
 
-// MARK: - Button Style
+// MARK: - Button Styles
 
 struct SecondaryActionStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .foregroundStyle(Color.textSecondary)
+            .foregroundStyle(Color.textPrimary)
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
-            .background(Color.bgCard)
-            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .background(configuration.isPressed ? Color.bgCardHover : Color.bgCard)
+            .clipShape(RoundedRectangle(cornerRadius: 8))
             .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(Color.borderDefault, lineWidth: 1)
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(Color.borderLight, lineWidth: 1)
             )
-            .scaleEffect(configuration.isPressed ? 0.96 : 1)
+            .scaleEffect(configuration.isPressed ? 0.97 : 1)
+            .animation(.easeOut(duration: 0.15), value: configuration.isPressed)
     }
 }
 
@@ -323,11 +317,11 @@ struct DevActionStyle: ButtonStyle {
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
             .background(Color.bgCard)
-            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .clipShape(RoundedRectangle(cornerRadius: 8))
             .overlay(
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: 8)
                     .stroke(Color.warning.opacity(0.3), lineWidth: 1)
             )
-            .scaleEffect(configuration.isPressed ? 0.96 : 1)
+            .scaleEffect(configuration.isPressed ? 0.97 : 1)
     }
 }

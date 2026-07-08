@@ -6,31 +6,33 @@ struct BriefingCardView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            // Header
+            // Section header
             Button {
                 withAnimation(.easeInOut(duration: 0.25)) {
                     isExpanded.toggle()
                 }
             } label: {
-                HStack(spacing: 12) {
-                    // Icon container (like web UI)
-                    Image(systemName: "newspaper")
-                        .font(.system(size: 16))
-                        .foregroundStyle(Color.textMuted)
-                        .frame(width: 40, height: 40)
-                        .background(Color.bgCardHover)
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                HStack(alignment: .top, spacing: 12) {
+                    VStack(alignment: .leading, spacing: 6) {
+                        HStack(spacing: 8) {
+                            Rectangle()
+                                .fill(Color.accent)
+                                .frame(width: 20, height: 2)
 
-                    VStack(alignment: .leading, spacing: 2) {
+                            KickerText("Section", color: .accent)
+                        }
+
                         Text(briefing.topic)
                             .font(.cardTitle)
                             .foregroundStyle(Color.textPrimary)
+                            .multilineTextAlignment(.leading)
 
-                        HStack(spacing: 8) {
+                        HStack(spacing: 6) {
                             if let readingTime = briefing.readingTime, readingTime > 0 {
-                                Label("\(readingTime) min read", systemImage: "clock")
+                                Text("\(readingTime) min read")
+                                Text("·")
                             }
-                            Label("\(briefing.storyList.count) stories", systemImage: "doc.text")
+                            Text("\(briefing.storyList.count) stories")
                         }
                         .font(.caption)
                         .foregroundStyle(Color.textMuted)
@@ -42,13 +44,14 @@ struct BriefingCardView: View {
                         .font(.bodySmall)
                         .foregroundStyle(Color.textMuted)
                         .rotationEffect(.degrees(isExpanded ? 0 : -90))
+                        .padding(.top, 4)
                 }
                 .padding()
             }
 
             if isExpanded {
                 VStack(alignment: .leading, spacing: 16) {
-                    // Summary — formatted with highlights
+                    // Summary — serif body copy
                     SummaryView(text: briefing.summary)
                         .padding(.horizontal)
 
@@ -58,7 +61,7 @@ struct BriefingCardView: View {
                     }
 
                     // Copy/Share actions
-                    HStack(spacing: 12) {
+                    HStack(spacing: 16) {
                         Button {
                             UIPasteboard.general.string = formatBriefingText()
                             HapticManager.notification(.success)
@@ -80,9 +83,9 @@ struct BriefingCardView: View {
             }
         }
         .background(Color.bgCard)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .clipShape(RoundedRectangle(cornerRadius: 10))
         .overlay(
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: 10)
                 .stroke(Color.borderDefault, lineWidth: 1)
         )
         .shadow(color: .black.opacity(0.04), radius: 8, y: 2)
@@ -102,36 +105,20 @@ struct BriefingCardView: View {
 
 // MARK: - Summary View
 
-/// Formats the summary paragraph into a more readable layout.
-/// Splits on sentences and bolds key phrases (text between ** markers).
+/// Renders the summary as serif editorial paragraphs, bolding **key phrases**.
 struct SummaryView: View {
     let text: String
 
     var body: some View {
-        let sentences = splitIntoSentences(text)
+        let paragraphs = splitIntoParagraphs(text)
 
-        if sentences.count > 1 {
-            // Multiple sentences: render as spaced paragraphs with a leading accent bar
-            VStack(alignment: .leading, spacing: 10) {
-                ForEach(Array(sentences.enumerated()), id: \.offset) { _, sentence in
-                    HStack(alignment: .top, spacing: 10) {
-                        RoundedRectangle(cornerRadius: 1)
-                            .fill(Color.accent.opacity(0.3))
-                            .frame(width: 3)
-
-                        formattedText(sentence)
-                            .font(.bodyRegular)
-                            .foregroundStyle(Color.textSecondary)
-                            .lineSpacing(4)
-                    }
-                }
+        VStack(alignment: .leading, spacing: 12) {
+            ForEach(Array(paragraphs.enumerated()), id: \.offset) { _, paragraph in
+                formattedText(paragraph)
+                    .font(.bodySerif)
+                    .foregroundStyle(Color.textSecondary)
+                    .lineSpacing(6)
             }
-        } else {
-            // Single sentence/short summary
-            formattedText(text)
-                .font(.bodyRegular)
-                .foregroundStyle(Color.textSecondary)
-                .lineSpacing(4)
         }
     }
 
@@ -142,7 +129,6 @@ struct SummaryView: View {
         for (i, part) in parts.enumerated() {
             if part.isEmpty { continue }
             if i % 2 == 1 {
-                // Bold part
                 result = result + Text(part).bold().foregroundColor(Color.textPrimary)
             } else {
                 result = result + Text(part)
@@ -151,27 +137,25 @@ struct SummaryView: View {
         return result
     }
 
-    private func splitIntoSentences(_ text: String) -> [String] {
-        // Split on period followed by space or end, keeping meaningful chunks
+    private func splitIntoParagraphs(_ text: String) -> [String] {
         let cleaned = text.trimmingCharacters(in: .whitespacesAndNewlines)
 
-        // First try splitting on double newlines (paragraph breaks)
+        // Prefer explicit paragraph breaks
         let paragraphs = cleaned.components(separatedBy: "\n\n").filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
         if paragraphs.count > 1 {
             return paragraphs
         }
 
-        // Otherwise split on ". " to get sentence groups (keep 2-3 sentences per group)
+        // Otherwise group sentences into readable paragraphs
         let sentences = cleaned.components(separatedBy: ". ").filter { !$0.isEmpty }
-        if sentences.count <= 2 { return [cleaned] }
+        if sentences.count <= 3 { return [cleaned] }
 
         var groups: [String] = []
         var current = ""
         for (i, sentence) in sentences.enumerated() {
             if !current.isEmpty { current += ". " }
             current += sentence
-            // Group every 2 sentences
-            if (i + 1) % 2 == 0 || i == sentences.count - 1 {
+            if (i + 1) % 3 == 0 || i == sentences.count - 1 {
                 if !current.hasSuffix(".") { current += "." }
                 groups.append(current)
                 current = ""
@@ -192,35 +176,30 @@ struct StoryCarouselView: View {
             // Navigation header
             if stories.count > 1 {
                 HStack {
-                    Text("Story \(currentIndex + 1) of \(stories.count)")
-                        .font(.caption)
-                        .foregroundStyle(Color.textMuted)
+                    KickerText("Story \(currentIndex + 1) of \(stories.count)")
 
                     Spacer()
 
-                    HStack(spacing: 8) {
+                    HStack(spacing: 12) {
                         Button {
                             withAnimation {
                                 currentIndex = max(0, currentIndex - 1)
                             }
                         } label: {
-                            Image(systemName: "chevron.left")
+                            Image(systemName: "arrow.left")
                                 .font(.caption.bold())
-                                .foregroundStyle(currentIndex > 0 ? Color.textSecondary : Color.textMuted.opacity(0.3))
+                                .foregroundStyle(currentIndex > 0 ? Color.textPrimary : Color.textMuted.opacity(0.3))
                         }
                         .disabled(currentIndex == 0)
-
-                        Text("\u{2022}")
-                            .foregroundStyle(Color.textMuted.opacity(0.3))
 
                         Button {
                             withAnimation {
                                 currentIndex = min(stories.count - 1, currentIndex + 1)
                             }
                         } label: {
-                            Image(systemName: "chevron.right")
+                            Image(systemName: "arrow.right")
                                 .font(.caption.bold())
-                                .foregroundStyle(currentIndex < stories.count - 1 ? Color.textSecondary : Color.textMuted.opacity(0.3))
+                                .foregroundStyle(currentIndex < stories.count - 1 ? Color.textPrimary : Color.textMuted.opacity(0.3))
                         }
                         .disabled(currentIndex == stories.count - 1)
                     }

@@ -12,21 +12,24 @@ struct LoginView: View {
             VStack(spacing: 32) {
                 Spacer()
 
-                // App icon and title
+                // Nameplate
                 VStack(spacing: 16) {
-                    Image(systemName: "newspaper.fill")
-                        .font(.system(size: 64))
-                        .foregroundStyle(Color.accent)
+                    Rectangle()
+                        .fill(Color.textPrimary)
+                        .frame(width: 64, height: 2)
                         .fadeIn()
 
                     Text("Briefing")
-                        .font(.heroTitle)
+                        .font(.system(size: 52, weight: .heavy, design: .serif))
                         .foregroundStyle(Color.textPrimary)
                         .fadeIn(delay: 0.1)
 
-                    Text("Your personalized AI news briefing")
-                        .font(.bodyLarge)
-                        .foregroundStyle(Color.textSecondary)
+                    KickerText("Your personalized news, every day")
+                        .fadeIn(delay: 0.2)
+
+                    Rectangle()
+                        .fill(Color.textPrimary)
+                        .frame(width: 64, height: 2)
                         .fadeIn(delay: 0.2)
                 }
 
@@ -52,10 +55,10 @@ struct LoginView: View {
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
                         .background(Color.bgCard)
-                        .clipShape(RoundedRectangle(cornerRadius: 14))
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
                         .overlay(
-                            RoundedRectangle(cornerRadius: 14)
-                                .stroke(Color.borderDefault, lineWidth: 1)
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(Color.borderLight, lineWidth: 1)
                         )
                     }
                     .disabled(isLoading)
@@ -65,7 +68,7 @@ struct LoginView: View {
 
                     if isLoading {
                         ProgressView()
-                            .tint(Color.accent)
+                            .tint(Color.textPrimary)
                     }
                 }
 

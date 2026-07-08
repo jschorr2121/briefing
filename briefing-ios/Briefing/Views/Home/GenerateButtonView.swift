@@ -15,22 +15,21 @@ struct GenerateButtonView: View {
             HStack(spacing: 10) {
                 if vm.isGenerating {
                     LoadingDots()
-                    Text("Generating...")
+                    Text("Preparing your edition...")
                 } else {
-                    Image(systemName: "bolt.fill")
                     Text("Generate Briefing")
                 }
             }
             .font(.buttonLabel)
-            .foregroundStyle(.white)
+            .foregroundStyle(Color.bgPrimary)
             .frame(maxWidth: .infinity)
             .padding(.vertical, 16)
             .background(
                 vm.canGenerate
-                    ? Color.accent
-                    : Color.accent.opacity(0.4)
+                    ? Color.textPrimary
+                    : Color.textPrimary.opacity(0.35)
             )
-            .clipShape(RoundedRectangle(cornerRadius: 14))
+            .clipShape(RoundedRectangle(cornerRadius: 8))
         }
         .disabled(!vm.canGenerate)
         .padding(.horizontal)
