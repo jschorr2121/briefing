@@ -70,6 +70,15 @@ struct LoginView: View {
                         ProgressView()
                             .tint(Color.textPrimary)
                     }
+
+                    #if DEBUG
+                    Button("Skip Sign-In (Debug)") {
+                        AuthManager.shared.signInForDebug()
+                    }
+                    .font(.bodySmall)
+                    .foregroundStyle(Color.textMuted)
+                    .padding(.top, 4)
+                    #endif
                 }
 
                 Spacer()

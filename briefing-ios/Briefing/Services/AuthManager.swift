@@ -67,6 +67,13 @@ final class AuthManager {
         isSignedIn = true
     }
 
+    #if DEBUG
+    func signInForDebug() {
+        user = User(email: "debug@briefing.app", name: "Debug User", image: nil)
+        isSignedIn = true
+    }
+    #endif
+
     func signOut() async {
         // Revoke token on server
         if token != nil {

@@ -9,7 +9,10 @@
     "lint": "next lint",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
-    "test:e2e:debug": "playwright test --debug"
+    "test:e2e:debug": "playwright test --debug",
+    "diagnose:check": "tsx scripts/diagnostic-compare/check-keys.ts",
+    "diagnose:build": "esbuild scripts/diagnostic-compare/index.ts --bundle --platform=node --target=node20 --format=cjs --outfile=scripts/diagnostic-compare/dist/index.cjs --external:@anthropic-ai/sdk --external:openai",
+    "diagnose:sources": "npm run diagnose:build && node scripts/diagnostic-compare/dist/index.cjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.71.2",
@@ -33,6 +36,7 @@
     "typescript": "5.9.3"
   },
   "devDependencies": {
-    "@playwright/test": "^1.58.2"
+    "@playwright/test": "^1.58.2",
+    "tsx": "^4.19.0"
   }
 }

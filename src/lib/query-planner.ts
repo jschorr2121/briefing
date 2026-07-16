@@ -1,6 +1,6 @@
-import { Redis } from '@upstash/redis';
 import { getOpenAIModel } from './models';
 import { findCuratedTopic, type TopicConfig } from './topic-engine';
+import { getCachedQueryPlan, setCachedQueryPlan } from './briefing-cache';
 
 // ─── Types ───────────────────────────────────────────────────────────
 
@@ -29,43 +29,6 @@ export interface QueryPlan {
 export interface ResolvedTopic {
   displayName: string;
   queries: QueryInstruction[];
-}
-
-// ─── Redis helpers ───────────────────────────────────────────────────
-
-const PLAN_TTL_SECONDS = 24 * 60 * 60; // 24 hours
-
-function getRedis(): Redis | null {
-  const url = process.env.KV_REST_API_URL;
-  const token = process.env.KV_REST_API_TOKEN;
-  if (!url || !token) return null;
-  return new Redis({ url, token });
-}
-
-function planCacheKey(topicName: string): string {
-  return `queryplan:topic:${topicName.toLowerCase().trim()}`;
-}
-
-async function getCachedPlan(topicName: string): Promise<QueryPlan | null> {
-  const redis = getRedis();
-  if (!redis) return null;
-  try {
-    const data = await redis.get<QueryPlan>(planCacheKey(topicName));
-    return data ?? null;
-  } catch (err) {
-    console.error('Error reading query plan cache:', err);
-    return null;
-  }
-}
-
-async function setCachedPlan(topicName: string, plan: QueryPlan): Promise<void> {
-  const redis = getRedis();
-  if (!redis) return;
-  try {
-    await redis.set(planCacheKey(topicName), plan, { ex: PLAN_TTL_SECONDS });
-  } catch (err) {
-    console.error('Error writing query plan cache:', err);
-  }
 }
 
 // ─── LLM Query Planner ──────────────────────────────────────────────
@@ -258,7 +221,7 @@ export async function resolveTopics(
     }
 
     // Check Redis cache for plan (skip in dev mode)
-    const cached = opts?.skipCache ? null : await getCachedPlan(name);
+    const cached = opts?.skipCache ? null : await getCachedQueryPlan(name);
     if (cached) {
       console.log(`📦 Cached query plan for "${name}"`);
       resolved.push({
@@ -289,7 +252,7 @@ export async function resolveTopics(
           displayName: entry.name,
           queries: plan.queries,
         };
-        await setCachedPlan(entry.name, plan);
+        await setCachedQueryPlan(entry.name, plan);
       } else {
         // Fallback: basic articles query
         console.warn(`⚠️ No plan found for "${entry.name}", using basic fallback`);
@@ -301,7 +264,7 @@ export async function resolveTopics(
           displayName: entry.name,
           queries: fallbackPlan.queries,
         };
-        await setCachedPlan(entry.name, fallbackPlan);
+        await setCachedQueryPlan(entry.name, fallbackPlan);
       }
     }
   }

@@ -9,6 +9,15 @@
 
 import { Redis } from '@upstash/redis';
 
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) =>
+      setTimeout(() => reject(new Error(`Redis timeout after ${ms}ms`)), ms)
+    ),
+  ]);
+}
+
 // ─── Redis ───────────────────────────────────────────────────────────
 
 let _redis: Redis | null | undefined;
@@ -37,7 +46,7 @@ export async function getCached<T>(key: string): Promise<T | null> {
   const redis = getRedis();
   if (!redis) return null;
   try {
-    const v = await redis.get<T>(key);
+    const v = await withTimeout(redis.get<T>(key), 3000);
     return v ?? null;
   } catch (err) {
     console.error(`[news/cache] get failed for ${key}:`, err);
@@ -49,7 +58,7 @@ export async function setCached<T>(key: string, value: T, ttlSeconds: number): P
   const redis = getRedis();
   if (!redis) return;
   try {
-    await redis.set(key, value, { ex: ttlSeconds });
+    await withTimeout(redis.set(key, value, { ex: ttlSeconds }), 3000);
   } catch (err) {
     console.error(`[news/cache] set failed for ${key}:`, err);
   }
@@ -86,7 +95,7 @@ async function acquireLock(lockKey: string): Promise<boolean> {
   if (!redis) return true; // no Redis → no cross-process coordination, just proceed
   try {
     // Upstash returns "OK" on success, null when nx fails. Coerce defensively.
-    const result = await redis.set(lockKey, '1', { nx: true, ex: LOCK_TTL_SECONDS });
+    const result = await withTimeout(redis.set(lockKey, '1', { nx: true, ex: LOCK_TTL_SECONDS }), 3000);
     return result !== null && result !== undefined;
   } catch (err) {
     console.error(`[news/cache] lock acquire failed for ${lockKey}:`, err);
@@ -98,7 +107,7 @@ async function releaseLock(lockKey: string): Promise<void> {
   const redis = getRedis();
   if (!redis) return;
   try {
-    await redis.del(lockKey);
+    await withTimeout(redis.del(lockKey), 3000);
   } catch (err) {
     console.error(`[news/cache] lock release failed for ${lockKey}:`, err);
   }

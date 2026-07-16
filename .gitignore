@@ -19,3 +19,6 @@ logs/
 playwright/.auth/user.json
 playwright-report/
 test-results/
+
+# Diagnostic compare output
+scripts/diagnostic-compare/output/
