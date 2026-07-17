@@ -232,8 +232,8 @@ async function generateBriefings_legacy(topics: string[]): Promise<Briefing[]> {
 // ─── Generate briefings (routes to Perigon or legacy) ────────────────
 
 async function generateBriefings(topics: string[]): Promise<Briefing[]> {
-  if (NEWS_SOURCE === 'perigon') {
-    console.log(`🔄 [Cron] Using Perigon pipeline for ${topics.length} topics`);
+  if (NEWS_SOURCE === 'perigon' || NEWS_SOURCE === 'agentic') {
+    console.log(`🔄 [Cron] Using ${NEWS_SOURCE} pipeline for ${topics.length} topics`);
     return generateBriefingsForCron(topics);
   }
 

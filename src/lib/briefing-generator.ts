@@ -1,5 +1,6 @@
 import { resolveTopics } from './query-planner';
 import { fetchArticlesForTopic } from './article-fetcher';
+import { fetchArticlesViaWebSearch } from './agentic-fetcher';
 import { assembleSection, sectionCacheId, type StoryCard, type Article } from './briefing-assembler';
 import { getCachedSection } from './perigon-cache';
 import { getOpenAIModel } from './models';
@@ -59,26 +60,27 @@ export async function generateBriefing(
   const skipCache = settings.skipCache === true;
   if (skipCache) console.log('🚫 Cache bypassed (dev mode)');
 
-  // 1. Resolve all topics via query planner
-  const resolved = await resolveTopics(topics, { skipCache });
+  // 1 + 2. Gather articles for ALL topics in parallel.
+  //    - agentic: one web-search LLM call per topic (no separate planner call)
+  //    - perigon: query planner → Perigon endpoints with cascade fallback
+  const useAgentic = (process.env.NEWS_SOURCE || 'perigon') === 'agentic';
+  let articleResults: PromiseSettledResult<Awaited<ReturnType<typeof fetchArticlesForTopic>>>[];
+  if (useAgentic) {
+    articleResults = await Promise.allSettled(
+      topics.map(t => fetchArticlesViaWebSearch(t.name, skipCache))
+    );
+  } else {
+    const resolved = await resolveTopics(topics, { skipCache });
+    articleResults = await Promise.allSettled(
+      resolved.map(r => fetchArticlesForTopic(r, skipCache))
+    );
+  }
 
-  // 2. Fetch articles for ALL topics in parallel
-  const articleResults = await Promise.allSettled(
-    resolved.map(r => fetchArticlesForTopic(r, skipCache))
-  );
-
-  // Build debug info from resolved topics (available even when briefing is cached)
+  // Build debug info from fetch results (both fetchers report the same shape)
   const debugInfoByIndex: (DebugInfo | undefined)[] = topics.map((_, i) => {
-    const r = resolved[i];
-    if (!r) return undefined;
     const fetchResult = articleResults[i];
-    const cascadeStep = fetchResult?.status === 'fulfilled' ? fetchResult.value.debugInfo.cascadeStep : undefined;
-    const articleCount = fetchResult?.status === 'fulfilled' ? fetchResult.value.debugInfo.articleCount : 0;
-    return {
-      queries: r.queries.map(q => ({ type: q.type, query: q.query, vectorQuery: q.vectorQuery })),
-      articleCount: articleCount ?? 0,
-      cascadeStep,
-    };
+    if (fetchResult?.status !== 'fulfilled') return undefined;
+    return fetchResult.value.debugInfo;
   });
 
   // 3. Assemble ALL briefings with LLM in parallel
