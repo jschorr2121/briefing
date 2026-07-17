@@ -19,6 +19,18 @@ import {
 } from './prompts';
 import { filterRecentStories } from './filter-stories';
 import { setCachedSection, type TopicBriefingSection } from './perigon-cache';
+import { getCached, setCached } from './news/cache';
+
+// Issue-over-issue freshness: story URLs covered in a topic's recent
+// briefings, so the next issue leads with what's new instead of repeating
+// yesterday. Soft signal only — the LLM may still re-cover a story on a
+// significant development, and sparse niche topics are never left empty.
+const SEEN_TTL_SECONDS = 72 * 60 * 60;
+const SEEN_MAX_URLS = 30;
+
+function seenKey(topicId: string): string {
+  return `briefing:seen:${topicId}`;
+}
 
 // ─── Types (matching the frontend contract) ──────────────────────────
 
@@ -74,13 +86,14 @@ async function assembleWithLLM(
   topicName: string,
   articles: PreparedArticle[],
   settings: BriefingSettings,
+  recentlyCoveredUrls: string[],
 ): Promise<{ summary: string; stories: StoryCard[] }> {
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) throw new Error('OpenAI API key not configured');
 
   const model = getOpenAIModel();
   const systemPrompt = buildPerigonAssemblyPrompt(topicName, settings);
-  const userMessage = buildPerigonUserMessage(topicName, articles);
+  const userMessage = buildPerigonUserMessage(topicName, articles, recentlyCoveredUrls);
 
   async function callLLM(): Promise<{ summary: string; stories: StoryCard[] }> {
     const res = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -136,7 +149,10 @@ export async function assembleSection(
   settings: BriefingSettings,
   _skipCache = false,
 ): Promise<TopicBriefingSection> {
-  const assembled = await assembleWithLLM(topicName, articles, settings);
+  const cacheId = sectionCacheId(topicName);
+  const recentlyCovered = (await getCached<string[]>(seenKey(cacheId))) ?? [];
+
+  const assembled = await assembleWithLLM(topicName, articles, settings, recentlyCovered);
 
   const section: TopicBriefingSection = {
     topic: topicName,
@@ -147,7 +163,14 @@ export async function assembleSection(
   };
 
   // Write-through even in dev mode (reads are what skipCache bypasses).
-  await setCachedSection(sectionCacheId(topicName), section);
+  await setCachedSection(cacheId, section);
+
+  // Remember what this issue covered so the next one leads with fresh stories.
+  const coveredNow = section.stories.map(s => s.url).filter((u): u is string => !!u);
+  if (coveredNow.length > 0) {
+    const merged = [...coveredNow, ...recentlyCovered.filter(u => !coveredNow.includes(u))].slice(0, SEEN_MAX_URLS);
+    await setCached(seenKey(cacheId), merged, SEEN_TTL_SECONDS);
+  }
 
   return section;
 }
