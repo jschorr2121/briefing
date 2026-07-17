@@ -1,6 +1,6 @@
 # Sample Newsletters — Agentic Pipeline Prototype (July 17, 2026)
 
-Five sample issues generated with the proposed **agentic gather → rank → grounded write** method, spanning mainstream → very niche. Every issue was built from real, current web material gathered at generation time; every URL was received from an actual search/fetch, never constructed.
+Six sample issues generated with the proposed **agentic gather → rank → grounded write** method, spanning mainstream → very niche. Every issue was built from real, current web material gathered at generation time; every URL was received from an actual search/fetch, never constructed.
 
 These emulate the target pipeline (`NEWS_SOURCE=agentic`, see `docs/newsletter-pipeline-redesign.md`). The emulation is *more* thorough than the day-1 production pipeline (it fetched full article pages to verify facts — production v1 grounds on search results and citations; the verify pass is the documented phase-2 upgrade).
 
@@ -11,6 +11,7 @@ These emulate the target pipeline (`NEWS_SOURCE=agentic`, see `docs/newsletter-p
 | Small modular reactors | industry niche | [small-modular-reactors.md](small-modular-reactors.md) |
 | Mechanical keyboards | hobby niche | [mechanical-keyboards.md](mechanical-keyboards.md) |
 | Speedcubing | very niche | [speedcubing.md](speedcubing.md) |
+| Protein structure prediction | deep-science niche | [protein-structure-prediction.md](protein-structure-prediction.md) |
 
 ## Rubric
 
@@ -25,6 +26,7 @@ Each issue graded 1–10 on: **Relevance** (on-topic stories), **Accuracy/Sourci
 | Small modular reactors | 10 | 10 | 9 | 9 | 9 | 9 | 6 (21 calls) | **8.9** |
 | Mechanical keyboards | 10 | 8.5 | 9 | 9 | 10 | 9 | 5 (26 calls) | **8.6** |
 | Speedcubing | 10 | 8.5 | 9 | 9 | 9 | 9 | 9 (5 calls) | **9.1** |
+| Protein structure prediction | 10 | 9 | 8 | 9 | 10 | 10 | 8 (11 calls) | **9.0** |
 
 Grading notes (the deductions, so they're not hidden):
 - **Accuracy**: mechanical-keyboards' switch-chart story relies on search snippets (kbd.news 403-blocks fetches); speedcubing's WCA-event-change story is single-sourced to speedcubing.org. One inference bullet ("records expected frozen") was caught in review and removed. Everything else was fetch-verified.
