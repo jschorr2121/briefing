@@ -81,9 +81,13 @@ Per topic-generation: gather ≈ $0.02–0.04 (2–4 searches) + ~$0.003 tokens 
 3. **Cron rehearsal**: run `cron/generate-briefs` with `NEWS_SOURCE=agentic` against a test schedule before flipping prod; email rendering is unchanged but eyeball one.
 4. **Tune** `MAX_AGE_DAYS` (45) and the grounding majority threshold against live behavior.
 
+## Shipped in this session beyond the core switch
+
+- **Per-topic source memory** (`agentic-fetcher.ts`): hosts that produced grounded coverage are remembered (`websearch:sources:{id}`, 30d TTL, cap 10) and injected as hints into the next gather — so the second "speedcubing" generation starts from speedcubing.org + WCA instead of rediscovering them. Only grounded results update memory, keeping junk hosts out.
+- **Issue-over-issue freshness** (`briefing-assembler.ts`, so it benefits *both* paths): the URLs a topic covered recently (`briefing:seen:{id}`, 72h TTL, cap 30) are passed to assembly, which is told to lead with what's new and repeat a story only on a significant development. Soft signal — sparse niche topics still get an issue.
+
 ## Phase 2 (highest-leverage next steps, in order)
 
-1. **Verify pass for facts, not just URLs**: fetch the top 3–5 candidate pages (plain HTTP), pass excerpts to assembly, and entity-check the draft (names/numbers/dates must appear in a cited source). This is what caught the Darlington fake in prototyping. Cost: ~1 extra small LLM call + free fetches.
-2. **Per-topic source memory**: cache the community sources that produced good stories for a topic (30-day TTL). Second generation of "speedcubing" starts from speedcubing.org + WCA instead of rediscovering them — cheaper *and* better.
-3. **Issue-over-issue dedup**: store the story URLs/embeddings from the user's previous issue; instruct assembly to lead with what's *new since yesterday*. This is the single biggest "feels personalized" lever for daily emails.
-4. **`news/` cutover**: wire Jake's orphaned rebuild in as the engine (its rank/diversify/cache is better than the active path's), with `agentic-fetcher` as a provider alongside `perigon-client`.
+1. **Verify pass for facts, not just URLs**: fetch the top 3–5 candidate pages (plain HTTP), pass excerpts to assembly, and entity-check the draft (names/numbers/dates must appear in a cited source). This is what caught the Darlington fake in prototyping. Cost: ~1 extra small LLM call + free fetches. *(The samples were generated with this step; the production fetcher grounds on citations only, so this is the main remaining quality gap.)*
+2. **`news/` cutover**: wire Jake's orphaned rebuild in as the engine (its rank/diversify/cache is better than the active path's), with `agentic-fetcher` as a provider alongside `perigon-client`.
+3. **Embedding dedup**: source-memory and seen-tracking are URL/host based; add embedding similarity so the same event from a different URL is also caught (Feedly-style LSH prefilter).
