@@ -1,4 +1,25 @@
-# Dev Branch Changelog (Feb 3 – Feb 16, 2026)
+# Dev Branch Changelog
+
+## Jul 17, 2026 — Agentic newsletter pipeline (branch `fable/newsletter-pipeline`)
+
+### Build fixes (news-rebuild was broken)
+- Restored `src/lib/briefing-assembler.ts` — `briefing-generator.ts` imported it but it was never committed; reconstructed from master's inline assembly logic, now also writes the section cache
+- Fixed `/api/generate` importing nonexistent `checkUsage` (→ `checkAndIncrementUsage`)
+- Excluded `scripts/diagnostic-compare/` (own toolchain, missing variant sources) from root tsconfig so `next build` passes
+
+### NEWS_SOURCE=agentic — LLM web-search gathering
+- New `src/lib/agentic-fetcher.ts`: one OpenAI Responses call per topic with the `web_search` tool returns strict-JSON candidates; kept only when grounded in the call's `url_citation` annotations (fabricated URLs can't ship); 45-day staleness cutoff; 6h Redis cache per topic
+- Same `ArticleSet` contract as the Perigon fetcher — assembly, section cache, cron, email all unchanged; 2 LLM calls per topic total (agentic path skips the query-planner call)
+- Wired through `briefing-pipeline.ts` and both cron routes; `NEWS_SOURCE=perigon` remains the default until verified with a live key
+- Offline checks: `npx tsx scripts/check-agentic-fetcher.ts`
+
+### Decision record + samples
+- `docs/newsletter-pipeline-redesign.md` — API-vs-agentic verdict (agentic-first) with verified pricing, research sources, architecture, cost/latency estimates, and what still needs a key to verify
+- `samples/newsletters/` — 5 graded sample issues (AI & Tech, Formula 1, SMRs, mechanical keyboards, speedcubing) generated from real current web material, with rubric and honest grades (8.6–9.1/10)
+
+---
+
+# Earlier: Dev Branch Changelog (Feb 3 – Feb 16, 2026)
 
 ## Summary
 
