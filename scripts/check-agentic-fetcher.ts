@@ -1,7 +1,7 @@
 // Offline sanity check for the agentic fetcher's parse + grounding logic.
 // No network, no keys. Run with: npx tsx scripts/check-agentic-fetcher.ts
 
-import { parseCandidates, groundCandidates } from '../src/lib/agentic-fetcher';
+import { parseCandidates, groundCandidates, mergeSourceHosts } from '../src/lib/agentic-fetcher';
 
 let failures = 0;
 
@@ -53,6 +53,19 @@ check('keeps valid candidates when no citations returned', noCites.grounded === 
 // Unknown dates are kept (assembly prompt handles recency)
 const undated = groundCandidates([{ title: 'No date', url: 'https://real.com/nd' }], []);
 check('keeps candidates with unknown dates', undated.articles.length === 1);
+
+// ─── mergeSourceHosts ────────────────────────────────────────────────
+
+const articlesForMemory = [
+  { title: 'A', source: 'A', date: '', summary: '', url: 'https://wca.org/x' },
+  { title: 'B', source: 'B', date: '', summary: '', url: 'https://www.speedcubing.org/y' },
+  { title: 'C', source: 'C', date: '', summary: '', url: 'https://wca.org/z' },
+];
+const mergedHosts = mergeSourceHosts(['oldsite.com', 'wca.org'], articlesForMemory);
+check('memory: fresh hosts first, deduped', JSON.stringify(mergedHosts) === JSON.stringify(['wca.org', 'speedcubing.org', 'oldsite.com']));
+
+const manyPrev = Array.from({ length: 15 }, (_, i) => `site${i}.com`);
+check('memory: capped at 10 hosts', mergeSourceHosts(manyPrev, articlesForMemory).length === 10);
 
 if (failures > 0) {
   console.error(`\n${failures} check(s) failed`);

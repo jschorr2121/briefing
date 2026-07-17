@@ -18,11 +18,24 @@ const GATHER_CACHE_TTL_SECONDS = 6 * 60 * 60; // match the Perigon query cache
 const MAX_ARTICLES = 12;
 const MAX_AGE_DAYS = 45; // hard staleness cutoff for gathered candidates
 
-// ─── Cache key ───────────────────────────────────────────────────────
+// Source memory: hosts that produced good coverage for a topic before.
+// Injected as hints into the next gather so niche topics start from the
+// community sources that worked instead of rediscovering them each time.
+const SOURCE_MEMORY_TTL_SECONDS = 30 * 24 * 60 * 60;
+const SOURCE_MEMORY_MAX_HOSTS = 10;
+
+// ─── Cache keys ──────────────────────────────────────────────────────
+
+function topicId(topicName: string): string {
+  return topicName.toLowerCase().trim().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
+}
 
 function gatherCacheKey(topicName: string): string {
-  const id = topicName.toLowerCase().trim().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
-  return `websearch:articles:${id}`;
+  return `websearch:articles:${topicId(topicName)}`;
+}
+
+function sourceMemoryKey(topicName: string): string {
+  return `websearch:sources:${topicId(topicName)}`;
 }
 
 // ─── Gather prompt ───────────────────────────────────────────────────
@@ -187,9 +200,13 @@ function dedupeByUrl(articles: PreparedArticle[]): PreparedArticle[] {
 
 // ─── Main fetch ──────────────────────────────────────────────────────
 
-async function gatherViaWebSearch(topicName: string): Promise<{ articles: PreparedArticle[]; cascadeStep: string }> {
+async function gatherViaWebSearch(topicName: string, knownSources: string[]): Promise<{ articles: PreparedArticle[]; cascadeStep: string }> {
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) throw new Error('OpenAI API key not configured');
+
+  const sourceHint = knownSources.length > 0
+    ? `\n\nSources that produced good coverage for this topic previously: ${knownSources.join(', ')}. Check them first, but do not limit yourself to them.`
+    : '';
 
   const model = getOpenAIModel();
   const res = await fetch('https://api.openai.com/v1/responses', {
@@ -203,7 +220,7 @@ async function gatherViaWebSearch(topicName: string): Promise<{ articles: Prepar
       instructions: buildGatherInstructions(),
       tools: [{ type: 'web_search', user_location: { type: 'approximate', country: 'US' } }],
       tool_choice: 'auto',
-      input: `Topic: ${topicName}`,
+      input: `Topic: ${topicName}${sourceHint}`,
     }),
   });
 
@@ -244,6 +261,34 @@ async function gatherViaWebSearch(topicName: string): Promise<{ articles: Prepar
 }
 
 /**
+ * Remember which hosts produced grounded coverage for this topic, so the
+ * next gather can start from them. Newest hosts first, capped, 30d TTL.
+ */
+export function mergeSourceHosts(previous: string[], articles: PreparedArticle[]): string[] {
+  const fresh = articles.map(a => hostOf(a.url)).filter(Boolean);
+  const merged: string[] = [];
+  for (const host of [...fresh, ...previous]) {
+    if (!merged.includes(host)) merged.push(host);
+    if (merged.length >= SOURCE_MEMORY_MAX_HOSTS) break;
+  }
+  return merged;
+}
+
+async function updateSourceMemory(
+  topicName: string,
+  previous: string[],
+  articles: PreparedArticle[],
+  cascadeStep: string,
+): Promise<void> {
+  // Only learn from grounded results — ungrounded ones may contain junk hosts.
+  if (cascadeStep !== 'websearch') return;
+  const merged = mergeSourceHosts(previous, articles);
+  if (merged.length > 0) {
+    await setCached(sourceMemoryKey(topicName), merged, SOURCE_MEMORY_TTL_SECONDS);
+  }
+}
+
+/**
  * NEWS_SOURCE=agentic replacement for fetchArticlesForTopic. One web-search
  * LLM call per topic, cached 6h so overlapping users share the cost.
  */
@@ -265,10 +310,12 @@ export async function fetchArticlesViaWebSearch(topicName: string, skipCache = f
     }
   }
 
-  const { articles, cascadeStep } = await gatherViaWebSearch(topicName);
+  const knownSources = (await getCached<string[]>(sourceMemoryKey(topicName))) ?? [];
+  const { articles, cascadeStep } = await gatherViaWebSearch(topicName, knownSources);
 
   if (articles.length > 0) {
     await setCached(cacheKey, articles, GATHER_CACHE_TTL_SECONDS);
+    await updateSourceMemory(topicName, knownSources, articles, cascadeStep);
   }
 
   return {
