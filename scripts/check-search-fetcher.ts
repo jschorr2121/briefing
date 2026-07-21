@@ -1,7 +1,7 @@
 // Offline sanity check for the search-api fetcher's parsing and result
 // preparation. No network, no keys. Run with: npx tsx scripts/check-search-fetcher.ts
 
-import { parsePlannedQueries, prepareSearchResults, normalizeDate } from '../src/lib/search-fetcher';
+import { parsePlannedQueries, prepareSearchResults, normalizeDate, clampQuery, parseKeepIndices } from '../src/lib/search-fetcher';
 
 let failures = 0;
 
@@ -60,6 +60,33 @@ const many = Array.from({ length: 30 }, (_, i) => ({
   snippet: 's',
 }));
 check('caps at 12 articles', prepareSearchResults(many).length === 12);
+
+const oneHost = Array.from({ length: 6 }, (_, i) => ({
+  title: `Same-host story ${i}`,
+  url: `https://onehost.com/article-${i}`,
+  snippet: 's',
+}));
+const capped = prepareSearchResults([...oneHost, { title: 'Other host', url: 'https://elsewhere.com/story', snippet: 's' }]);
+check('caps articles per host (source diversity)', capped.filter(a => a.url.includes('onehost.com')).length === 3);
+check('host cap leaves room for other hosts', capped.some(a => a.url.includes('elsewhere.com')));
+
+// ─── clampQuery ──────────────────────────────────────────────────────
+
+check('short queries pass through', clampQuery('Fed rates', 100) === 'Fed rates');
+const long = 'word '.repeat(30).trim(); // 149 chars
+check('long queries clamped under limit', clampQuery(long, 100).length <= 100);
+check('clamp cuts at word boundary', !clampQuery(long, 100).endsWith('wor'));
+check('unbreakable strings hard-cut', clampQuery('x'.repeat(150), 100).length === 100);
+
+// ─── parseKeepIndices (relevance gate) ───────────────────────────────
+
+check('parses keep list to 0-based indices', JSON.stringify(parseKeepIndices('{"keep":[1,3]}', 5)) === '[0,2]');
+check('parses fenced keep list', JSON.stringify(parseKeepIndices('```json\n{"keep":[2]}\n```', 3)) === '[1]');
+check('empty keep list means drop all', JSON.stringify(parseKeepIndices('{"keep":[]}', 5)) === '[]');
+check('out-of-range and junk entries ignored', JSON.stringify(parseKeepIndices('{"keep":[0,1,99,"x",2.5]}', 5)) === '[0]');
+check('dedupes repeated indices', JSON.stringify(parseKeepIndices('{"keep":[2,2,2]}', 5)) === '[1]');
+check('garbage returns null (fail open)', parseKeepIndices('not json', 5) === null);
+check('missing keep field returns null', parseKeepIndices('{"other":[1]}', 5) === null);
 
 if (failures > 0) {
   console.error(`\n${failures} check(s) failed`);

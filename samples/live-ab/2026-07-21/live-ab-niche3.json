@@ -1,0 +1,225 @@
+{
+  "generatedAt": "2026-07-21T16:06:49.440Z",
+  "results": [
+    {
+      "approach": "search-brave",
+      "topic": "speedcubing",
+      "ok": true,
+      "cascadeStep": "search-api-brave",
+      "gatherMs": 197187,
+      "assembleMs": 5193,
+      "articleCount": 2,
+      "articles": [
+        {
+          "title": "Blink and you'll miss it: Cubes and lubes: Europe's 'Speedcubers' twist for glory - RTL Today",
+          "source": "today.rtl.lu",
+          "date": "Jul 17, 2026",
+          "summary": "Welcome to the world of competitive Rubik's Cube solving -- \"speedcubing\" for those in the know -- where players compete in disciplines ranging from the blindfold challenge to solving cubes with oven gloves on their hands.",
+          "url": "https://today.rtl.lu/news/world/cubes-and-lubes-europes-speedcubers-twist-for-glory-1111413106"
+        },
+        {
+          "title": "Eighty Israelis come together to compete in Rubik's Cube event with hundreds spectating",
+          "source": "jpost.com",
+          "date": "Jul 16, 2026",
+          "summary": "The annual competition saw record-high registration rates as interest in the Rubik's Cube world in Israel grows.",
+          "url": "https://jpost.com/israel-news/article-902714"
+        }
+      ],
+      "assembled": {
+        "summary": "Recent reporting highlights speedcubing’s growing mainstream momentum, from record audience interest at an Israeli competition to Europe’s broader “speedcubers” culture and unconventional events. Together, the articles underscore how community-driven contests are expanding participation while showcasing a wider range of disciplines beyond standard timed solves.",
+        "stories": [
+          {
+            "headline": "Eighty Israelis compete as Rubik’s Cube event draws hundreds of spectators",
+            "bullets": [
+              "Eighty Israeli competitors took part while hundreds spectated at the Rubik’s Cube competition.",
+              "The event reportedly saw record-high registration rates amid rising interest in the speedcubing community in Israel.",
+              "Coverage frames the competition as part of a broader growth trend in participation and public attention."
+            ],
+            "source": "jpost.com",
+            "url": "https://jpost.com/israel-news/article-902714",
+            "date": "Jul 16, 2026"
+          },
+          {
+            "headline": "Europe’s speedcubers push for glory with lubes, blindfold and oven-glove disciplines",
+            "bullets": [
+              "RTL Today profiles Europe’s competitive speedcubing scene, describing disciplines from blindfold solving to solving with oven gloves.",
+              "The article spotlights the culture around cubes and lubes, positioning them as part of performance and preparation.",
+              "It emphasizes how competitive formats and novelty challenges are helping attract and retain participants."
+            ],
+            "source": "today.rtl.lu",
+            "url": "https://today.rtl.lu/news/world/cubes-and-lubes-europes-speedcubers-twist-for-glory-1111413106",
+            "date": "Jul 17, 2026"
+          }
+        ]
+      },
+      "calls": [
+        {
+          "host": "api.openai.com",
+          "path": "/v1/chat/completions",
+          "status": 200,
+          "ms": 1195,
+          "model": "gpt-5.4-nano-2026-03-17",
+          "inputTokens": 207,
+          "outputTokens": 23
+        },
+        {
+          "host": "api.search.brave.com",
+          "path": "/res/v1/news/search",
+          "status": 429,
+          "ms": 336
+        },
+        {
+          "host": "api.search.brave.com",
+          "path": "/res/v1/news/search",
+          "status": 200,
+          "ms": 573
+        },
+        {
+          "host": "api.openai.com",
+          "path": "/v1/chat/completions",
+          "status": 200,
+          "ms": 1090,
+          "model": "gpt-5.4-nano-2026-03-17",
+          "inputTokens": 337,
+          "outputTokens": 10
+        },
+        {
+          "host": "api.openai.com",
+          "path": "/v1/responses",
+          "status": 429,
+          "ms": 194274
+        },
+        {
+          "host": "api.openai.com",
+          "path": "/v1/chat/completions#assembly",
+          "status": 200,
+          "ms": 0,
+          "model": "gpt-5.4-nano-2026-03-17",
+          "inputTokens": 656,
+          "outputTokens": 369
+        }
+      ],
+      "tokens": {
+        "gatherIn": 544,
+        "gatherOut": 33,
+        "assembleIn": 656,
+        "assembleOut": 369,
+        "webSearchToolCalls": 0
+      },
+      "searchApiCalls": 2
+    },
+    {
+      "approach": "search-brave",
+      "topic": "artisanal fountain pen restoration",
+      "ok": true,
+      "cascadeStep": "search-api-brave",
+      "gatherMs": 57358,
+      "assembleMs": 5239,
+      "articleCount": 3,
+      "articles": [
+        {
+          "title": "This Titanium Calligraphy Pen Trades Tactical Utility for Softer, More Expressive Brush Strokes - Yanko Design",
+          "source": "yankodesign.com",
+          "date": "Jul 19, 2026",
+          "summary": "https://youtu.be/l7L-SjpWHjU Titanium is a material with a very specific reputation. It belongs to the world of rugged efficiency, survival gear, and precision engineering, usually chosen for objects that need to endure pressure, impact, and time with very little fuss.",
+          "url": "https://yankodesign.com/2026/07/19/this-titanium-calligraphy-pen-trades-tactical-utility-for-softer-more-expressive-brush-strokes"
+        },
+        {
+          "title": "Click here: Why the Japanese make the best pens in the world | Hindustan Times",
+          "source": "hindustantimes.com",
+          "date": "Jul 16, 2026",
+          "summary": "A bad Japanese pen? No such thing. See why they outlast, outrank and strike out competitors the world over",
+          "url": "https://hindustantimes.com/lifestyle/brunch/click-here-why-the-japanese-make-the-best-pens-in-the-world-101784237358657.html"
+        },
+        {
+          "title": "The 7 Best Japanese Stationery Designs That Make Going Back to School Actually Feel Worth It - Yanko Design",
+          "source": "yankodesign.com",
+          "date": "Jul 17, 2026",
+          "summary": "There's something about the start of a new semester that makes you want to be more organized than you actually are. The folders, the planners, the fresh notebooks- most of it is forgotten by October. The stationery that survives a school year isn't the cheapest or the most colorful.",
+          "url": "https://yankodesign.com/2026/07/17/the-7-best-japanese-stationery-designs-that-make-going-back-to-school-actually-feel-worth-it"
+        }
+      ],
+      "assembled": {
+        "summary": "The current coverage skews more toward pen materials and consumer-facing Japanese pen culture than toward hands-on artisanal restoration techniques. Recent pieces from Yanko Design highlight a titanium calligraphy pen’s material-driven performance, while Hindustan Times frames Japan’s pen-making reputation around longevity and quality—context that can influence demand for restoration and long-term maintenance. Overall, there’s little direct reporting on restoration services, tools, or restorers in these articles.",
+        "stories": [
+          {
+            "headline": "Titanium calligraphy pen focuses on softer strokes and expressive brush-like lines",
+            "bullets": "While not about restoration directly, material-first designs can change maintenance expectations for nib and body wear.",
+            "source": "Yanko Design",
+            "url": "https://yankodesign.com/2026/07/19/this-titanium-calligraphy-pen-trades-tactical-utility-for-softer-more-expressive-brush-strokes",
+            "date": "Jul 19, 2026"
+          },
+          {
+            "headline": "Hindustan Times highlights why Japanese pens outlast competitors worldwide",
+            "bullets": "The piece is culture-and-brand oriented rather than technical, but it reinforces the value proposition behind maintaining older pens.",
+            "source": "Hindustan Times",
+            "url": "https://hindustantimes.com/lifestyle/brunch/click-here-why-the-japanese-make-the-best-pens-in-the-world-101784237358657.html",
+            "date": "Jul 16, 2026"
+          },
+          {
+            "headline": "Yanko Design rounds up Japanese stationery that keeps value through the school year",
+            "bullets": "This type of coverage may influence buyer behavior toward pens and accessories that are designed for continued use.",
+            "source": "Yanko Design",
+            "url": "https://yankodesign.com/2026/07/17/the-7-best-japanese-stationery-designs-that-make-going-back-to-school-actually-feel-worth-it",
+            "date": "Jul 17, 2026"
+          }
+        ]
+      },
+      "calls": [
+        {
+          "host": "api.openai.com",
+          "path": "/v1/chat/completions",
+          "status": 200,
+          "ms": 858,
+          "model": "gpt-5.4-nano-2026-03-17",
+          "inputTokens": 209,
+          "outputTokens": 26
+        },
+        {
+          "host": "api.search.brave.com",
+          "path": "/res/v1/news/search",
+          "status": 429,
+          "ms": 590
+        },
+        {
+          "host": "api.search.brave.com",
+          "path": "/res/v1/news/search",
+          "status": 200,
+          "ms": 694
+        },
+        {
+          "host": "api.openai.com",
+          "path": "/v1/chat/completions",
+          "status": 200,
+          "ms": 673,
+          "model": "gpt-5.4-nano-2026-03-17",
+          "inputTokens": 381,
+          "outputTokens": 12
+        },
+        {
+          "host": "api.openai.com",
+          "path": "/v1/responses",
+          "status": 502,
+          "ms": 55096
+        },
+        {
+          "host": "api.openai.com",
+          "path": "/v1/chat/completions#assembly",
+          "status": 200,
+          "ms": 0,
+          "model": "gpt-5.4-nano-2026-03-17",
+          "inputTokens": 852,
+          "outputTokens": 623
+        }
+      ],
+      "tokens": {
+        "gatherIn": 590,
+        "gatherOut": 38,
+        "assembleIn": 852,
+        "assembleOut": 623,
+        "webSearchToolCalls": 0
+      },
+      "searchApiCalls": 2
+    }
+  ]
+}

@@ -213,6 +213,9 @@ async function gatherViaWebSearch(topicName: string, knownSources: string[]): Pr
       'Content-Type': 'application/json',
       Authorization: `Bearer ${apiKey}`,
     },
+    // A live run saw this endpoint hang 194s before returning 429; without a
+    // timeout that stalls the whole briefing (and any search-api fallback).
+    signal: AbortSignal.timeout(60_000),
     body: JSON.stringify({
       model,
       instructions: buildGatherInstructions(),

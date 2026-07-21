@@ -23,17 +23,23 @@ const RESULTS_PER_QUERY = 10;
 const MAX_QUERIES = 3;
 const MAX_AGE_DAYS = 45; // same staleness cutoff as the agentic path
 const SNIPPET_MAX_CHARS = 400; // context control: this cap is the whole point
+const MAX_PER_HOST = 3; // source diversity: live A/B saw 5/12 articles from one host
+const MAX_QUERY_CHARS = 100; // NewsData rejects longer queries (HTTP 422)
+// Below this many gathered articles, the topic is too sparse for the search
+// API and the agentic web-search gather takes over (quality backstop).
+const AGENTIC_FALLBACK_THRESHOLD = 4;
 
-export type SearchProvider = 'brave' | 'tavily' | 'exa';
+export type SearchProvider = 'brave' | 'tavily' | 'exa' | 'newsdata';
 
 // ─── Provider selection ──────────────────────────────────────────────
 
 export function activeProvider(): SearchProvider | null {
   const forced = process.env.SEARCH_API_PROVIDER?.toLowerCase();
-  if (forced === 'brave' || forced === 'tavily' || forced === 'exa') return forced;
+  if (forced === 'brave' || forced === 'tavily' || forced === 'exa' || forced === 'newsdata') return forced;
   if (process.env.BRAVE_API_KEY) return 'brave';
   if (process.env.TAVILY_API_KEY) return 'tavily';
   if (process.env.EXA_API_KEY) return 'exa';
+  if (process.env.NEWSDATA_API_KEY) return 'newsdata';
   return null;
 }
 
@@ -51,10 +57,15 @@ function plannerModel(): string {
 
 export function buildPlannerPrompt(): string {
   const today = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  // Query style matters measurably: in the Jul 2026 live A/B, long essay-style
+  // queries ("global central banks monetary policy decisions 2026 IMF World
+  // Bank financial stability report") pulled SEO-blog matches out of Brave,
+  // while short entity-anchored ones returned mainstream coverage. Each query
+  // is also a billed search request, so fewer queries are directly cheaper.
   return `You expand a news-briefing topic into search queries for a news search API. Today is ${today}.
 
-- Return 1-${MAX_QUERIES} distinct queries covering the topic's key angles. Fewer, better queries beat many overlapping ones.
-- For broad topics one or two queries usually suffice.
+- Return 1-2 distinct queries covering the topic's key angles (${MAX_QUERIES} only if the topic genuinely spans that many separate angles). Fewer, better queries beat many overlapping ones — each query costs money.
+- Write queries the way a news editor would: SHORT keyword phrases (2-6 words, under 60 characters) anchored on concrete entities — "Federal Reserve interest rates", "TSMC AI chips". Never long descriptive sentences: they match SEO content farms instead of news.
 - For niche topics (hobbies, industry subfields), target the community's own outlets: add the community's proper names (federations, flagship sites, jargon) to the query.
 - Include the current year in at most one query.
 
@@ -114,6 +125,76 @@ async function planQueries(topicName: string): Promise<string[]> {
   }
 }
 
+// ─── Relevance gate ──────────────────────────────────────────────────
+//
+// Search APIs keyword-match: the live A/B saw Brave return FIFA World Cup
+// articles for "speedcubing" — 10 confident, entirely off-topic results that
+// an article-count check can't catch. One tiny LLM call over the TITLES only
+// (~300 tokens, ≈$0.0001 at nano rates) drops clearly-unrelated results, and
+// when too few survive, the agentic fallback takes over.
+
+export function buildRelevancePrompt(topicName: string): string {
+  return `You are filtering news search results for a briefing about: "${topicName}".
+
+You will get a numbered list of headlines. Reply with the numbers of headlines to KEEP.
+- Keep anything plausibly relevant to the topic — when unsure, keep it.
+- Drop only headlines CLEARLY about an unrelated subject that happened to match keywords.
+
+Respond with ONLY valid JSON, no markdown fences: {"keep": [1, 2, ...]}`;
+}
+
+/** Parse the relevance response into 0-based indices; exported for offline checks. */
+export function parseKeepIndices(text: string, count: number): number[] | null {
+  const clean = text.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
+  const start = clean.indexOf('{');
+  const end = clean.lastIndexOf('}');
+  if (start === -1 || end <= start) return null;
+  try {
+    const parsed = JSON.parse(clean.substring(start, end + 1));
+    if (!Array.isArray(parsed.keep)) return null;
+    const indices = parsed.keep
+      .filter((n: unknown): n is number => typeof n === 'number' && Number.isInteger(n) && n >= 1 && n <= count)
+      .map((n: number) => n - 1);
+    return [...new Set<number>(indices)];
+  } catch {
+    return null;
+  }
+}
+
+async function filterRelevant(topicName: string, articles: PreparedArticle[]): Promise<PreparedArticle[]> {
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey || articles.length === 0) return articles;
+
+  try {
+    const list = articles.map((a, i) => `${i + 1}. ${a.title} (${a.source})`).join('\n');
+    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: plannerModel(),
+        messages: [
+          { role: 'system', content: buildRelevancePrompt(topicName) },
+          { role: 'user', content: list },
+        ],
+      }),
+    });
+    if (!res.ok) throw new Error(`relevance gate HTTP ${res.status}`);
+    const data = await res.json();
+    const kept = parseKeepIndices(data.choices?.[0]?.message?.content ?? '', articles.length);
+    if (kept === null) return articles; // unparseable → fail open
+    if (kept.length < articles.length) {
+      console.log(`🚧 [Search-API] Relevance gate kept ${kept.length}/${articles.length} articles for "${topicName}"`);
+    }
+    return kept.map(i => articles[i]);
+  } catch (err) {
+    console.warn(`⚠️ [Search-API] Relevance gate failed for "${topicName}" — keeping all results:`, err);
+    return articles;
+  }
+}
+
 // ─── Raw result → PreparedArticle ────────────────────────────────────
 
 export interface RawSearchResult {
@@ -169,6 +250,7 @@ function isTooOld(dateStr: string): boolean {
 export function prepareSearchResults(raw: RawSearchResult[]): PreparedArticle[] {
   const seenUrls = new Set<string>();
   const seenTitles = new Set<string>();
+  const hostCounts = new Map<string, number>();
   const out: PreparedArticle[] = [];
 
   for (const r of raw) {
@@ -189,6 +271,14 @@ export function prepareSearchResults(raw: RawSearchResult[]): PreparedArticle[] 
     const urlKey = r.url.replace(/[?#].*$/, '');
     const titleKey = r.title.toLowerCase().trim();
     if (seenUrls.has(urlKey) || seenTitles.has(titleKey)) continue;
+
+    // Same running story from one outlet crowds out other sources (live A/B:
+    // one host supplied 5 of 12 World News articles). Cap per host.
+    const host = hostOf(r.url);
+    const hostCount = hostCounts.get(host) ?? 0;
+    if (hostCount >= MAX_PER_HOST) continue;
+    hostCounts.set(host, hostCount + 1);
+
     seenUrls.add(urlKey);
     seenTitles.add(titleKey);
 
@@ -307,44 +397,121 @@ async function searchExa(query: string): Promise<RawSearchResult[]> {
   }));
 }
 
+/** Trim a query to maxLen at a word boundary; exported for offline checks. */
+export function clampQuery(query: string, maxLen: number = MAX_QUERY_CHARS): string {
+  if (query.length <= maxLen) return query;
+  const cut = query.substring(0, maxLen);
+  const lastSpace = cut.lastIndexOf(' ');
+  return (lastSpace > 0 ? cut.substring(0, lastSpace) : cut).trim();
+}
+
+async function searchNewsdata(query: string): Promise<RawSearchResult[]> {
+  const params = new URLSearchParams({
+    apikey: process.env.NEWSDATA_API_KEY!,
+    q: clampQuery(query),
+    language: 'en',
+    prioritydomain: 'top',
+    size: String(Math.min(RESULTS_PER_QUERY, 10)), // free tier caps size at 10
+  });
+  const res = await fetch(`https://newsdata.io/api/1/latest?${params}`);
+  if (!res.ok) throw new Error(`NewsData HTTP ${res.status}: ${await res.text().catch(() => '')}`);
+  const data = await res.json();
+
+  interface NewsdataResult {
+    title?: string;
+    link?: string;
+    description?: string;
+    pubDate?: string;
+    source_name?: string;
+    source_id?: string;
+  }
+  return ((data.results ?? []) as NewsdataResult[]).map(r => ({
+    title: r.title,
+    url: r.link,
+    source: r.source_name ?? r.source_id,
+    date: r.pubDate,
+    snippet: r.description,
+  }));
+}
+
 const PROVIDER_FNS: Record<SearchProvider, (q: string) => Promise<RawSearchResult[]>> = {
   brave: searchBrave,
   tavily: searchTavily,
   exa: searchExa,
+  newsdata: searchNewsdata,
 };
 
 // ─── Main gather ─────────────────────────────────────────────────────
 
 async function gatherViaSearchApi(
   topicName: string,
-): Promise<{ articles: PreparedArticle[]; queries: string[]; provider: SearchProvider }> {
+): Promise<{ articles: PreparedArticle[]; queries: string[]; provider: string }> {
   const provider = activeProvider();
   if (!provider) {
     throw new Error(
-      'NEWS_SOURCE=search-api requires BRAVE_API_KEY, TAVILY_API_KEY, or EXA_API_KEY (or SEARCH_API_PROVIDER to force one)'
+      'NEWS_SOURCE=search-api requires BRAVE_API_KEY, TAVILY_API_KEY, EXA_API_KEY, or NEWSDATA_API_KEY (or SEARCH_API_PROVIDER to force one)'
     );
   }
 
   const queries = await planQueries(topicName);
   const search = PROVIDER_FNS[provider];
 
-  const settled = await Promise.allSettled(queries.map(q => search(q)));
+  // Sequential, not parallel: Brave enforces ~1 QPS, and the live A/B showed
+  // the first of two concurrent queries 429ing. One retry after a beat
+  // handles residual rate-limit blips. Two sequential ~600ms queries still
+  // finish an order of magnitude faster than an agentic gather.
   const raw: RawSearchResult[] = [];
-  settled.forEach((s, i) => {
-    if (s.status === 'fulfilled') {
-      raw.push(...s.value);
-    } else {
-      console.warn(`⚠️ [Search-API] ${provider} query failed ("${queries[i]}"):`, s.reason);
+  let failures = 0;
+  for (const q of queries) {
+    try {
+      raw.push(...(await search(q)));
+    } catch (err) {
+      if (String(err).includes('429')) {
+        await new Promise(r => setTimeout(r, 1100));
+        try {
+          raw.push(...(await search(q)));
+          continue;
+        } catch (retryErr) {
+          err = retryErr;
+        }
+      }
+      failures++;
+      console.warn(`⚠️ [Search-API] ${provider} query failed ("${q}"):`, err);
     }
-  });
-  if (raw.length === 0 && settled.every(s => s.status === 'rejected')) {
+  }
+  if (raw.length === 0 && failures === queries.length) {
     throw new Error(`All ${provider} queries failed for "${topicName}"`);
   }
 
-  const articles = prepareSearchResults(raw);
+  const articles = await filterRelevant(topicName, prepareSearchResults(raw));
   console.log(
     `🔎 [Search-API] ${provider}: ${queries.length} queries → ${raw.length} raw → ${articles.length} articles for "${topicName}"`
   );
+
+  // Hybrid quality backstop: search APIs handle mainstream topics well but
+  // can come up near-empty on niche ones, where the agentic web-search gather
+  // measurably shines (community sites a news index doesn't carry). Falling
+  // back only when sparse keeps agentic's cost confined to the topics that
+  // need it. Opt out with SEARCH_API_AGENTIC_FALLBACK=0.
+  if (
+    articles.length < AGENTIC_FALLBACK_THRESHOLD &&
+    process.env.OPENAI_API_KEY &&
+    process.env.SEARCH_API_AGENTIC_FALLBACK !== '0'
+  ) {
+    console.log(
+      `🪃 [Search-API] Only ${articles.length} articles for "${topicName}" — falling back to agentic web-search gather`
+    );
+    try {
+      const { fetchArticlesViaWebSearch } = await import('./agentic-fetcher');
+      const agentic = await fetchArticlesViaWebSearch(topicName, true);
+      if (agentic.articles.length > articles.length) {
+        return { articles: agentic.articles, queries, provider: `${provider}+agentic-fallback` };
+      }
+    } catch (err) {
+      console.warn(`⚠️ [Search-API] Agentic fallback failed for "${topicName}":`, err);
+    }
+  }
+
   return { articles, queries, provider };
 }
 

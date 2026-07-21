@@ -64,6 +64,11 @@ See latest progress notes below.
 
 ## Progress Log
 
+### Jul 21, 2026 (PM) — live-measured gather A/B
+- Ran `scripts/live-ab-compare.ts`: agentic web_search tool vs direct search APIs, live, same 3 topics; evidence in `samples/live-ab/2026-07-21/`, analysis in `docs/COST_ANALYSIS.md` (revision 2, all numbers measured)
+- Winner: hybrid — Brave News direct (2 short queries) + nano relevance gate + agentic fallback for sparse topics; $0.035/briefing vs $0.056–0.077 agentic-nano, 4–6× faster
+- search-fetcher hardening from measured failures: short-query planner prompt, per-host cap, relevance gate (Brave returned FIFA articles for "speedcubing"), sequential queries + 429 retry (Brave ~1 QPS), NewsData query clamp, 60s timeout on agentic gather (saw a 194s hang)
+
 ### Jul 21, 2026
 - **NEWS_SOURCE=search-api**: direct search-API gathering (Brave News primary, Tavily/Exa fallback) with gpt-5.4-nano query planning; snippet-only LLM context. ~$0.035/3-topic briefing vs $0.077 agentic-nano (analysis: `docs/COST_ANALYSIS.md`)
 - **Cache coalescing fixed**: topic gathers now single-flight across serverless instances (90s lock, waiters await the winner's result); previously concurrent identical requests duplicated the gather
