@@ -1,6 +1,7 @@
 import { resolveTopics } from './query-planner';
 import { fetchArticlesForTopic } from './article-fetcher';
 import { fetchArticlesViaWebSearch } from './agentic-fetcher';
+import { fetchArticlesViaSearchApi } from './search-fetcher';
 import { assembleSection, sectionCacheId, type StoryCard, type Article } from './briefing-assembler';
 import { getCachedSection } from './perigon-cache';
 import { getOpenAIModel } from './models';
@@ -61,11 +62,16 @@ export async function generateBriefing(
   if (skipCache) console.log('🚫 Cache bypassed (dev mode)');
 
   // 1 + 2. Gather articles for ALL topics in parallel.
+  //    - search-api: direct search-API calls + cheap-LLM query planning
   //    - agentic: one web-search LLM call per topic (no separate planner call)
   //    - perigon: query planner → Perigon endpoints with cascade fallback
-  const useAgentic = (process.env.NEWS_SOURCE || 'perigon') === 'agentic';
+  const newsSource = process.env.NEWS_SOURCE || 'perigon';
   let articleResults: PromiseSettledResult<Awaited<ReturnType<typeof fetchArticlesForTopic>>>[];
-  if (useAgentic) {
+  if (newsSource === 'search-api') {
+    articleResults = await Promise.allSettled(
+      topics.map(t => fetchArticlesViaSearchApi(t.name, skipCache))
+    );
+  } else if (newsSource === 'agentic') {
     articleResults = await Promise.allSettled(
       topics.map(t => fetchArticlesViaWebSearch(t.name, skipCache))
     );

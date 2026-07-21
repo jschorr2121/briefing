@@ -20,9 +20,10 @@ import {
 // NEWS_SOURCE values:
 //   perigon (default) — Perigon article pipeline
 //   agentic           — LLM web-search gathering (agentic-fetcher.ts) + same assembly
+//   search-api        — direct search-API gathering (search-fetcher.ts) + same assembly
 //   openai/perplexity — legacy single-call paths (kept for revert capability)
 const NEWS_SOURCE = process.env.NEWS_SOURCE || 'perigon';
-const MODERN_SOURCES = ['perigon', 'agentic'];
+const MODERN_SOURCES = ['perigon', 'agentic', 'search-api'];
 
 // ─── Shared types ────────────────────────────────────────────────────
 
@@ -350,6 +351,8 @@ async function generateBriefings_legacy(
  *
  * Pipeline is selected via the NEWS_SOURCE env var:
  *   - "perigon"    → Perigon article pipeline (default)
+ *   - "agentic"    → LLM web-search gathering + shared assembly
+ *   - "search-api" → direct search-API gathering + shared assembly
  *   - "openai"     → Legacy OpenAI Responses API with web_search
  *   - "perplexity" → Legacy Perplexity sonar model
  */

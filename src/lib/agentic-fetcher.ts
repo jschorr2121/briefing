@@ -11,7 +11,7 @@
 
 import { getOpenAIModel } from './models';
 import { type PreparedArticle } from './prompts';
-import { getCached, setCached } from './news/cache';
+import { getCached, setCached, fetchWithLock, canonicalTopicId, EMPTY_TTL_SECONDS } from './news/cache';
 import { type ArticleSet } from './article-fetcher';
 
 const GATHER_CACHE_TTL_SECONDS = 6 * 60 * 60; // match the Perigon query cache
@@ -26,16 +26,14 @@ const SOURCE_MEMORY_MAX_HOSTS = 10;
 
 // ─── Cache keys ──────────────────────────────────────────────────────
 
-function topicId(topicName: string): string {
-  return topicName.toLowerCase().trim().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
-}
-
+// Canonical ids so "AI news" and "artificial intelligence" share one entry
+// (and one gather) across users.
 function gatherCacheKey(topicName: string): string {
-  return `websearch:articles:${topicId(topicName)}`;
+  return `websearch:articles:${canonicalTopicId(topicName)}`;
 }
 
 function sourceMemoryKey(topicName: string): string {
-  return `websearch:sources:${topicId(topicName)}`;
+  return `websearch:sources:${canonicalTopicId(topicName)}`;
 }
 
 // ─── Gather prompt ───────────────────────────────────────────────────
@@ -295,35 +293,58 @@ async function updateSourceMemory(
 export async function fetchArticlesViaWebSearch(topicName: string, skipCache = false): Promise<ArticleSet> {
   const cacheKey = gatherCacheKey(topicName);
 
-  if (!skipCache) {
-    const cached = await getCached<PreparedArticle[]>(cacheKey);
-    if (cached) {
-      console.log(`📦 [Agentic] Cache hit for "${topicName}"`);
-      return {
-        articles: cached,
-        debugInfo: {
-          queries: [{ type: 'web_search', query: topicName }],
-          articleCount: cached.length,
-          cascadeStep: 'websearch-cached',
-        },
-      };
+  const doGather = async (): Promise<{ articles: PreparedArticle[]; cascadeStep: string }> => {
+    const knownSources = (await getCached<string[]>(sourceMemoryKey(topicName))) ?? [];
+    const gathered = await gatherViaWebSearch(topicName, knownSources);
+    if (gathered.articles.length > 0) {
+      await updateSourceMemory(topicName, knownSources, gathered.articles, gathered.cascadeStep);
     }
+    return gathered;
+  };
+
+  if (skipCache) {
+    const { articles, cascadeStep } = await doGather();
+    return {
+      articles,
+      debugInfo: {
+        queries: [{ type: 'web_search', query: topicName }],
+        articleCount: articles.length,
+        cascadeStep,
+      },
+    };
   }
 
-  const knownSources = (await getCached<string[]>(sourceMemoryKey(topicName))) ?? [];
-  const { articles, cascadeStep } = await gatherViaWebSearch(topicName, knownSources);
+  // Single-flight around the gather: concurrent requests for the same
+  // (canonicalized) topic — same user or different users — result in one
+  // web-search call; everyone else awaits the winner's cached result.
+  let didWork = false;
+  let freshCascadeStep = 'websearch';
+  const articles = await fetchWithLock<PreparedArticle[]>({
+    cacheKey,
+    lockKey: `${cacheKey}:lock`,
+    ttlSeconds: GATHER_CACHE_TTL_SECONDS,
+    work: async () => {
+      didWork = true;
+      const gathered = await doGather();
+      freshCascadeStep = gathered.cascadeStep;
+      return gathered.articles;
+    },
+  });
 
-  if (articles.length > 0) {
-    await setCached(cacheKey, articles, GATHER_CACHE_TTL_SECONDS);
-    await updateSourceMemory(topicName, knownSources, articles, cascadeStep);
+  // Empty gathers stay cached only briefly, so a dead topic can revive soon
+  // without every request in between re-paying for the search.
+  if (didWork && articles.length === 0) {
+    await setCached(cacheKey, articles, EMPTY_TTL_SECONDS);
   }
+
+  if (!didWork) console.log(`📦 [Agentic] Cache hit for "${topicName}"`);
 
   return {
     articles,
     debugInfo: {
       queries: [{ type: 'web_search', query: topicName }],
       articleCount: articles.length,
-      cascadeStep,
+      cascadeStep: didWork ? freshCascadeStep : 'websearch-cached',
     },
   };
 }

@@ -64,6 +64,12 @@ See latest progress notes below.
 
 ## Progress Log
 
+### Jul 21, 2026
+- **NEWS_SOURCE=search-api**: direct search-API gathering (Brave News primary, Tavily/Exa fallback) with gpt-5.4-nano query planning; snippet-only LLM context. ~$0.035/3-topic briefing vs $0.077 agentic-nano (analysis: `docs/COST_ANALYSIS.md`)
+- **Cache coalescing fixed**: topic gathers now single-flight across serverless instances (90s lock, waiters await the winner's result); previously concurrent identical requests duplicated the gather
+- **Canonical topic keys**: "AI news" ≡ "artificial intelligence" share one cache entry across users (`canonicalTopicId` in `src/lib/news/cache.ts`)
+- Offline checks: `scripts/check-news-cache.ts`, `scripts/check-search-fetcher.ts`
+
 ### Feb 4, 2026
 - Removed Hub, health tips from product emails
 - Default topics + topic persistence shipped
