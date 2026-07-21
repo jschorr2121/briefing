@@ -133,9 +133,17 @@ export interface PreparedArticle {
   url: string;
 }
 
-export function buildPerigonUserMessage(topicName: string, articles: PreparedArticle[]): string {
+export function buildPerigonUserMessage(
+  topicName: string,
+  articles: PreparedArticle[],
+  recentlyCoveredUrls?: string[],
+): string {
+  const seenBlock = recentlyCoveredUrls && recentlyCoveredUrls.length > 0
+    ? `\n\nThese article URLs were already covered in this topic's recent briefings. Prefer stories NOT in this list; only repeat one if there is a significant new development. If every provided article was recently covered, cover the most important ones anyway rather than returning nothing:\n${recentlyCoveredUrls.join('\n')}`
+    : '';
+
   return `Topic: ${topicName}
 
 Here are the latest and most relevant articles:
-${JSON.stringify(articles)}`;
+${JSON.stringify(articles)}${seenBlock}`;
 }

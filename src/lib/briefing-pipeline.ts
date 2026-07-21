@@ -17,8 +17,13 @@ import {
   type BriefingResponse,
 } from './briefing-generator';
 
-// Set NEWS_SOURCE=openai or NEWS_SOURCE=perplexity to revert to legacy providers
+// NEWS_SOURCE values:
+//   perigon (default) — Perigon article pipeline
+//   agentic           — LLM web-search gathering (agentic-fetcher.ts) + same assembly
+//   search-api        — direct search-API gathering (search-fetcher.ts) + same assembly
+//   openai/perplexity — legacy single-call paths (kept for revert capability)
 const NEWS_SOURCE = process.env.NEWS_SOURCE || 'perigon';
+const MODERN_SOURCES = ['perigon', 'agentic', 'search-api'];
 
 // ─── Shared types ────────────────────────────────────────────────────
 
@@ -346,6 +351,8 @@ async function generateBriefings_legacy(
  *
  * Pipeline is selected via the NEWS_SOURCE env var:
  *   - "perigon"    → Perigon article pipeline (default)
+ *   - "agentic"    → LLM web-search gathering + shared assembly
+ *   - "search-api" → direct search-API gathering + shared assembly
  *   - "openai"     → Legacy OpenAI Responses API with web_search
  *   - "perplexity" → Legacy Perplexity sonar model
  */
@@ -353,8 +360,8 @@ export async function generateBriefing(
   topics: TopicInput[],
   settings: BriefingSettings
 ): Promise<BriefingResponse> {
-  if (NEWS_SOURCE === 'perigon') {
-    console.log(`🔄 Using Perigon pipeline for ${topics.length} topics`);
+  if (MODERN_SOURCES.includes(NEWS_SOURCE)) {
+    console.log(`🔄 Using ${NEWS_SOURCE} pipeline for ${topics.length} topics`);
     return generateBriefingPerigon(topics, settings);
   }
 
@@ -370,8 +377,8 @@ export async function generateBriefing(
 export async function generateBriefingsForCronPipeline(
   topicNames: string[]
 ): Promise<{ topic: string; summary: string; stories: StoryCard[]; articles: Article[] }[]> {
-  if (NEWS_SOURCE === 'perigon') {
-    console.log(`🔄 [Cron] Using Perigon pipeline for ${topicNames.length} topics`);
+  if (MODERN_SOURCES.includes(NEWS_SOURCE)) {
+    console.log(`🔄 [Cron] Using ${NEWS_SOURCE} pipeline for ${topicNames.length} topics`);
     return generateBriefingsForCron(topicNames);
   }
 

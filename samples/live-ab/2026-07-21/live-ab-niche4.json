@@ -1,0 +1,94 @@
+{
+  "generatedAt": "2026-07-21T16:08:54.221Z",
+  "results": [
+    {
+      "approach": "search-brave",
+      "topic": "speedcubing",
+      "ok": true,
+      "cascadeStep": "search-api-brave",
+      "gatherMs": 65263,
+      "assembleMs": 2240,
+      "articleCount": 1,
+      "articles": [
+        {
+          "title": "Blink and you'll miss it: Cubes and lubes: Europe's 'Speedcubers' twist for glory - RTL Today",
+          "source": "today.rtl.lu",
+          "date": "Jul 17, 2026",
+          "summary": "Two players sit side by side, each ... clock records their time to the hundredth of a second. The freshly scrambled cube arrives concealed in a box. When the box is overturned, competitors have 15 seconds to examine the state of the cube before placing their hands on a sensor to start the clock and begin their solve. The speedcubing world was recently ...",
+          "url": "https://today.rtl.lu/news/world/cubes-and-lubes-europes-speedcubers-twist-for-glory-1111413106"
+        }
+      ],
+      "assembled": {
+        "summary": "Recent coverage highlights how speedcubing is expanding into fast-paced, spectator-friendly formats. A July 17, 2026 RTL Today report describes a European twist on competition—using a brief inspection window and sensor timing to begin solves—showing the sport’s emphasis on precision under pressure.",
+        "stories": [
+          {
+            "headline": "Europe’s speedcubing twist adds 15-second inspection and sensor timing",
+            "bullets": [
+              "RTL Today reports competitors get only 15 seconds to examine a freshly scrambled cube before starting their solve.",
+              "Timing begins via a sensor when hands touch the cube, with results measured to the hundredth of a second.",
+              "The format aims to add tension and immediacy while keeping core speedcubing measurement front and center."
+            ],
+            "source": "RTL Today",
+            "url": "https://today.rtl.lu/news/world/cubes-and-lubes-europes-speedcubers-twist-for-glory-1111413106",
+            "date": "Jul 17, 2026"
+          }
+        ]
+      },
+      "calls": [
+        {
+          "host": "api.openai.com",
+          "path": "/v1/chat/completions",
+          "status": 200,
+          "ms": 1429,
+          "model": "gpt-5.4-nano-2026-03-17",
+          "inputTokens": 207,
+          "outputTokens": 23
+        },
+        {
+          "host": "api.search.brave.com",
+          "path": "/res/v1/news/search",
+          "status": 200,
+          "ms": 1375
+        },
+        {
+          "host": "api.search.brave.com",
+          "path": "/res/v1/news/search",
+          "status": 429,
+          "ms": 48
+        },
+        {
+          "host": "api.search.brave.com",
+          "path": "/res/v1/news/search",
+          "status": 200,
+          "ms": 371
+        },
+        {
+          "host": "api.openai.com",
+          "path": "/v1/chat/completions",
+          "status": 200,
+          "ms": 891,
+          "model": "gpt-5.4-nano-2026-03-17",
+          "inputTokens": 423,
+          "outputTokens": 8
+        },
+        {
+          "host": "api.openai.com",
+          "path": "/v1/chat/completions#assembly",
+          "status": 200,
+          "ms": 0,
+          "model": "gpt-5.4-nano-2026-03-17",
+          "inputTokens": 612,
+          "outputTokens": 233
+        }
+      ],
+      "tokens": {
+        "gatherIn": 630,
+        "gatherOut": 31,
+        "assembleIn": 612,
+        "assembleOut": 233,
+        "webSearchToolCalls": 0
+      },
+      "searchApiCalls": 3
+    }
+  ]
+}

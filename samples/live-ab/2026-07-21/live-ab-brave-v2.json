@@ -1,0 +1,548 @@
+{
+  "generatedAt": "2026-07-21T16:00:35.563Z",
+  "results": [
+    {
+      "approach": "search-brave",
+      "topic": "AI & Tech",
+      "ok": true,
+      "cascadeStep": "search-api-brave",
+      "gatherMs": 1820,
+      "assembleMs": 5935,
+      "articleCount": 10,
+      "articles": [
+        {
+          "title": "AIRe – Journal of AI Law and Regulation - Lexxion",
+          "source": "lexxion.eu",
+          "date": "Jul 18, 2026",
+          "summary": "We invite submissions that analyse ... of AI in a diversity of legal fields, such as: ... Please provide the advert in a PDF-X-1a format + 3 mm bleed (without crop marks). ... Inserts/Supplements have to be delivered at least one week prior to publication date. Delivery address: Schaltungsdienst Lange oHG z.Hd. Fr. Schulz, Beilage EStAL Heft _/2026 (Please state issue number.) Zehrensdorfer Straße",
+          "url": "https://www.lexxion.eu/en/journals/aire/"
+        },
+        {
+          "title": "Who should regulate global AI? China makes a play for leadership : NPR",
+          "source": "npr.org",
+          "date": "Jul 20, 2026",
+          "summary": "The AI world is moving at lightning speed – and the world is trying to figure out how to regulate this technology. China just made a big play to be the global leader.",
+          "url": "https://npr.org/2026/07/20/nx-s1-5886477/who-should-regulate-global-ai-china-makes-a-play-for-leadership"
+        },
+        {
+          "title": "EU's AI labeling rules take effect next month",
+          "source": "theregister.com",
+          "date": "Jul 20, 2026",
+          "summary": "Chatbots and agents will have to come clean about who – or what – users are talking to",
+          "url": "https://theregister.com/ai-and-ml/2026/07/20/eus-ai-labeling-rules-take-effect-next-month/5274917"
+        },
+        {
+          "title": "There's a Gigantic Problem at the Heart of the AI Industry That Could Cause the Whole Thing to Collapse",
+          "source": "futurism.com",
+          "date": "Jul 20, 2026",
+          "summary": "The AI industry has an enormous inefficiency problem, which doesn't bode well, considering how much money is being spent.",
+          "url": "https://futurism.com/artificial-intelligence/problem-ai-industry-collapse-efficiency"
+        },
+        {
+          "title": "Weak AI regulation may backfire, making products less safe | Cornell Chronicle",
+          "source": "news.cornell.edu",
+          "date": "Jul 20, 2026",
+          "summary": "A new modeling study finds no regulation of AI products and services may be safer than weak regulation.",
+          "url": "https://news.cornell.edu/stories/2026/07/weak-ai-regulation-may-backfire-making-products-less-safe"
+        },
+        {
+          "title": "AI News Today July 20 2026: 16 Biggest Stories",
+          "source": "buildfastwithai.com",
+          "date": "Jul 19, 2026",
+          "summary": "The EU orders Google to open Android to AI rivals, Gemini slips a third time, and Oracle cuts 30,000 jobs for Stargate. 16 AI stories for July 20, 2026.",
+          "url": "https://www.buildfastwithai.com/blogs/ai-news-today-july-20-2026-16-biggest-stories"
+        },
+        {
+          "title": "Weak AI Regulation Is Worse Than No Regulation, Researchers Claim",
+          "source": "gizmodo.com",
+          "date": "Jul 21, 2026",
+          "summary": "Game theory says the best AI safety regulation is strict and targets everyone in the supply chain, according to the paper.",
+          "url": "https://gizmodo.com/weak-ai-regulation-is-worse-than-no-regulation-researchers-claim-2000787983"
+        },
+        {
+          "title": "Data centres forced to generate more power than they use under new laws",
+          "source": "afr.com",
+          "date": "Jul 14, 2026",
+          "summary": "Tech giants face tough grid mandates and a world-first copyright regime as the Albanese government launches a major regulatory crackdown on artificial intelligence.",
+          "url": "https://www.afr.com/technology/albanese-hits-data-centres-with-grid-mandate-in-major-ai-pivot-20260715-p60fg6"
+        },
+        {
+          "title": "U.S. Tech Legislative & Regulatory Update – Second Quarter 2026 | Global Policy Watch",
+          "source": "globalpolicywatch.com",
+          "date": "Jul 16, 2026",
+          "summary": "By Jennifer Johnson, Nicholas Xenakis, Jayne Ponder, Micah Telegen, Rosie Moss, Evan Chiacchiaro & Irene Kim on July 16, 2026 · Posted in Artificial Intelligence (AI), Autonomous Vehicles, Frontier Models, Internet of Things (IoT) This update highlights key legislative and regulatory developments ...",
+          "url": "https://globalpolicywatch.com/2026/07/__trashed-2"
+        },
+        {
+          "title": "AI Safety Grades Are In: No Lab Tops C+, and the Best Ones Are Retreating",
+          "source": "techtimes.com",
+          "date": "Jul 19, 2026",
+          "summary": "AI safety grades 2026 are in: the Future of Life Institute’s Summer 2026 index graded nine frontier AI labs and found not one earned above a C+, while four top labs walked back prior safety pause pledges. OpenAI’s new GPT-Red red-teaming system meanwhile showed that securing AI now demands an",
+          "url": "https://techtimes.com/articles/320959/20260719/ai-safety-grades-are-no-lab-tops-c-best-ones-are-retreating.htm"
+        }
+      ],
+      "assembled": {
+        "summary": "AI governance is accelerating on multiple fronts, with China pushing for global regulatory leadership (NPR) and the EU’s AI labeling rules set to take effect next month (The Register). Research and analysis are also challenging policymakers: Cornell Chronicle reports weak or absent AI regulation may improve safety in a modeling study, while Gizmodo echoes game-theory findings that weak regulation can backfire. Meanwhile, the compliance landscape expands alongside market and operational pressures, including data-center power mandates (AFR) and continued debate over frontier model safety performance (TechTimes).",
+        "stories": [
+          {
+            "headline": "China seeks global leadership on AI regulation as other powers scramble",
+            "bullets": [
+              "NPR reports China is positioning itself as a key driver of how global AI should be regulated.",
+              "The piece frames regulation as a fast-moving geopolitical race, with multiple countries trying to set standards.",
+              "The push highlights how AI governance is increasingly tied to international influence, not just domestic policy."
+            ],
+            "source": "npr.org",
+            "url": "https://npr.org/2026/07/20/nx-s1-5886477/who-should-regulate-global-ai-china-makes-a-play-for-leadership",
+            "date": "Jul 20, 2026"
+          },
+          {
+            "headline": "EU AI labeling rules begin next month for chatbots and agents",
+            "bullets": [
+              "The Register says chatbots and agents will be required to disclose who—or what—users are interacting with.",
+              "The change aims to make AI interactions more transparent at the point of use.",
+              "The rules are scheduled to take effect next month, tightening compliance expectations for AI deployers."
+            ],
+            "source": "theregister.com",
+            "url": "https://theregister.com/ai-and-ml/2026/07/20/eus-ai-labeling-rules-take-effect-next-month/5274917",
+            "date": "Jul 20, 2026"
+          },
+          {
+            "headline": "Weak AI regulation may reduce safety, Cornell modeling study finds",
+            "bullets": [
+              "Cornell Chronicle reports a new modeling study suggests no regulation—or too-weak regulation—may lead to safer AI products.",
+              "The study challenges the assumption that lighter regulatory oversight automatically improves outcomes.",
+              "It argues the safety effects of regulation depend on how incentives shape development and deployment."
+            ],
+            "source": "news.cornell.edu",
+            "url": "https://news.cornell.edu/stories/2026/07/weak-ai-regulation-may-backfire-making-products-less-safe",
+            "date": "Jul 20, 2026"
+          },
+          {
+            "headline": "Game-theory research: weak AI safety rules worse than none",
+            "bullets": [
+              "Gizmodo summarizes game-theory work concluding strict, supply-chain-wide safety regulation may be more effective.",
+              "The reporting claims weak regulation can increase risk by failing to sufficiently constrain incentives.",
+              "It reinforces the broader argument that policy design matters, not just the presence of rules."
+            ],
+            "source": "gizmodo.com",
+            "url": "https://gizmodo.com/weak-ai-regulation-is-worse-than-no-regulation-researchers-claim-2000787983",
+            "date": "Jul 21, 2026"
+          },
+          {
+            "headline": "Data centers hit new grid mandates under Australia’s AI regulatory push",
+            "bullets": [
+              "AFR reports new laws require data centers to generate more power than they use, driven by grid mandates.",
+              "The coverage describes a major regulatory crackdown on AI-related infrastructure in Australia.",
+              "The piece also notes the policy context includes a world-first copyright regime alongside power requirements."
+            ],
+            "source": "afr.com",
+            "url": "https://www.afr.com/technology/albanese-hits-data-centres-with-grid-mandate-in-major-ai-pivot-20260715-p60fg6",
+            "date": "Jul 14, 2026"
+          }
+        ]
+      },
+      "calls": [
+        {
+          "host": "api.openai.com",
+          "path": "/v1/chat/completions",
+          "status": 200,
+          "ms": 1114,
+          "model": "gpt-5.4-nano-2026-03-17",
+          "inputTokens": 207,
+          "outputTokens": 23
+        },
+        {
+          "host": "api.search.brave.com",
+          "path": "/res/v1/news/search",
+          "status": 429,
+          "ms": 410
+        },
+        {
+          "host": "api.search.brave.com",
+          "path": "/res/v1/news/search",
+          "status": 200,
+          "ms": 680
+        },
+        {
+          "host": "api.openai.com",
+          "path": "/v1/chat/completions#assembly",
+          "status": 200,
+          "ms": 0,
+          "model": "gpt-5.4-nano-2026-03-17",
+          "inputTokens": 1546,
+          "outputTokens": 876
+        }
+      ],
+      "tokens": {
+        "gatherIn": 207,
+        "gatherOut": 23,
+        "assembleIn": 1546,
+        "assembleOut": 876,
+        "webSearchToolCalls": 0
+      },
+      "searchApiCalls": 2
+    },
+    {
+      "approach": "search-brave",
+      "topic": "World News",
+      "ok": true,
+      "cascadeStep": "search-api-brave",
+      "gatherMs": 1787,
+      "assembleMs": 6656,
+      "articleCount": 10,
+      "articles": [
+        {
+          "title": "US-Iran War Live Updates: Iran claims a string of attacks on US targets across West Asia",
+          "source": "cnbctv18.com",
+          "date": "Jul 21, 2026",
+          "summary": "Qatar has written to the UN Security Council and UN secretary-general over what it called repeated Iranian attacks, including the July 7 strike on the Al Rekayyat tanker and a missile attack repelled by Qatari forces on July 12. Doha said the attacks violated international law and UN resolutions.",
+          "url": "https://www.cnbctv18.com/world/us-iran-war-live-updates-us-strikes-iran-tenth-straight-night-two-tankers-catch-fire-in-strait-of-hormuz-crude-liveblog-19950052.htm"
+        },
+        {
+          "title": "US service member killed in Iraq during ‘detonation’ of Iranian drone - France 24",
+          "source": "france24.com",
+          "date": "Jul 19, 2026",
+          "summary": "The repeated targeting ‌of civilian facilities amounted to a dangerous ‌escalation and violated ​international law, the UN Charter and UN Security Council ​Resolution 2817, ​the ministry said in ​a statement.",
+          "url": "https://www.france24.com/en/middle-east/20260719-middle-east-live-us-targets-iran-s-revolutionary-guard-in-retaliation-for-killed-troops"
+        },
+        {
+          "title": "US Launches 10th Night of Iran Strikes as IRGC Hits US Bases in Kuwait, Bahrain and Targets Shipping in Strait of Hormuz",
+          "source": "gulfnews.com",
+          "date": "Jul 21, 2026",
+          "summary": "The Kuwaiti Foreign Ministry condemned ... the latest of which took place earlier in the day. In a press release carried by Kuwait News Agency, the ministry termed this aggression a blatant violation of Kuwait's sovereignty, a direct threat to its security and stability and the safety of its citizens and residents, and a serious breach of international law, the UN Charter and UN Security Council (",
+          "url": "https://gulfnews.com/world/mena/us-launches-10th-night-of-iran-strikes-as-irgc-claims-attacks-on-bahrain-kuwait-1.500614721"
+        },
+        {
+          "title": "July 20, 1974: The Turkish Invasion That Wounded Cyprus for Generations - GreekReporter.com",
+          "source": "greekreporter.com",
+          "date": "Jul 20, 2026",
+          "summary": "By the time the UN Security Council was able to obtain a ceasefire on July 22nd, the Turkish forces were in command of a narrow path between Kyrenia and Nicosia, 3 percent of the territory of Cyprus, which they succeeded in widening, violating the ceasefire demanded in Resolution 353.",
+          "url": "https://greekreporter.com/2026/07/20/cyprus-turkish-invasion"
+        },
+        {
+          "title": "UPSC Key-21st July 2026: Dengue Vaccine, Right to protest and EPF Scheme",
+          "source": "indianexpress.com",
+          "date": "Jul 21, 2026",
+          "summary": "Why Indus Waters treaty is relevant to the UPSC exam? What is the significance of topics such as the Hormuz crisis, Houthis, and UNSC reforms, on both the preliminary and main exams? You can learn more by reading the Indian Express UPSC Key for July 21, 2026.",
+          "url": "https://indianexpress.com/article/upsc-current-affairs/upsc-key-dengue-vaccine-right-to-protest-and-epf-scheme-10797194/"
+        },
+        {
+          "title": "LIVE Blog - UN Security Council | UN Meetings Coverage and Press Releases",
+          "source": "press.un.org",
+          "date": "Jul 15, 2026",
+          "summary": "The International Criminal Court (ICC) Deputy Prosecutor Nazhat Shameem Khan will provide the semi-annual briefing to the Security Council on the ICC’s activities related to the situation in Darfur.",
+          "url": "https://press.un.org/en/sc_live"
+        },
+        {
+          "title": "IAEA Investigating Reported Attack On Iran’s Darkhovin Nuclear Site | Outlook India",
+          "source": "outlookindia.com",
+          "date": "Jul 19, 2026",
+          "summary": "The IAEA is investigating reports of an attack on Iran's Darkhovin nuclear plant construction site, saying the unfinished facility contained no nuclear material and poses no radiological risk.",
+          "url": "https://www.outlookindia.com/international/iaea-investigating-reported-attack-on-irans-darkhovin-nuclear-site"
+        },
+        {
+          "title": "Christina Markus Lassen, Permanent Representative of Denmark to the United Nations — Statement at the UN Security Council on the Maintenance of Peace and Security of Ukraine (10191st Meeting) - EUROPE SAYS",
+          "source": "europesays.com",
+          "date": "Jul 18, 2026",
+          "summary": "Denmark repeats its calls for the ... and the UN Charter. Without exception. And it demands full accountability and justice for all the crimes committed in Russia’s war of aggression in Ukraine. ... Denmark remains convinced that the only way to alleviate the horrendous scale of civilian suffering in Ukraine is through an immediate and comprehensive ceasefire. We renew our call that such a ceasefi",
+          "url": "https://www.europesays.com/3139228/"
+        },
+        {
+          "title": "Kuwait condemns Houthi maritime threats, backs Saudi Arabia",
+          "source": "prokerala.com",
+          "date": "Jul 21, 2026",
+          "summary": "The ministry called on the international community to ensure the implementation of relevant UN Security Council resolutions, particularly Resolution 2216 on Yemen and Resolution 2722 on protecting navigation in the Red Sea, Xinhua News Agency reported.",
+          "url": "https://prokerala.com/news/articles/a1790673.html"
+        },
+        {
+          "title": "India, Moldova discuss UNSC reforms, fight against terror | India News - The Indian Express",
+          "source": "indianexpress.com",
+          "date": "Jul 21, 2026",
+          "summary": "The President held bilateral discussions with her Moldovan counterpart Maia Sandu.",
+          "url": "https://indianexpress.com/article/india/india-moldova-discuss-unsc-reforms-fight-against-terror-10795815/"
+        }
+      ],
+      "assembled": {
+        "summary": "The dominant world-news thread is escalating US-Iran tensions across West Asia, with Iran-linked claims of attacks and continued US strikes described in multiple live updates, including incidents affecting shipping in the Strait of Hormuz. In parallel, international institutions are responding to nuclear and security concerns—such as the IAEA investigating a reported attack on Iran’s Darkhovin site—while the UN continues active Security Council coverage on other flashpoints like Darfur and Ukraine.",
+        "stories": [
+          {
+            "headline": "US launches 10th night of Iran strikes amid claims of regional attacks",
+            "bullets": [
+              "Live updates say the US is continuing strikes for a 10th consecutive night as Iran-linked forces claim actions across the region.",
+              "Kuwait’s Foreign Ministry condemned what it called aggression and a violation of Kuwait’s sovereignty and international law.",
+              "The reporting also references heightened pressure around maritime routes, including targets described in and around the Strait of Hormuz."
+            ],
+            "source": "gulfnews.com",
+            "url": "https://gulfnews.com/world/mena/us-launches-10th-night-of-iran-strikes-as-irgc-claims-attacks-on-bahrain-kuwait-1.500614721",
+            "date": "Jul 21, 2026"
+          },
+          {
+            "headline": "Qatar tells UN Security Council about repeated Iranian attacks on US targets",
+            "bullets": [
+              "Qatar wrote to the UN Security Council and UN secretary-general over attacks it attributes to Iran.",
+              "The complaint cites incidents including a July 7 strike on the Al Rekayyat tanker and a missile attack repelled by Qatari forces on July 12.",
+              "Doha argues the actions violate international law and UN resolutions."
+            ],
+            "source": "cnbctv18.com",
+            "url": "https://www.cnbctv18.com/world/us-iran-war-live-updates-us-strikes-iran-tenth-straight-night-two-tankers-catch-fire-in-strait-of-hormuz-crude-liveblog-19950052.htm",
+            "date": "Jul 21, 2026"
+          },
+          {
+            "headline": "France 24 reports US service member killed in Iraq during Iranian drone detonation",
+            "bullets": [
+              "France 24 reports a US service member was killed in Iraq during a detonation involving an Iranian drone.",
+              "The story frames the pattern of targeting civilian facilities as a dangerous escalation.",
+              "It cites claims of violations of international law, the UN Charter, and UN Security Council Resolution 2817."
+            ],
+            "source": "france24.com",
+            "url": "https://www.france24.com/en/middle-east/20260719-middle-east-live-us-targets-iran-s-revolutionary-guard-in-retaliation-for-killed-troops",
+            "date": "Jul 19, 2026"
+          },
+          {
+            "headline": "IAEA investigates reported attack on Iran’s Darkhovin nuclear construction site",
+            "bullets": [
+              "The IAEA says it is investigating reports of an attack on Iran’s Darkhovin nuclear site.",
+              "It reports the unfinished facility contained no nuclear material and posed no radiological risk.",
+              "The investigation underscores continued international scrutiny of activities around nuclear infrastructure."
+            ],
+            "source": "outlookindia.com",
+            "url": "https://www.outlookindia.com/international/iaea-investigating-reported-attack-on-irans-darkhovin-nuclear-site",
+            "date": "Jul 19, 2026"
+          },
+          {
+            "headline": "UN Security Council live coverage continues as ICC briefs on Darfur activities",
+            "bullets": [
+              "UN press coverage notes the ICC Deputy Prosecutor Nazhat Shameem Khan is set to provide a semi-annual Security Council briefing on ICC activities related to Darfur.",
+              "The item reflects ongoing UN efforts to track accountability and legal processes tied to international crises.",
+              "It sits alongside wider Security Council engagement in other conflicts referenced elsewhere in the reporting."
+            ],
+            "source": "press.un.org",
+            "url": "https://press.un.org/en/sc_live",
+            "date": "Jul 15, 2026"
+          }
+        ]
+      },
+      "calls": [
+        {
+          "host": "api.openai.com",
+          "path": "/v1/chat/completions",
+          "status": 200,
+          "ms": 1058,
+          "model": "gpt-5.4-nano-2026-03-17",
+          "inputTokens": 206,
+          "outputTokens": 20
+        },
+        {
+          "host": "api.search.brave.com",
+          "path": "/res/v1/news/search",
+          "status": 200,
+          "ms": 658
+        },
+        {
+          "host": "api.search.brave.com",
+          "path": "/res/v1/news/search",
+          "status": 429,
+          "ms": 726
+        },
+        {
+          "host": "api.openai.com",
+          "path": "/v1/chat/completions#assembly",
+          "status": 200,
+          "ms": 0,
+          "model": "gpt-5.4-nano-2026-03-17",
+          "inputTokens": 1716,
+          "outputTokens": 912
+        }
+      ],
+      "tokens": {
+        "gatherIn": 206,
+        "gatherOut": 20,
+        "assembleIn": 1716,
+        "assembleOut": 912,
+        "webSearchToolCalls": 0
+      },
+      "searchApiCalls": 2
+    },
+    {
+      "approach": "search-brave",
+      "topic": "Finance",
+      "ok": true,
+      "cascadeStep": "search-api-brave",
+      "gatherMs": 1634,
+      "assembleMs": 6591,
+      "articleCount": 10,
+      "articles": [
+        {
+          "title": "The Federal Reserve Needs to Raise Interest Rates - Bloomberg",
+          "source": "bloomberg.com",
+          "date": "Jul 20, 2026",
+          "summary": "The pressure on Federal Reserve Chair Kevin Warsh to tighten monetary policy has receded a bit. The Consumer Price Index report for June was benign. Not only did overall rate of inflation fall, helped by the sharp drop in gasoline prices, but also the core measure, which excludes food and energy ...",
+          "url": "https://www.bloomberg.com/opinion/articles/2026-07-20/the-federal-reserve-needs-to-raise-interest-rates"
+        },
+        {
+          "title": "Could AI-Driven Inflation Lead to Fed Rate Hikes?",
+          "source": "investopedia.com",
+          "date": "Jul 20, 2026",
+          "summary": "Federal Reserve Chairman Kevin Warsh testifies during the Senate Banking, Housing, and Urban Affairs Committee hearing on Wednesday, July 15, 2026. ... AI-related spending is driving inflation and could lead to higher Federal Reserve interest rates.",
+          "url": "https://www.investopedia.com/could-ai-driven-inflation-lead-to-fed-rate-hikes-12022437"
+        },
+        {
+          "title": "The Treasury is walking a tightrope on U.S. debt by relying so much on short-term rates that are at the mercy of a suddenly very hawkish Fed | Fortune",
+          "source": "fortune.com",
+          "date": "Jul 20, 2026",
+          "summary": "\"Therefore, the biggest risk to the debt burden would be a sharp rise in short-dated yields if the Fed were to hike rates by more than expected in the coming year.\"",
+          "url": "https://fortune.com/2026/07/20/us-debt-treasury-short-term-rates-hawkish-fed-rate-hikes"
+        },
+        {
+          "title": "Federal Reserve Board - Calendar: July 2026",
+          "source": "federalreserve.gov",
+          "date": "Jul 19, 2026",
+          "summary": "The Federal Reserve Board of Governors in Washington DC.",
+          "url": "https://www.federalreserve.gov/newsevents/2026-july.htm"
+        },
+        {
+          "title": "Bank of America CEO says stubborn inflation could trigger more Fed rate hikes - TheStreet",
+          "source": "thestreet.com",
+          "date": "Jul 21, 2026",
+          "summary": "Moreover, that forecast led to ... bank’s interest-rate outlook. Moynihan said that six months ago, the team expected the Federal Reserve to cut rates. Now, the team says, “our belief is we’ll raise rates” to contain consistent inflation. He indicated that the tightening cycle would likely begin “more towards the end of the year,” with additional increases potentially extending into next year. For",
+          "url": "https://www.thestreet.com/economy/bank-of-america-economy-warning-inflation-interest-rate-hikes"
+        },
+        {
+          "title": "Markets News, July 20, 2026: Major Indexes Close Lower as Stocks Fail to Sustain Early Gains; Oil Rises as Iran War Intensifies",
+          "source": "investopedia.com",
+          "date": "Jul 20, 2026",
+          "summary": "Major stock indexes finished lower to begin a busy week of earnings, while oil prices rose after President Donald Trump said Iran “will pay” for the deaths of American soldiers.",
+          "url": "https://investopedia.com/stock-market-today-dow-jones-s-and-p-500-07202026-12022323"
+        },
+        {
+          "title": "US - FedWatch Rate Forecast (2026) | US Treasury Bonds | Collection | MacroMicro",
+          "source": "en.macromicro.me",
+          "date": "Jul 20, 2026",
+          "summary": "Key fundamental and positioning indicators to monitor for US Treasury bonds.",
+          "url": "https://en.macromicro.me/collections/51/us-treasury-bond"
+        },
+        {
+          "title": "Speech by Governor Cook on the economic outlook - Federal Reserve Board",
+          "source": "federalreserve.gov",
+          "date": "Jul 14, 2026",
+          "summary": "Thank you, Paul, for that kind introduction. I am honored to speak with you and all who have joined us here today. 1 Persistently elevated inflation impo",
+          "url": "https://www.federalreserve.gov/newsevents/speech/cook20260715a.htm"
+        },
+        {
+          "title": "Here’s Why Investors Favour DigitalOcean Holdings (DOCN)",
+          "source": "finance.yahoo.com",
+          "date": "Jul 21, 2026",
+          "summary": "U.S. equities experienced a strong recovery in Q2 2026, with the S&P 500 Index gaining 15.2%, marking its best quarter since 2020. A ceasefire between the United States and Iran and accelerated investment in artificial intelligence (AI) regained market optimism in the quarter, leading the Information Technology and Industrials sectors upward, and Energy and Utilities lagged because of falling oil ",
+          "url": "https://finance.yahoo.com/markets/stocks/articles/why-investors-favour-digitalocean-holdings-132541645.html"
+        },
+        {
+          "title": "US Dollar mid-year outlook: Exceptional currency, exceptional risks? | FXStreet",
+          "source": "fxstreet.com",
+          "date": "Jul 20, 2026",
+          "summary": "The US Dollar enters the second half of 2026 in a markedly different position from a year ago. The King currency has recovered, reflecting persistent US inflation, changing expectations for Fed policy, geopolitical tensions and renewed demand for defensive assets.",
+          "url": "https://www.fxstreet.com/analysis/us-dollar-mid-year-outlook-exceptional-currency-exceptional-risks-202607201201"
+        }
+      ],
+      "assembled": {
+        "summary": "Markets are focused on whether the Federal Reserve will need to push rates higher again after a relatively benign June CPI report, even as “sticky” inflation risks remain. Multiple outlets highlight how policy expectations are feeding into Treasury funding conditions—especially through short-term yields—and note cross-currents from AI-linked price pressures and geopolitical shocks (including oil moves tied to Iran).",
+        "stories": [
+          {
+            "headline": "Fed rate hikes debate resumes after June CPI eases inflation pressure",
+            "bullets": [
+              "Bloomberg argues the pressure to tighten has eased after the June CPI report showed inflation falling, helped by a sharp gasoline drop.",
+              "The core measure (excluding food and energy) also moderated, changing the near-term inflation narrative.",
+              "Despite the improvement, the piece still frames the debate as whether the Fed ultimately needs to raise rates further."
+            ],
+            "source": "bloomberg.com",
+            "url": "https://www.bloomberg.com/opinion/articles/2026-07-20/the-federal-reserve-needs-to-raise-interest-rates",
+            "date": "Jul 20, 2026"
+          },
+          {
+            "headline": "AI-linked inflation dynamics could force the Fed to hike rates again",
+            "bullets": [
+              "Investopedia asks whether AI-driven spending and related demand could become a persistent inflation channel.",
+              "It links the possibility of higher inflation to the potential for additional Fed rate hikes.",
+              "The story positions AI spending as a factor that could alter traditional inflation expectations."
+            ],
+            "source": "investopedia.com",
+            "url": "https://www.investopedia.com/could-ai-driven-inflation-lead-to-fed-rate-hikes-12022437",
+            "date": "Jul 20, 2026"
+          },
+          {
+            "headline": "Treasury debt risk rises as funding leans on short-term rates",
+            "bullets": [
+              "Fortune warns the U.S. Treasury is “walking a tightrope” by relying heavily on short-term rates that can jump if the Fed turns more hawkish.",
+              "It identifies a key risk: a sharp rise in short-dated yields triggered by rate hikes beyond expectations.",
+              "The report frames the issue as a near-term debt-burden sensitivity to Fed policy surprises."
+            ],
+            "source": "fortune.com",
+            "url": "https://fortune.com/2026/07/20/us-debt-treasury-short-term-rates-hawkish-fed-rate-hikes",
+            "date": "Jul 20, 2026"
+          },
+          {
+            "headline": "Bank of America flags stubborn inflation and possible end-2026 hikes",
+            "bullets": [
+              "TheStreet reports Bank of America CEO Brian Moynihan says inflation may remain too stubborn for an easy pivot.",
+              "The bank’s interest-rate outlook shifts toward believing the Fed will raise rates rather than cut them.",
+              "It suggests the tightening cycle could start closer to the end of 2026, with additional increases possible into next year."
+            ],
+            "source": "thestreet.com",
+            "url": "https://www.thestreet.com/economy/bank-of-america-economy-warning-inflation-interest-rate-hikes",
+            "date": "Jul 21, 2026"
+          },
+          {
+            "headline": "Oil jumps and stocks soften as Iran tensions flare and earnings loom",
+            "bullets": [
+              "Investopedia reports major indexes fell as stocks failed to sustain early gains ahead of a busy earnings week.",
+              "Oil rose after President Donald Trump said Iran “will pay” for the deaths of American soldiers.",
+              "The mix of geopolitical risk pricing and earnings uncertainty helped shape a weaker day for equities."
+            ],
+            "source": "investopedia.com",
+            "url": "https://investopedia.com/stock-market-today-dow-jones-s-and-p-500-07202026-12022323",
+            "date": "Jul 20, 2026"
+          }
+        ]
+      },
+      "calls": [
+        {
+          "host": "api.openai.com",
+          "path": "/v1/chat/completions",
+          "status": 200,
+          "ms": 1011,
+          "model": "gpt-5.4-nano-2026-03-17",
+          "inputTokens": 205,
+          "outputTokens": 23
+        },
+        {
+          "host": "api.search.brave.com",
+          "path": "/res/v1/news/search",
+          "status": 429,
+          "ms": 309
+        },
+        {
+          "host": "api.search.brave.com",
+          "path": "/res/v1/news/search",
+          "status": 200,
+          "ms": 620
+        },
+        {
+          "host": "api.openai.com",
+          "path": "/v1/chat/completions#assembly",
+          "status": 200,
+          "ms": 0,
+          "model": "gpt-5.4-nano-2026-03-17",
+          "inputTokens": 1564,
+          "outputTokens": 855
+        }
+      ],
+      "tokens": {
+        "gatherIn": 205,
+        "gatherOut": 23,
+        "assembleIn": 1564,
+        "assembleOut": 855,
+        "webSearchToolCalls": 0
+      },
+      "searchApiCalls": 2
+    }
+  ]
+}

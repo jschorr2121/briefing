@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthenticatedUser } from '@/lib/auth-helper';
-import { checkUsage, getTopicLimit } from '@/lib/subscription';
+import { checkAndIncrementUsage, getTopicLimit } from '@/lib/subscription';
 import { generateBriefing } from '@/lib/briefing-pipeline';
 
 interface Topic {
@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
 
     // Check usage limits if user is authenticated
     if (email) {
-      const usage = await checkUsage(email);
+      const usage = await checkAndIncrementUsage(email);
       if (!usage.allowed) {
         return NextResponse.json(
           {

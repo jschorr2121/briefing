@@ -39,6 +39,7 @@
     "node_modules",
     "capacitor.config.ts",
     "ios",
-    "android"
+    "android",
+    "scripts/diagnostic-compare"
   ]
 }

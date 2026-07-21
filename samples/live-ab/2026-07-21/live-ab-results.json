@@ -1,0 +1,2528 @@
+{
+  "generatedAt": "2026-07-21T15:54:00.422Z",
+  "results": [
+    {
+      "approach": "agentic-nano",
+      "topic": "AI & Tech",
+      "ok": true,
+      "cascadeStep": "websearch-ungrounded",
+      "gatherMs": 11771,
+      "assembleMs": 6826,
+      "articleCount": 9,
+      "articles": [
+        {
+          "title": "AI-powered cybercrime is getting easier",
+          "source": "Axios",
+          "date": "Jul 14, 2026",
+          "summary": "Axios reports that multiple recent reports suggest cybercriminals are moving from AI experiments into real-world use. The piece cites expert commentary that attackers are compressing operations and notes researchers’ observations that many early AI-assisted attacks still show mistakes like exposed servers and prompts left behind in malware.",
+          "url": "https://www.axios.com/2026/07/14/ai-cybercrime-ransomware-hackers"
+        },
+        {
+          "title": "Axios House: AI is a cybersecurity risk accelerant, experts say",
+          "source": "Axios",
+          "date": "Jul 17, 2026",
+          "summary": "Axios reports on expert remarks that AI is accelerating cybersecurity risk for public and private organizations. The article references comments including that entities must rapidly update security protocols to handle threats like data theft, ransomware, or infiltration, and quotes Accenture Federal Services’ cyber lead Amanda Satterwhite.",
+          "url": "https://www.axios.com/2026/07/17/axios-house-ai-is-a-cybersecurity-risk-accelerant-experts-say"
+        },
+        {
+          "title": "AI agents could make living off the land attacks 'much more dangerous', says CrowdStrike Field CTO",
+          "source": "ITPro",
+          "date": "Jul 17, 2026",
+          "summary": "ITPro reports CrowdStrike’s Field CTO warning that AI agents could increase the danger of living-off-the-land (LOTL) attacks. The article says CrowdStrike’s 2026 Global Threat Report found threat actors exploiting legitimate AI tools at dozens of organizations globally, and mentions Bitdefender research on the prevalence of these techniques.",
+          "url": "https://www.itpro.com/technology/artificial-intelligence/compromised-ai-agents-could-make-living-off-the-land-attacks-much-more-dangerous-says-crowdstrike-field-cto"
+        },
+        {
+          "title": "Windows 11's massive July 2026 update fixes 570 vulnerabilities and shows how AI is quietly reshaping Patch Tuesday itself",
+          "source": "Windows Central",
+          "date": "Jul 18, 2026",
+          "summary": "Windows Central reports that Microsoft’s July 2026 Windows 11 update fixes 570 vulnerabilities. The article links the higher volume of security fixes to the use of AI in vulnerability research and describes Microsoft’s agentic security scanning harness (MDASH).",
+          "url": "https://www.windowscentral.com/microsoft/windows-11/windows-11s-massive-july-2026-update-shows-how-ai-is-changing-patch-tuesday"
+        },
+        {
+          "title": "OpenAI Deployment Safety Hub: System cards & other updates",
+          "source": "OpenAI",
+          "date": "Jul 9, 2026",
+          "summary": "OpenAI’s Deployment Safety Hub page lists system card updates for recent models, including entries dated Jul 9, 2026 and Jul 8, 2026. The page describes new system cards such as GPT-5.6 and GPT-Live-related updates.",
+          "url": "https://deploymentsafety.openai.com/"
+        },
+        {
+          "title": "GPT-Red: Unlocking Self-Improvement for Robustness",
+          "source": "OpenAI",
+          "date": "Jul 15, 2026",
+          "summary": "OpenAI publishes a post describing GPT-Red work on self-improvement for robustness and safety scaling. The post cites evaluation results including that GPT-5.6 Sol is said to be more robust to prompt injections and references a comparison against an earlier production model.",
+          "url": "https://openai.com/index/unlocking-self-improvement-gpt-red/"
+        },
+        {
+          "title": "Federal Trade Commission’s Proposed Policy Statement Concerning The Suppression Of Accuracy In Artificial Intelligence Systems",
+          "source": "Federal Trade Commission",
+          "date": "Jul 1, 2026",
+          "summary": "The FTC posts its proposed policy statement concerning the suppression of accuracy in artificial intelligence systems. The page indicates it is dated July 1, 2026 and is part of the FTC’s legal-library materials.",
+          "url": "https://www.ftc.gov/legal-library/browse/federal-trade-commissions-proposed-policy-statement-concerning-suppression-accuracy-artificial"
+        },
+        {
+          "title": "Senator Markey Releases “The AI Accountability Agenda: Taking Power Back from Big Tech”",
+          "source": "Senator Markey",
+          "date": "Jul 10, 2026",
+          "summary": "Senator Markey releases an “AI Accountability Agenda” describing a proposed vision for AI policy in Congress. The release references introduced or discussed policy elements and mentions a draft called the “Protecting Communities from Data Center Impacts Act,” including a requirement for federal certification linked to energy, environmental, and economic impacts.",
+          "url": "https://www.markey.senate.gov/news/press-releases/senator-markey-releases-the-ai-accountability-agenda-taking-power-back-from-big-tech"
+        },
+        {
+          "title": "Commission publishes guidelines on transparency obligations for providers and deployers of certain AI systems",
+          "source": "European Commission (Digital Strategy)",
+          "date": "Jul 20, 2026",
+          "summary": "The European Commission publishes guidelines intended to help providers and deployers meet AI Act transparency obligations. The news item says the transparency obligations start to apply on 2 August 2026.",
+          "url": "https://digital-strategy.ec.europa.eu/en/news/commission-publishes-guidelines-transparency-obligations-providers-and-deployers-certain-ai-systems"
+        }
+      ],
+      "assembled": {
+        "summary": "Across AI and tech, the most urgent theme is security: Axios and ITPro highlight how AI is lowering the barrier for cybercrime and making “living-off-the-land” tactics more dangerous. At the same time, major vendors are turning AI toward defense and reliability—Microsoft’s July 2026 Windows 11 update ties high patch volume to AI-driven vulnerability research—while OpenAI continues publishing deployment and robustness updates. On the policy side, regulators in the EU and the U.S. are moving toward enforceable transparency and accountability, including EU AI Act guidance and the FTC’s proposed policy statement on accuracy suppression.",
+        "stories": [
+          {
+            "headline": "AI-driven cybercrime is moving from experiments to real-world attacks",
+            "bullets": [
+              "Axios reports that attackers are increasingly using AI in operational cybercrime rather than isolated tests.",
+              "Experts cited note attackers are compressing workflows, turning faster iterations into more effective intrusion attempts.",
+              "Researchers observed early AI-assisted attacks still contain mistakes such as exposed servers and leftover prompts in malware."
+            ],
+            "source": "Axios",
+            "url": "https://www.axios.com/2026/07/14/ai-cybercrime-ransomware-hackers",
+            "date": "Jul 14, 2026"
+          },
+          {
+            "headline": "AI agents could intensify “living-off-the-land” intrusions, CrowdStrike warns",
+            "bullets": [
+              "ITPro reports CrowdStrike’s Field CTO warning that AI agents can make living-off-the-land (LOTL) attacks more dangerous.",
+              "CrowdStrike’s 2026 Global Threat Report found threat actors exploiting legitimate AI tools across dozens of organizations.",
+              "The story also points to Bitdefender research on the prevalence of these techniques."
+            ],
+            "source": "ITPro",
+            "url": "https://www.itpro.com/technology/artificial-intelligence/compromised-ai-agents-could-make-living-off-the-land-attacks-much-more-dangerous-says-crowdstrike-field-cto",
+            "date": "Jul 17, 2026"
+          },
+          {
+            "headline": "Windows 11 July 2026 patch fixes 570 flaws, reflecting AI-driven research",
+            "bullets": [
+              "Windows Central reports Microsoft’s July 2026 Windows 11 update fixes 570 vulnerabilities.",
+              "The article links the security-fix volume to the use of AI in vulnerability research.",
+              "It describes Microsoft’s agentic security scanning harness (MDASH) as part of how Patch Tuesday is evolving."
+            ],
+            "source": "Windows Central",
+            "url": "https://www.windowscentral.com/microsoft/windows-11/windows-11s-massive-july-2026-update-shows-how-ai-is-changing-patch-tuesday",
+            "date": "Jul 18, 2026"
+          },
+          {
+            "headline": "EU issues AI Act transparency guidelines for certain providers and deployers",
+            "bullets": [
+              "The European Commission published guidelines to help providers and deployers meet AI Act transparency obligations.",
+              "The guidance is tied to timelines for when obligations begin, noting they start applying on 2 August 2026.",
+              "The update targets compliance for certain AI systems within the EU regulatory framework."
+            ],
+            "source": "European Commission (Digital Strategy)",
+            "url": "https://digital-strategy.ec.europa.eu/en/news/commission-publishes-guidelines-transparency-obligations-providers-and-deployers-certain-ai-systems",
+            "date": "Jul 20, 2026"
+          },
+          {
+            "headline": "FTC proposes rule on suppressing AI accuracy in artificial intelligence systems",
+            "bullets": [
+              "The FTC published a proposed policy statement addressing suppression of accuracy in AI systems.",
+              "The document is dated July 1, 2026 and is part of the FTC’s legal-library materials.",
+              "It signals regulatory focus on consumer and market impacts tied to AI reliability and truthfulness."
+            ],
+            "source": "Federal Trade Commission",
+            "url": "https://www.ftc.gov/legal-library/browse/federal-trade-commissions-proposed-policy-statement-concerning-suppression-accuracy-artificial",
+            "date": "Jul 1, 2026"
+          }
+        ]
+      },
+      "calls": [
+        {
+          "host": "api.openai.com",
+          "path": "/v1/responses",
+          "status": 200,
+          "ms": 11753,
+          "model": "gpt-5.4-nano-2026-03-17",
+          "inputTokens": 9153,
+          "outputTokens": 1358,
+          "webSearchToolCalls": 1
+        },
+        {
+          "host": "api.openai.com",
+          "path": "/v1/chat/completions#assembly",
+          "status": 200,
+          "ms": 0,
+          "model": "gpt-5.4-nano-2026-03-17",
+          "inputTokens": 1533,
+          "outputTokens": 916
+        }
+      ],
+      "tokens": {
+        "gatherIn": 9153,
+        "gatherOut": 1358,
+        "assembleIn": 1533,
+        "assembleOut": 916,
+        "webSearchToolCalls": 1
+      },
+      "searchApiCalls": 0
+    },
+    {
+      "approach": "agentic-nano",
+      "topic": "World News",
+      "ok": true,
+      "cascadeStep": "websearch-ungrounded",
+      "gatherMs": 12123,
+      "assembleMs": 6461,
+      "articleCount": 7,
+      "articles": [
+        {
+          "title": "Security Council LIVE: ‘Urgent de-escalation’ needed now in Ukraine amid spike in civilian deaths",
+          "source": "United Nations",
+          "date": "Jul 9, 2026",
+          "summary": "An emergency meeting on Thursday heard calls for urgent de-escalation in Ukraine as Russian drone and missile attacks on Ukrainian civilians intensify. UN political chief Rosemary DiCarlo urged the Security Council to use diplomatic channels to reach de-escalation.",
+          "url": "https://www.un.org/en/security-council-live-%E2%80%98urgent-de-escalation%E2%80%99-needed-now-ukraine-amid-spike-civilian-deaths"
+        },
+        {
+          "title": "UN calls for maximum restraint to preserve ceasefire between the United States and Iran",
+          "source": "DPPA (Department of Political and Peacebuilding Affairs, UN)",
+          "date": "Jul 2, 2026",
+          "summary": "The UN called for maximum restraint to preserve a ceasefire between the United States and Iran, warning that a return to full-scale hostilities would have catastrophic consequences for the region and global economy. The statement says the Security Council’s support for diplomacy is “more important than ever” at this stage.",
+          "url": "https://dppa.un.org/en/speeches-and-statements/un-calls-for-maximum-restraint-to-preserve-ceasefire-between-the"
+        },
+        {
+          "title": "Occupied Palestinian Territory: Aid restrictions in Gaza, ‘senseless’ infant deaths in the West Bank",
+          "source": "United Nations in Palestine",
+          "date": "Jul 7, 2026",
+          "summary": "A UN report highlights aid restrictions in Gaza and “senseless” infant deaths in the West Bank, citing humanitarian concerns. It says humanitarian organizations register planned aid consignments on a portal/database and references UNICEF’s warning that children have been killed, maimed, displaced, and deprived of essentials needed to survive.",
+          "url": "https://palestine.un.org/en/318779-occupied-palestinian-territory-aid-restrictions-gaza-%E2%80%98senseless%E2%80%99-infant-deaths-west-bank"
+        },
+        {
+          "title": "Humanitarian Situation Report | 10 July 2026",
+          "source": "OCHA oPt (United Nations Office for the Coordination of Humanitarian Affairs - Occupied Palestinian Territory)",
+          "date": "Jul 10, 2026",
+          "summary": "OCHA oPt’s Humanitarian Situation Report (10 July 2026) describes ongoing humanitarian operations constrained by access restrictions inside Gaza. It includes details such as displacement following an attack and fire in East Tayba Bedouin community in Area C of Ramallah governorate.",
+          "url": "https://www.ochaopt.org/content/humanitarian-situation-report-10-july-2026"
+        },
+        {
+          "title": "UNRWA Situation Report #229 on the Humanitarian Crisis in the Gaza Strip and the Occupied West Bank, including East Jerusalem",
+          "source": "UNRWA",
+          "date": "Jul 2026",
+          "summary": "UNRWA’s Situation Report #229 updates the humanitarian crisis in Gaza and the occupied West Bank, including East Jerusalem. It states UNRWA has recorded 392 colleagues killed in Gaza since the start of the war (310 UNRWA personnel and 82 persons supporting UNRWA) as of 7 July.",
+          "url": "https://www.unrwa.org/resources/reports/unrwa-situation-report-229-humanitarian-crisis-gaza-strip-and-occupied-west-bank"
+        },
+        {
+          "title": "Humanitarian Situation Update - Analysis of the Response to the Needs of Children at Mid-year 2026",
+          "source": "UNICEF State of Palestine",
+          "date": "Jul 17, 2026",
+          "summary": "UNICEF’s mid-year 2026 analysis says humanitarian conditions in the Gaza Strip remain dire and reports that most of the population—1.9 out of 2.1 million people—are displaced and exposed to ongoing health and environmental risks. The reporting period is 17 July 2026.",
+          "url": "https://www.unicef.org/sop/reports/humanitarian-situation-update-analysis-response-needs-children-mid-year-2026"
+        },
+        {
+          "title": "Indrika Ratwatte (OCHA) on the situation in the Middle East (Yemen) - Security Council, 10193rd meeting",
+          "source": "UN Web TV",
+          "date": "Jul 13, 2026",
+          "summary": "In a Security Council 10193rd meeting, Indrika Ratwatte of OCHA focused on Yemen’s humanitarian crisis. The briefing says the humanitarian crisis is deepening while the ability to respond has been sharply reduced.",
+          "url": "https://webtv.un.org/en/asset/k1z/k1zqzci5l4"
+        }
+      ],
+      "assembled": {
+        "summary": "Across the UN system’s latest briefings, humanitarian conditions and civilian protection pressures are intensifying in Ukraine and the occupied Palestinian territory, while diplomacy is being urged to prevent wider regional escalation. UN agencies report continued access constraints and mass displacement in Gaza, alongside fresh calls for urgent de-escalation in Ukraine’s Security Council session.",
+        "stories": [
+          {
+            "headline": "UN Security Council urges urgent de-escalation as Ukraine civilian deaths spike",
+            "bullets": [
+              "Emergency Security Council discussion called for urgent de-escalation amid intensified Russian drone and missile attacks on Ukrainian civilians.",
+              "UN political chief Rosemary DiCarlo urged Security Council members to use diplomatic channels to curb the escalation.",
+              "The meeting framed the worsening civilian toll as an immediate driver for renewed international action."
+            ],
+            "source": "United Nations",
+            "url": "https://www.un.org/en/security-council-live-%E2%80%98urgent-de-escalation%E2%80%99-needed-now-ukraine-amid-spike-civilian-deaths",
+            "date": "Jul 9, 2026"
+          },
+          {
+            "headline": "Aid restrictions in Gaza and infant deaths in West Bank prompt UN condemnation",
+            "bullets": [
+              "A UN report highlights aid restrictions in Gaza and “senseless” infant deaths in the West Bank.",
+              "The report cites humanitarian concerns and notes planned aid consignments are registered via a portal/database.",
+              "It references UNICEF warnings about children killed, maimed, displaced, and deprived of essentials."
+            ],
+            "source": "United Nations in Palestine",
+            "url": "https://palestine.un.org/en/318779-occupied-palestinian-territory-aid-restrictions-gaza-%E2%80%98senseless%E2%80%99-infant-deaths-west-bank",
+            "date": "Jul 7, 2026"
+          },
+          {
+            "headline": "OCHA reports Gaza access constraints and displacement after East Tayba incident",
+            "bullets": [
+              "OCHA’s Humanitarian Situation Report (10 July 2026) says humanitarian operations in Gaza remain constrained by access restrictions.",
+              "The update includes displacement following an attack and fire in East Tayba Bedouin community in Area C of Ramallah governorate.",
+              "It continues to track how incidents and limitations affect aid delivery and civilian safety."
+            ],
+            "source": "OCHA oPt (United Nations Office for the Coordination of Humanitarian Affairs - Occupied Palestinian Territory)",
+            "url": "https://www.ochaopt.org/content/humanitarian-situation-report-10-july-2026",
+            "date": "Jul 10, 2026"
+          },
+          {
+            "headline": "UNRWA tallies 392 colleagues killed in Gaza since war began",
+            "bullets": [
+              "UNRWA Situation Report #229 updates the humanitarian crisis across Gaza and the occupied West Bank, including East Jerusalem.",
+              "As of 7 July, UNRWA recorded 392 colleagues killed in Gaza (310 UNRWA personnel and 82 persons supporting UNRWA).",
+              "The report underscores the scale of harm to UN-linked humanitarian operations."
+            ],
+            "source": "UNRWA",
+            "url": "https://www.unrwa.org/resources/reports/unrwa-situation-report-229-humanitarian-crisis-gaza-strip-and-occupied-west-bank",
+            "date": "Jul 2026"
+          },
+          {
+            "headline": "UN warns against escalation risk as it calls for restraint over US-Iran ceasefire",
+            "bullets": [
+              "The UN called for maximum restraint to preserve a ceasefire between the United States and Iran.",
+              "It warned that a return to full-scale hostilities would have catastrophic consequences for the region and global economy.",
+              "The statement said Security Council support for diplomacy is “more important than ever” at this stage."
+            ],
+            "source": "DPPA (Department of Political and Peacebuilding Affairs, UN)",
+            "url": "https://dppa.un.org/en/speeches-and-statements/un-calls-for-maximum-restraint-to-preserve-ceasefire-between-the",
+            "date": "Jul 2, 2026"
+          }
+        ]
+      },
+      "calls": [
+        {
+          "host": "api.openai.com",
+          "path": "/v1/responses",
+          "status": 200,
+          "ms": 12121,
+          "model": "gpt-5.4-nano-2026-03-17",
+          "inputTokens": 13125,
+          "outputTokens": 1287,
+          "webSearchToolCalls": 2
+        },
+        {
+          "host": "api.openai.com",
+          "path": "/v1/chat/completions#assembly",
+          "status": 200,
+          "ms": 0,
+          "model": "gpt-5.4-nano-2026-03-17",
+          "inputTokens": 1403,
+          "outputTokens": 911
+        }
+      ],
+      "tokens": {
+        "gatherIn": 13125,
+        "gatherOut": 1287,
+        "assembleIn": 1403,
+        "assembleOut": 911,
+        "webSearchToolCalls": 2
+      },
+      "searchApiCalls": 0
+    },
+    {
+      "approach": "agentic-nano",
+      "topic": "Finance",
+      "ok": true,
+      "cascadeStep": "websearch-ungrounded",
+      "gatherMs": 13352,
+      "assembleMs": 6250,
+      "articleCount": 10,
+      "articles": [
+        {
+          "title": "Oil Holds Gains, Bonds Drop on Inflation Concerns: Markets Wrap",
+          "source": "swissinfo.ch",
+          "date": "Jul 21, 2026",
+          "summary": "Oil held near its highest close since mid-June as Middle East hostilities rekindled concerns about inflation. The report says bond losses followed worries about higher energy costs boosting inflation, while S&P 500 fell 0.2% and a chipmaker gauge bounced.",
+          "url": "https://www.swissinfo.ch/eng/oil-holds-gains%2C-bonds-drop-on-inflation-concerns%3A-markets-wrap/91774419"
+        },
+        {
+          "title": "Stock Market News for July 21, 2026",
+          "source": "Zacks.com",
+          "date": "Jul 21, 2026",
+          "summary": "The article reports that Wall Street closed lower on Monday, with healthcare and industrial stocks weighing on the market. It also notes the 10-year Treasury yield rose more than 5 basis points to 4.594% and the 30-year bond yield advanced above 5.11%.",
+          "url": "https://www.zacks.com/stock/news/2957067/stock-market-news-for-july-21-2026"
+        },
+        {
+          "title": "Fed - Monetary Policy: (FOMC Minutes, June 16-17, 2026)",
+          "source": "Federal Reserve",
+          "date": "Jun 17, 2026",
+          "summary": "The minutes reflect the Committee’s decision to leave the target range for the federal funds rate unchanged and note a unanimous vote to maintain the interest rate paid on reserve balances at 3.65% effective June 18, 2026. The document also states the next meeting would be held on July 28–29, 2026.",
+          "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260617.htm"
+        },
+        {
+          "title": "Consumer Price Index News Release - 2026 M06 Results",
+          "source": "U.S. Bureau of Labor Statistics",
+          "date": "Jul 2026",
+          "summary": "This CPI news release covers June 2026 results for CPI-U, providing data by expenditure category for the U.S. city average. The page also describes that the C-CPI-U is issued first in preliminary form and is subject to revisions.",
+          "url": "https://www.bls.gov/news.release/cpi.htm?lv=true"
+        },
+        {
+          "title": "Consumer Price Index Summary - 2026 M06 Results",
+          "source": "U.S. Bureau of Labor Statistics",
+          "date": "Jul 2026",
+          "summary": "The CPI summary page states CPI-W increased 3.5 percent over the last 12 months and includes publication scheduling information for the next CPI release. It notes the July 2026 CPI news release is scheduled for August 12, 2026.",
+          "url": "https://www.bls.gov/news.release/cpi.nr0.htm?swcfpc=1"
+        },
+        {
+          "title": "America In Focus: US inflation cooled in June, but AI build-out poses latest threat",
+          "source": "AP News",
+          "date": "Jul 17, 2026",
+          "summary": "The article summarizes a week of U.S. economic data coverage and personal impacts, including inflation context. It reports that jobless aid applications for the week ending July 11 dropped by 8,000 to 208,000, and references Labor Department reporting.",
+          "url": "https://apnews.com/article/c8ed0b54d80fe1bdaa5edcef671e6608"
+        },
+        {
+          "title": "Fed's Warsh stays mum on rate plans, pledges price stability",
+          "source": "Axios",
+          "date": "Jul 14, 2026",
+          "summary": "The piece says Federal Reserve chairman Kevin Warsh told Congress he remains determined to bring inflation back to target but declined to indicate whether that could require higher interest rates. It also states the next Fed policy meeting concludes on July 29, 2026.",
+          "url": "https://www.axios.com/2026/07/14/fed-warsh-congress-rates"
+        },
+        {
+          "title": "Fed's Warsh on \"imperfect measures\" of underlying inflation",
+          "source": "Axios",
+          "date": "Jul 15, 2026",
+          "summary": "Axios reports Warsh testifying before the Senate Banking Committee and discusses underlying inflation measures. It says market odds of interest-rate increases this year have diminished and makes the case that a rate hike at the July 29 policy meeting is remote.",
+          "url": "https://www.axios.com/2026/07/15/warsh-inflation-ppi-rates"
+        },
+        {
+          "title": "Banking Risk Monthly Outlook: July 2026",
+          "source": "S&P Global (Market Intelligence)",
+          "date": "Jul 2026",
+          "summary": "The report discusses banking risk trends for July 2026, including that higher interest rates in some emerging Asian banking sectors could lead to slower credit growth by end-2027. It also says new borrower support/forbearance measures are expected to be reintroduced in the next three months while regional economic activity normalizes.",
+          "url": "https://www.spglobal.com/market-intelligence/en/news-insights/research/2026/07/banking-risk-monthly-outlook-july-2026"
+        },
+        {
+          "title": "Financial Stability Report - July 2026",
+          "source": "Bank of England",
+          "date": "Jul 2026",
+          "summary": "The July 2026 financial stability report highlights issues monitored by the Bank, including effects of risky credit market concerns and liquidity pressures at international private credit funds. It also notes that to date those impacts have been limited, with further emphasis on leverage, interconnectedness, and concentration.",
+          "url": "https://www.bankofengland.co.uk/financial-stability-report/2026/july-2026"
+        }
+      ],
+      "assembled": {
+        "summary": "Markets are reacting to the latest inflation signals and energy-driven risk: Swissinfo.ch reports oil holding gains while bonds fall on inflation concerns, and the BLS CPI releases provide the most recent U.S. price-data backdrop. Policymakers remain focused on getting inflation to target—Federal Reserve minutes show the funds-rate range was left unchanged in June (with a July 28–29 meeting ahead), while coverage of Fed chairman Kevin Warsh highlights uncertainty around whether any further hikes are needed.",
+        "stories": [
+          {
+            "headline": "Oil steadies as bonds slide on inflation fears",
+            "bullets": [
+              "Oil held gains near its highest close since mid-June amid renewed Middle East hostilities concerns about inflation.",
+              "Bond losses followed worries that higher energy costs could lift inflation expectations.",
+              "U.S. stocks were mixed, with the S&P 500 down about 0.2% in the wrap."
+            ],
+            "source": "swissinfo.ch",
+            "url": "https://www.swissinfo.ch/eng/oil-holds-gains%2C-bonds-drop-on-inflation-concerns%3A-markets-wrap/91774419",
+            "date": "Jul 21, 2026"
+          },
+          {
+            "headline": "BLS releases June CPI, detailing categories and upcoming schedule",
+            "bullets": [
+              "The CPI news release covers June 2026 results for CPI-U, including data by expenditure category and notes revision mechanics.",
+              "The CPI summary reports CPI-W rose 3.5% over the last 12 months.",
+              "The July 2026 CPI news release is scheduled for Aug 12, 2026."
+            ],
+            "source": "U.S. Bureau of Labor Statistics",
+            "url": "https://www.bls.gov/news.release/cpi.nr0.htm?swcfpc=1",
+            "date": "Jul 2026"
+          },
+          {
+            "headline": "Fed minutes show rates unchanged and next meeting set for late July",
+            "bullets": [
+              "June 16–17, 2026 FOMC minutes confirm the target range for the federal funds rate was left unchanged.",
+              "The committee maintained the interest rate paid on reserve balances at 3.65%, effective June 18, 2026.",
+              "The next meeting was scheduled for Jul 28–29, 2026."
+            ],
+            "source": "Federal Reserve",
+            "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260617.htm",
+            "date": "Jun 17, 2026"
+          },
+          {
+            "headline": "Warsh tells Congress rate path hinges on bringing inflation to target",
+            "bullets": [
+              "Axios reports that Fed chairman Kevin Warsh said he remains determined to bring inflation back to target.",
+              "He declined to indicate whether that would require higher interest rates at the July 29 meeting.",
+              "The coverage notes market odds of rate increases this year have diminished, with a hike described as remote."
+            ],
+            "source": "Axios",
+            "url": "https://www.axios.com/2026/07/14/fed-warsh-congress-rates",
+            "date": "Jul 14, 2026"
+          },
+          {
+            "headline": "Bank of England flags liquidity and private credit risks in stability report",
+            "bullets": [
+              "The Bank of England’s July 2026 financial stability report focuses on risky credit market concerns and liquidity pressures at international private credit funds.",
+              "It notes impacts so far have been limited, while emphasizing monitoring of leverage, interconnectedness, and concentration.",
+              "The report frames ongoing vulnerabilities as areas that could amplify stress if conditions worsen."
+            ],
+            "source": "Bank of England",
+            "url": "https://www.bankofengland.co.uk/financial-stability-report/2026/july-2026",
+            "date": "Jul 2026"
+          }
+        ]
+      },
+      "calls": [
+        {
+          "host": "api.openai.com",
+          "path": "/v1/responses",
+          "status": 200,
+          "ms": 13350,
+          "model": "gpt-5.4-nano-2026-03-17",
+          "inputTokens": 9069,
+          "outputTokens": 1456,
+          "webSearchToolCalls": 1
+        },
+        {
+          "host": "api.openai.com",
+          "path": "/v1/chat/completions#assembly",
+          "status": 200,
+          "ms": 0,
+          "model": "gpt-5.4-nano-2026-03-17",
+          "inputTokens": 1607,
+          "outputTokens": 853
+        }
+      ],
+      "tokens": {
+        "gatherIn": 9069,
+        "gatherOut": 1456,
+        "assembleIn": 1607,
+        "assembleOut": 853,
+        "webSearchToolCalls": 1
+      },
+      "searchApiCalls": 0
+    },
+    {
+      "approach": "agentic-mini",
+      "topic": "AI & Tech",
+      "ok": true,
+      "cascadeStep": "websearch-ungrounded",
+      "gatherMs": 21189,
+      "assembleMs": 6523,
+      "articleCount": 5,
+      "articles": [
+        {
+          "title": "Alphabet's Gemini delay, spending worries loom over earnings",
+          "source": "Reuters",
+          "date": "Jul 21, 2026",
+          "summary": "Reuters says Alphabet faces heightened investor scrutiny because a delay in a model central to its AI ambitions is adding to worries about returns from massive data-center spending. The report says the setback is intensifying concerns as Chinese open-source models challenge top U.S. labs and fears grow about steep AI bills and possible overbuilding.",
+          "url": "https://au.marketscreener.com/news/alphabet-s-gemini-delay-spending-worries-loom-over-earnings-ce7f51d8db8cfe2d"
+        },
+        {
+          "title": "OpenAI Newsroom | Recent news",
+          "source": "OpenAI",
+          "date": "Jul 17, 2026",
+          "summary": "OpenAI’s newsroom lists a July 17, 2026 post titled \"A scorecard for the AI age.\" The same page also shows a June 24, 2026 announcement about OpenAI and Broadcom unveiling an LLM-optimized inference chip.",
+          "url": "https://openai.com/news/company-announcements/"
+        },
+        {
+          "title": "ChatGPT — Release Notes",
+          "source": "OpenAI Help Center",
+          "date": "Jul 16, 2026",
+          "summary": "OpenAI’s release notes say OpenAI o3 will be retired from ChatGPT on August 26, 2026 after a 90-day sunset period. The notes also say GPT-4.5 will be retired from ChatGPT on June 26, 2026 after a 30-day sunset period.",
+          "url": "https://help.openai.com/en/articles/6825453-chatgpt-release-not"
+        },
+        {
+          "title": "Prime Intellect raises $130M Series A to help enterprises build their own AI agents",
+          "source": "TechCrunch",
+          "date": "Jul 8, 2026",
+          "summary": "TechCrunch reports that Prime Intellect raised $130 million in Series A funding. The startup says it offers a \"full stack\" for AI agent development that includes compute access, a reinforcement learning framework, and evaluation tools.",
+          "url": "https://techcrunch.com/2026/07/08/prime-intellect-raises-130m-series-a-to-help-enterprises-build-their-own-ai-agents/"
+        },
+        {
+          "title": "Startup Oxmiq raises $35 million to build chip architecture to lower cost of AI",
+          "source": "Reuters",
+          "date": "Jul 1, 2026",
+          "summary": "Reuters reports that AI startup Oxmiq raised $35 million from investors. The company says it will use the money to build chip design architecture and software aimed at lowering the cost of building and running AI applications.",
+          "url": "https://www.investing.com/news/stock-market-news/startup-oxmiq-raises-35-million-to-build-chip-architecture-to-lower-cost-of-ai-4770636"
+        }
+      ],
+      "assembled": {
+        "summary": "AI and tech developments this week span model delivery, product lifecycle changes, and the economics of scaling AI. Reuters highlights Alphabet’s Gemini delay and the resulting investor focus on returns amid heavy data-center spending, while OpenAI announced upcoming retirements in ChatGPT release notes. Meanwhile, TechCrunch and Reuters underscore continued momentum in infrastructure and cost-optimization, with funding for enterprise AI agents and chip architecture aimed at reducing AI compute expenses.",
+        "stories": [
+          {
+            "headline": "Alphabet’s Gemini delay raises earnings and data-center ROI concerns",
+            "bullets": [
+              "Reuters reports a delay to a model central to Alphabet’s AI plans is intensifying investor scrutiny.",
+              "The setback adds to worries about returns from massive data-center spending.",
+              "Competition from Chinese open-source models and fears of steep AI bills/overbuilding are increasing pressure."
+            ],
+            "source": "Reuters",
+            "url": "https://au.marketscreener.com/news/alphabet-s-gemini-delay-spending-worries-loom-over-earnings-ce7f51d8db8cfe2d",
+            "date": "Jul 21, 2026"
+          },
+          {
+            "headline": "OpenAI schedules ChatGPT retirements for o3 and GPT-4.5",
+            "bullets": [
+              "OpenAI’s release notes say OpenAI o3 will be retired from ChatGPT on August 26, 2026 after a 90-day sunset.",
+              "GPT-4.5 is also scheduled for retirement from ChatGPT on June 26, 2026 after a 30-day sunset.",
+              "The update signals ongoing product/model lineup maintenance as OpenAI evolves its offerings."
+            ],
+            "source": "OpenAI Help Center",
+            "url": "https://help.openai.com/en/articles/6825453-chatgpt-release-not",
+            "date": "Jul 16, 2026"
+          },
+          {
+            "headline": "OpenAI and Broadcom reveal an LLM-optimized inference chip",
+            "bullets": [
+              "OpenAI’s newsroom highlights a June 24, 2026 announcement with Broadcom unveiling an LLM-optimized inference chip.",
+              "The company frames the move as supporting more efficient LLM deployment at inference time.",
+              "The page also includes a July 17, 2026 post titled “A scorecard for the AI age.”"
+            ],
+            "source": "OpenAI",
+            "url": "https://openai.com/news/company-announcements/",
+            "date": "Jul 17, 2026"
+          },
+          {
+            "headline": "Prime Intellect raises $130M to help enterprises build AI agents",
+            "bullets": [
+              "TechCrunch reports Prime Intellect raised $130 million in Series A funding.",
+              "The startup provides a “full stack” for AI agent development, including compute access, reinforcement learning, and evaluation tools.",
+              "The round reflects continued enterprise demand for agent-building platforms rather than standalone models."
+            ],
+            "source": "TechCrunch",
+            "url": "https://techcrunch.com/2026/07/08/prime-intellect-raises-130m-series-a-to-help-enterprises-build-their-own-ai-agents/",
+            "date": "Jul 8, 2026"
+          },
+          {
+            "headline": "Oxmiq secures $35M to design cheaper AI chip architecture",
+            "bullets": [
+              "Reuters reports Oxmiq raised $35 million to build chip design architecture and software for lowering AI costs.",
+              "The funding targets the economics of building and running AI applications, not just raw model capability.",
+              "The move underscores a broader push toward cost-efficient AI infrastructure."
+            ],
+            "source": "Reuters",
+            "url": "https://www.investing.com/news/stock-market-news/startup-oxmiq-raises-35-million-to-build-chip-architecture-to-lower-cost-of-ai-4770636",
+            "date": "Jul 1, 2026"
+          }
+        ]
+      },
+      "calls": [
+        {
+          "host": "api.openai.com",
+          "path": "/v1/responses",
+          "status": 200,
+          "ms": 21187,
+          "model": "gpt-5.4-mini-2026-03-17",
+          "inputTokens": 9079,
+          "outputTokens": 688,
+          "webSearchToolCalls": 1
+        },
+        {
+          "host": "api.openai.com",
+          "path": "/v1/chat/completions#assembly",
+          "status": 200,
+          "ms": 0,
+          "model": "gpt-5.4-nano-2026-03-17",
+          "inputTokens": 1031,
+          "outputTokens": 856
+        }
+      ],
+      "tokens": {
+        "gatherIn": 9079,
+        "gatherOut": 688,
+        "assembleIn": 1031,
+        "assembleOut": 856,
+        "webSearchToolCalls": 1
+      },
+      "searchApiCalls": 0
+    },
+    {
+      "approach": "agentic-mini",
+      "topic": "World News",
+      "ok": true,
+      "cascadeStep": "websearch-ungrounded",
+      "gatherMs": 13640,
+      "assembleMs": 6631,
+      "articleCount": 10,
+      "articles": [
+        {
+          "title": "US and Iran dig in over the Strait of Hormuz, showing the limits of intensifying airstrikes",
+          "source": "Associated Press",
+          "date": "Jul 21, 2026",
+          "summary": "The AP says the U.S. and Iran are bombing each other daily over the Strait of Hormuz, with the conflict raising new questions about strategy after an interim ceasefire collapsed. It says the fighting has left additional American troops dead and pushed U.S. gasoline prices back up.",
+          "url": "https://apnews.com/article/8c42c6ddc0c32d53ce452ace92a62b9a"
+        },
+        {
+          "title": "Iran and US persist in their attacks, as Pakistan tries to keep diplomacy alive",
+          "source": "Associated Press",
+          "date": "Jul 21, 2026",
+          "summary": "The AP reports that U.S. strikes continued overnight while Iran hit targets in Bahrain, Kuwait and Jordan. It says Pakistan is trying to keep diplomacy alive as tensions around the Strait of Hormuz remain high.",
+          "url": "https://apnews.com/article/1664f6a4dad005a99771b2ad15213585"
+        },
+        {
+          "title": "Iranian forces target Bahrain and Kuwait after US hits Iran’s south",
+          "source": "Reuters",
+          "date": "Jul 21, 2026",
+          "summary": "Reuters reports that U.S. forces bombed targets in southern Iran overnight after Trump said Tehran would pay dearly for the deaths of American soldiers. It says Iran targeted U.S. sites in Bahrain, Kuwait and Jordan, and a tanker was hit in the Strait of Hormuz.",
+          "url": "https://au.investing.com/news/world-news/iranian-forces-target-bahrain-and-kuwait-after-us-hits-irans-south-4543061"
+        },
+        {
+          "title": "US military identifies 2 soldiers killed in Iranian attack on Jordan",
+          "source": "ABC News",
+          "date": "Jul 20, 2026",
+          "summary": "The U.S. military identified two soldiers killed in action last week as part of the war with Iran. The story says a seventh soldier died more than a week after being wounded in a March 1 attack on Prince Sultan Air Base in Saudi Arabia.",
+          "url": "https://abcnews.com/US/wireStory/us-military-identifies-2-soldiers-killed-iranian-attack-134910219"
+        },
+        {
+          "title": "US soldiers killed by Iran were from Texas and Hawaii, military says",
+          "source": "Associated Press",
+          "date": "Jul 20, 2026",
+          "summary": "The AP says the soldiers killed in Jordan while defending against Iranian ballistic missile and drone attacks were identified on Monday. It says they were the first U.S. troop deaths from direct Iranian fire since the opening days of the war.",
+          "url": "https://apnews.com/article/1fd99826dfd511913b63d0b033b262d9"
+        },
+        {
+          "title": "US soldier killed in Iraq during ‘controlled detonation’ of Iranian drone",
+          "source": "Al Jazeera",
+          "date": "Jul 19, 2026",
+          "summary": "Al Jazeera says a U.S. soldier died on July 18 in Iraq during the detonation of an Iranian drone, and a second service member suffered mild injuries. It says the death brought the number of U.S. soldiers killed since the start of the war to 17.",
+          "url": "https://www.aljazeera.com/news/2026/7/19/us-soldier-killed-in-iraq-during-controlled-detonation-of-iranian-drone"
+        },
+        {
+          "title": "US military launches new airstrikes to 'swiftly punish' Iran for deaths of US troops",
+          "source": "AP News",
+          "date": "Jul 18, 2026",
+          "summary": "The AP says the U.S. carried out new airstrikes against Iran on Sunday after an attack in Jordan killed two American service members and left one missing. It also says air sirens sounded in Bahrain and Saudi Arabia during the same period.",
+          "url": "https://www.local10.com/news/2026/07/18/us-military-launches-new-airstrikes-to-swiftly-punish-iran-for-deaths-of-us-troops/"
+        },
+        {
+          "title": "US and Iran trade strikes over Strait of Hormuz. Kuwait suffers infrastructure damage",
+          "source": "AP News",
+          "date": "Jul 18, 2026",
+          "summary": "The AP says the U.S. and Iran exchanged strikes aimed at infrastructure and military targets, intensifying their battle over the Strait of Hormuz. It says the overnight strikes damaged two tunnels and a bridge near Bandar Abbas and that 13 additional U.S. service members had been injured since Monday.",
+          "url": "https://www.local10.com/news/world/2026/07/18/us-and-iran-exchange-strikes-as-they-struggle-over-strait-of-hormuz/"
+        },
+        {
+          "title": "16 US service members have died in the Iran war, reflecting a conflict fought largely in the air",
+          "source": "Associated Press",
+          "date": "Jul 18, 2026",
+          "summary": "The AP says the U.S. military reported two additional service members were killed, bringing the total to 16 at that point. It says the war began with an Iranian drone strike at a civilian port in Kuwait that killed six American soldiers.",
+          "url": "https://www.ksat.com/news/world/2026/07/18/16-us-service-members-have-died-in-the-iran-war-reflecting-a-conflict-fought-largely-in-the-air/"
+        },
+        {
+          "title": "Iran launches fresh attacks after sixth day of US strikes",
+          "source": "Reuters",
+          "date": "Jul 17, 2026",
+          "summary": "Reuters says Iran launched fresh strikes on U.S. facilities in the Middle East after a sixth straight night of U.S. strikes on Iranian military facilities. The report notes the first direct attack in Syria on U.S. targets.",
+          "url": "https://www.reddit.com/r/worldnews/comments/1uyv9dr/iran_launches_fresh_attacks_after_sixth_day_of_us/"
+        }
+      ],
+      "assembled": {
+        "summary": "World news in recent days has been dominated by escalating U.S.–Iran hostilities, including daily airstrikes and counterstrikes around the Strait of Hormuz, with fighting spreading to Bahrain, Kuwait, Jordan, and southern Iran. The conflict has also produced ongoing U.S. troop casualties, including identified deaths tied to Iranian attacks, and has drawn renewed focus on how close the spiraling campaign could push the region toward a wider confrontation. Pakistan is attempting to keep diplomacy alive as strikes persist and an interim ceasefire has collapsed.",
+        "stories": [
+          {
+            "headline": "U.S. and Iran trade daily strikes as Hormuz tensions exceed interim ceasefire limits",
+            "bullets": [
+              "The Associated Press reports the U.S. and Iran are bombing each other daily over the Strait of Hormuz, after an interim ceasefire collapsed.",
+              "The fighting has led to additional American troop deaths and has pushed U.S. gasoline prices higher.",
+              "New questions are emerging about the strategy and escalation trajectory of the air campaign."
+            ],
+            "source": "Associated Press",
+            "url": "https://apnews.com/article/8c42c6ddc0c32d53ce452ace92a62b9a",
+            "date": "Jul 21, 2026"
+          },
+          {
+            "headline": "Iran strikes Bahrain and Kuwait after U.S. hits southern Iran targets",
+            "bullets": [
+              "Reuters reports U.S. forces bombed targets in southern Iran overnight following statements that Tehran would face consequences for U.S. troop deaths.",
+              "Iranian forces retaliated with attacks on U.S. sites in Bahrain and Kuwait, and also hit locations in Jordan.",
+              "A tanker was reportedly hit in the Strait of Hormuz amid the renewed exchange."
+            ],
+            "source": "Reuters",
+            "url": "https://au.investing.com/news/world-news/iranian-forces-target-bahrain-and-kuwait-after-us-hits-irans-south-4543061",
+            "date": "Jul 21, 2026"
+          },
+          {
+            "headline": "U.S. identifies two soldiers killed in Iranian attack on Jordan",
+            "bullets": [
+              "ABC News reports the U.S. military identified two soldiers killed in action in a Jordan attack last week.",
+              "The deaths occurred as U.S. forces defended against Iranian ballistic missile and drone attacks.",
+              "The report adds that a further U.S. soldier died more than a week after being wounded."
+            ],
+            "source": "ABC News",
+            "url": "https://abcnews.com/US/wireStory/us-military-identifies-2-soldiers-killed-iranian-attack-134910219",
+            "date": "Jul 20, 2026"
+          },
+          {
+            "headline": "US names Texas and Hawaii soldiers killed by Iran during Jordan defense",
+            "bullets": [
+              "Associated Press reports the service members killed in Jordan were identified as coming from Texas and Hawaii.",
+              "The incident involved defense against Iranian ballistic missiles and drones.",
+              "The AP says the deaths were the first U.S. troop fatalities from direct Iranian fire since early in the war."
+            ],
+            "source": "Associated Press",
+            "url": "https://apnews.com/article/1fd99826dfd511913b63d0b033b262d9",
+            "date": "Jul 20, 2026"
+          },
+          {
+            "headline": "Pakistan seeks diplomacy as US and Iran persist in attacks across the region",
+            "bullets": [
+              "Associated Press reports U.S. strikes continued overnight while Iran hit targets in Bahrain, Kuwait, and Jordan.",
+              "It describes Pakistan as working to keep diplomatic efforts alive amid heightened Strait of Hormuz tensions.",
+              "The report underscores that both sides show no sign of backing away as the air campaign continues."
+            ],
+            "source": "Associated Press",
+            "url": "https://apnews.com/article/1664f6a4dad005a99771b2ad15213585",
+            "date": "Jul 21, 2026"
+          }
+        ]
+      },
+      "calls": [
+        {
+          "host": "api.openai.com",
+          "path": "/v1/responses",
+          "status": 200,
+          "ms": 13638,
+          "model": "gpt-5.4-mini-2026-03-17",
+          "inputTokens": 15534,
+          "outputTokens": 1608,
+          "webSearchToolCalls": 3
+        },
+        {
+          "host": "api.openai.com",
+          "path": "/v1/chat/completions#assembly",
+          "status": 200,
+          "ms": 0,
+          "model": "gpt-5.4-nano-2026-03-17",
+          "inputTokens": 1671,
+          "outputTokens": 881
+        }
+      ],
+      "tokens": {
+        "gatherIn": 15534,
+        "gatherOut": 1608,
+        "assembleIn": 1671,
+        "assembleOut": 881,
+        "webSearchToolCalls": 3
+      },
+      "searchApiCalls": 0
+    },
+    {
+      "approach": "agentic-mini",
+      "topic": "Finance",
+      "ok": true,
+      "cascadeStep": "websearch-ungrounded",
+      "gatherMs": 6813,
+      "assembleMs": 6352,
+      "articleCount": 6,
+      "articles": [
+        {
+          "title": "Warsh says markets to get ample notice to any Fed balance sheet changes",
+          "source": "MarketScreener",
+          "date": "Jul 14, 2026",
+          "summary": "Reuters reported that Federal Reserve Chair Kevin Warsh said any changes to U.S. central bank balance-sheet policy would be previewed, explained, and debated. He said financial markets would get ample advance notice before changes are made.",
+          "url": "https://www.marketscreener.com/news/warsh-says-markets-to-get-ample-notice-to-any-fed-balance-sheet-changes-ce7f5eddd888f22d"
+        },
+        {
+          "title": "Traders expect Fed to skip July rate hike as inflation cools",
+          "source": "MarketScreener",
+          "date": "Jul 14, 2026",
+          "summary": "Reuters reported that traders became less likely to expect a July rate hike after a government report showed inflation cooled more than expected in June. The story said markets were pricing only about a 30% chance of a hike at the Fed's July 28-29 meeting.",
+          "url": "https://www.marketscreener.com/news/traders-expect-fed-to-skip-july-rate-hike-as-inflation-cools-ce7f5eddd98cf627"
+        },
+        {
+          "title": "Fed seen less likely to raise rates as job growth slows",
+          "source": "MarketScreener",
+          "date": "Jul 2, 2026",
+          "summary": "Reuters reported that traders saw less reason for the Federal Reserve to raise rates later in July after a government report showed the U.S. added far fewer jobs than expected in the prior two months. The article tied the shift in expectations to slowing job growth.",
+          "url": "https://www.marketscreener.com/news/fed-seen-less-likely-to-raise-rates-as-job-growth-slows-ce7f5fd3d88ff024"
+        },
+        {
+          "title": "Fed expected to hold rates steady in July, hike in September",
+          "source": "Kitco News",
+          "date": "Jun 25, 2026",
+          "summary": "Reuters reported that markets expected the Federal Reserve to leave rates unchanged in July despite a government inflation report showing the central bank's preferred inflation measure was at a three-year high. Traders still saw a September hike as possible, with the article citing about a 30% chance of a July hike.",
+          "url": "https://www.kitco.com/news/off-the-wire/2026-06-25/fed-expected-hold-rates-steady-july-hike-september"
+        },
+        {
+          "title": "July 2026 World Economic Outlook Update: Global Economy in Crosscurrents of War and Technology",
+          "source": "International Monetary Fund",
+          "date": "Jul 2026",
+          "summary": "The IMF's July 2026 update said strong corporate earnings and a resilient global economy had helped cushion financial conditions. It said financial conditions remained accommodative and had eased further, with bond spreads historically tight and equity markets strengthened since the April 2026 Global Financial Stability Report.",
+          "url": "https://www.imf.org/-/media/files/publications/weo/2026/update/july/english/text.pdf"
+        },
+        {
+          "title": "FOMC Minutes, June 16-17, 2026",
+          "source": "Federal Reserve Board",
+          "date": "Jun 17, 2026",
+          "summary": "The Federal Reserve's minutes covered the June 16-17, 2026 FOMC meeting. The document also noted modest take-up of one of the Fed's programs during the intermeeting period.",
+          "url": "https://www.federalreserve.gov/monetarypolicy/files/fomcminutes20260617.pdf"
+        }
+      ],
+      "assembled": {
+        "summary": "Recent coverage centers on shifting expectations for U.S. monetary policy, with Reuters-cited reports indicating markets are increasingly leaning toward a July hold as inflation cools and job growth slows. Alongside this, the Federal Reserve’s communications (including advance notice for balance-sheet changes) and the FOMC’s June minutes frame how policy decisions are being signaled, while the IMF highlights generally supportive global financial conditions despite crosscurrents.",
+        "stories": [
+          {
+            "headline": "Markets price near-zero July Fed hike as inflation cools",
+            "bullets": [
+              "Traders became less likely to expect a July rate hike after a government report showed June inflation cooled more than expected.",
+              "Markets are pricing roughly a 30% chance of a hike at the Fed’s July 28–29 meeting.",
+              "The shift reflects a broader pullback in tightening expectations tied directly to incoming inflation data."
+            ],
+            "source": "MarketScreener",
+            "url": "https://www.marketscreener.com/news/traders-expect-fed-to-skip-july-rate-hike-as-inflation-cools-ce7f5eddd98cf627",
+            "date": "Jul 14, 2026"
+          },
+          {
+            "headline": "Warsh says Fed balance-sheet changes will be previewed and debated",
+            "bullets": [
+              "Federal Reserve Chair Kevin Warsh said any changes to U.S. central bank balance-sheet policy would be previewed, explained, and debated.",
+              "He emphasized that financial markets would receive ample advance notice before changes are made.",
+              "The remarks highlight how balance-sheet policy signaling may reduce uncertainty for investors and traders."
+            ],
+            "source": "MarketScreener",
+            "url": "https://www.marketscreener.com/news/warsh-says-markets-to-get-ample-notice-to-any-fed-balance-sheet-changes-ce7f5eddd888f22d",
+            "date": "Jul 14, 2026"
+          },
+          {
+            "headline": "Job growth slowdown cuts odds of further Fed rate increases",
+            "bullets": [
+              "Traders viewed the case for additional Fed rate hikes as weaker after a report showed the U.S. added far fewer jobs than expected in the prior two months.",
+              "Expectations shifted in response to slowing job growth, reducing urgency for tightening.",
+              "The update reinforces how labor-market momentum is now a key input to near-term rate expectations."
+            ],
+            "source": "MarketScreener",
+            "url": "https://www.marketscreener.com/news/fed-seen-less-likely-to-raise-rates-as-job-growth-slows-ce7f5fd3d88ff024",
+            "date": "Jul 2, 2026"
+          },
+          {
+            "headline": "IMF flags accommodative global financial conditions despite crosscurrents",
+            "bullets": [
+              "The IMF’s July 2026 World Economic Outlook update said strong corporate earnings and a resilient global economy have cushioned financial conditions.",
+              "It noted financial conditions remain accommodative, with bond spreads historically tight and equity markets strengthened since April 2026 updates.",
+              "The report frames ongoing vulnerabilities as part of “crosscurrents of war and technology,” even as conditions ease."
+            ],
+            "source": "International Monetary Fund",
+            "url": "https://www.imf.org/-/media/files/publications/weo/2026/update/july/english/text.pdf",
+            "date": "Jul 2026"
+          },
+          {
+            "headline": "FOMC minutes detail June meeting and modest take-up of a Fed program",
+            "bullets": [
+              "The Federal Reserve released minutes from the June 16–17, 2026 FOMC meeting.",
+              "The document also noted modest take-up of one of the Fed’s programs during the intermeeting period.",
+              "The minutes provide fresh insight into policy deliberations and ongoing operational measures."
+            ],
+            "source": "Federal Reserve Board",
+            "url": "https://www.federalreserve.gov/monetarypolicy/files/fomcminutes20260617.pdf",
+            "date": "Jun 17, 2026"
+          }
+        ]
+      },
+      "calls": [
+        {
+          "host": "api.openai.com",
+          "path": "/v1/responses",
+          "status": 200,
+          "ms": 6811,
+          "model": "gpt-5.4-mini-2026-03-17",
+          "inputTokens": 9153,
+          "outputTokens": 820,
+          "webSearchToolCalls": 1
+        },
+        {
+          "host": "api.openai.com",
+          "path": "/v1/chat/completions#assembly",
+          "status": 200,
+          "ms": 0,
+          "model": "gpt-5.4-nano-2026-03-17",
+          "inputTokens": 1176,
+          "outputTokens": 896
+        }
+      ],
+      "tokens": {
+        "gatherIn": 9153,
+        "gatherOut": 820,
+        "assembleIn": 1176,
+        "assembleOut": 896,
+        "webSearchToolCalls": 1
+      },
+      "searchApiCalls": 0
+    },
+    {
+      "approach": "search-brave",
+      "topic": "AI & Tech",
+      "ok": true,
+      "cascadeStep": "search-api-brave",
+      "gatherMs": 3618,
+      "assembleMs": 7117,
+      "articleCount": 12,
+      "articles": [
+        {
+          "title": "TSMC is accelerating Arizona fab buildout to capitalize on AI demand: CFO",
+          "source": "cnbc.com",
+          "date": "Jul 19, 2026",
+          "summary": "Speaking in an interview with CNBC, TSMC's Wendell Huang said the fresh investment comes on the back of robust customer demand.",
+          "url": "https://cnbc.com/2026/07/20/tsmc-arizona-fab-capacity-ai-chip-demand.html"
+        },
+        {
+          "title": "AI Chip Stocks See Turnaround After Slump? JPMorgan Says Pullback May Be Entry Opportunity, Semiconductor Fundamentals Remain Strong",
+          "source": "tradingkey.com",
+          "date": "Jul 20, 2026",
+          "summary": "TradingKey - Recently, the AI industry chain has undergone a significant correction, with the semiconductor sector facing notable pressure. However, JPMorgan does not believe this adjustment signals the end of the AI rally. The firm’s strategy team views the current market movement as capital ...",
+          "url": "https://tradingkey.com/analysis/stocks/us-stocks/262041612-jpmorgan-sees-ai-chip-sell-off-as-a-buying-opportunity-tradingkey"
+        },
+        {
+          "title": "What Triggered the Recent Semiconductor Sell-Off",
+          "source": "kavout.com",
+          "date": "Jul 16, 2026",
+          "summary": "Shares of AMD and Intel fell sharply on June 5, 2026, dragging down the semiconductor sector. This sell-off was attributed to macroeconomic concerns and specific industry challenges, including a cautious AI chip forecast from Broadcom.",
+          "url": "https://www.kavout.com/market-lens/what-triggered-the-recent-semiconductor-sell-off"
+        },
+        {
+          "title": "TSMC Posts Record Quarter as AI Chip Demand Pushes Full-Year Growth Outlook Past 40%",
+          "source": "techtimes.com",
+          "date": "Jul 16, 2026",
+          "summary": "TSMC Q2 2026 earnings reached a record $40.2 billion in revenue, up 36% year over year, as the company raised its full-year AI chip outlook to above 40% growth, pledged $100 billion more to Arizona fabs, and confirmed CoWoS advanced packaging is fully sold out with lead times now exceeding one year.",
+          "url": "https://techtimes.com/articles/320696/20260716/tsmc-posts-record-quarter-ai-chip-demand-pushes-full-year-growth-outlook-past-40.htm"
+        },
+        {
+          "title": "ASML's Q2 2026 Sales Mix: EUV Now 57% of Net System Revenue - FourWeekMBA",
+          "source": "fourweekmba.com",
+          "date": "Jul 19, 2026",
+          "summary": "Figures from ASML’s Q2 2026 results (July 15, 2026), via ASML Investor Relations. ASML’s Q2 2026 tool mix shows revenue concentrating at the leading edge — where AI chips are built and where the real demand scarcity now sits. ASML Q2 2026 — Net System Sales Mix 57% EUV (leading-edge) ...",
+          "url": "https://fourweekmba.com/ai-asml-euv-57-percent-q2-2026-system-sales"
+        },
+        {
+          "title": "Jensen Huang Told CES 2026 That Memory Is Now the Biggest Bottleneck in AI. Micron and Sandisk Have Outperformed Nvidia's Stock Ever Since. | The Motley Fool",
+          "source": "fool.com",
+          "date": "Jul 18, 2026",
+          "summary": "Memory and data storage manufacturers can't keep up with AI-driven demand.",
+          "url": "https://fool.com/investing/2026/07/18/jensen-huang-told-ces-2026-that-memory-is-now-the"
+        },
+        {
+          "title": "ASML shares fall after hiking sales forecast for second time this year on strong AI chip demand",
+          "source": "cnbc.com",
+          "date": "Jul 14, 2026",
+          "summary": "ASML on Wednesday raised its guidance for a second time this year as its customers continue to ramp up their production capacity of AI chips.",
+          "url": "https://www.cnbc.com/2026/07/15/asml-2q-earnings-ai-chips-orders.html"
+        },
+        {
+          "title": "TSMC raises capex and revenue forecast, highlighting growing AI chip demand",
+          "source": "finance.yahoo.com",
+          "date": "Jul 16, 2026",
+          "summary": "TSMC, the world's largest made-to-order chipmaker, reported second quarter results.",
+          "url": "https://finance.yahoo.com/markets/article/tsmc-raises-capex-and-revenue-forecast-highlighting-growing-ai-chip-demand-113101950.html"
+        },
+        {
+          "title": "TSMC Hikes Sales, Spending Outlook to Catch AI ‘Megatrend’ - Bloomberg",
+          "source": "bloomberg.com",
+          "date": "Jul 16, 2026",
+          "summary": "Taiwan Semiconductor Manufacturing Co. raised its spending and revenue projections for the year, reflecting its confidence that torrid growth in demand for chips and data centers will extend into 2027 and beyond.",
+          "url": "https://bloomberg.com/news/articles/2026-07-16/tsmc-beats-lofty-estimates-in-latest-sign-of-sustained-ai-demand"
+        },
+        {
+          "title": "TSMC hikes 2026 guidance as AI demand outpaces capacity - TheStreet",
+          "source": "thestreet.com",
+          "date": "Jul 17, 2026",
+          "summary": "So, why did Wall Street immediately start selling?",
+          "url": "https://thestreet.com/investing/stocks/tsmc-hikes-2026-guidance-ai-demand"
+        },
+        {
+          "title": "The Enterprise AI Reckoning: The Next Phase Of The AI Economy",
+          "source": "forbes.com",
+          "date": "Jul 20, 2026",
+          "summary": "Palantir's CEO criticized the frontier AI business model, arguing enterprises pay for \"tokens that create no value\" while surrendering proprietary business knowledge",
+          "url": "https://forbes.com/sites/viviantoh/2026/07/20/the-enterprise-ai-reckoning-the-next-phase-of-the-ai-economy"
+        },
+        {
+          "title": "Top AI Security Threats Every Cybersecurity Team Must Prepare for in 2026",
+          "source": "analyticsinsight.net",
+          "date": "Jul 19, 2026",
+          "summary": "Learn about prompt injection, AI phishing, deepfakes, model poisoning, Shadow AI, and best practices to secure enterprise AI systems.",
+          "url": "https://analyticsinsight.net/amp/story/cybersecurity/top-ai-security-threats-every-cybersecurity-team-must-prepare-for-in-2026"
+        }
+      ],
+      "assembled": {
+        "summary": "Recent coverage highlights AI’s expanding compute bottleneck and the resulting capex race: TSMC’s record quarter and raised guidance underscore demand strong enough to push additional Arizona fab buildout. At the same time, AI chip stocks are seeing volatility after a sell-off, while equipment supplier ASML points to leading-edge capacity constraints (EUV mix rising). Beyond chips, enterprise AI and security coverage suggest the market is shifting toward value realization and tighter controls as AI systems scale.",
+        "stories": [
+          {
+            "headline": "TSMC ramps Arizona fab buildout as AI chip demand drives record results",
+            "bullets": [
+              "TSMC told CNBC its accelerated Arizona fab buildout is meant to capitalize on robust AI-related customer demand.",
+              "The company’s capex and spending plans are moving alongside stronger throughput needs for AI accelerators.",
+              "Earlier reports tied TSMC’s momentum to a raised growth outlook and extended lead times for advanced packaging capacity."
+            ],
+            "source": "cnbc.com",
+            "url": "https://cnbc.com/2026/07/20/tsmc-arizona-fab-capacity-ai-chip-demand.html",
+            "date": "Jul 19, 2026"
+          },
+          {
+            "headline": "TSMC Q2 record: AI chip outlook raised above 40% growth, CoWoS sold out",
+            "bullets": [
+              "TSMC reported record Q2 2026 revenue of $40.2 billion, up 36% year over year.",
+              "The company lifted its full-year AI chip growth outlook to above 40%.",
+              "CoWoS advanced packaging is fully sold out, with lead times now exceeding one year."
+            ],
+            "source": "techtimes.com",
+            "url": "https://techtimes.com/articles/320696/20260716/tsmc-posts-record-quarter-ai-chip-demand-pushes-full-year-growth-outlook-past-40.htm",
+            "date": "Jul 16, 2026"
+          },
+          {
+            "headline": "ASML guidance boosted again as AI chip demand tightens leading-edge capacity",
+            "bullets": [
+              "ASML raised its sales forecast for a second time this year, citing strong AI chip orders and customer capacity ramps.",
+              "Reports also emphasize that leading-edge demand remains where scarcity is most pronounced.",
+              "Equipment mix data showed EUV at 57% of net system revenue, aligning with AI buildout needs."
+            ],
+            "source": "cnbc.com",
+            "url": "https://www.cnbc.com/2026/07/15/asml-2q-earnings-ai-chips-orders.html",
+            "date": "Jul 14, 2026"
+          },
+          {
+            "headline": "AI chip stocks bounce as JPMorgan frames sell-off as potential entry",
+            "bullets": [
+              "After an AI-related correction, JPMorgan said a pullback may be an attractive entry point rather than the end of the AI rally.",
+              "The semiconductor sector saw notable pressure amid broader market weakness.",
+              "The core message: semiconductor fundamentals tied to AI demand remain strong despite near-term volatility."
+            ],
+            "source": "tradingkey.com",
+            "url": "https://tradingkey.com/analysis/stocks/us-stocks/262041612-jpmorgan-sees-ai-chip-sell-off-as-a-buying-opportunity-tradingkey",
+            "date": "Jul 20, 2026"
+          },
+          {
+            "headline": "Enterprise AI scrutiny grows as security and value concerns move center stage",
+            "bullets": [
+              "Forbes argues the next phase of the AI economy will center on enterprise value realization, criticizing token-based frontier AI economics.",
+              "Separate coverage highlights AI security threats teams must prepare for in 2026, including prompt injection, AI phishing, and deepfakes.",
+              "Together, the reporting points to a shift from pure model adoption toward governance, security, and measurable business outcomes."
+            ],
+            "source": "forbes.com",
+            "url": "https://forbes.com/sites/viviantoh/2026/07/20/the-enterprise-ai-reckoning-the-next-phase-of-the-ai-economy",
+            "date": "Jul 20, 2026"
+          }
+        ]
+      },
+      "calls": [
+        {
+          "host": "api.openai.com",
+          "path": "/v1/chat/completions",
+          "status": 200,
+          "ms": 990,
+          "model": "gpt-5.4-nano-2026-03-17",
+          "inputTokens": 146,
+          "outputTokens": 53
+        },
+        {
+          "host": "api.search.brave.com",
+          "path": "/res/v1/news/search",
+          "status": 200,
+          "ms": 704
+        },
+        {
+          "host": "api.search.brave.com",
+          "path": "/res/v1/news/search",
+          "status": 429,
+          "ms": 744
+        },
+        {
+          "host": "api.search.brave.com",
+          "path": "/res/v1/news/search",
+          "status": 200,
+          "ms": 2615
+        },
+        {
+          "host": "api.openai.com",
+          "path": "/v1/chat/completions#assembly",
+          "status": 200,
+          "ms": 0,
+          "model": "gpt-5.4-nano-2026-03-17",
+          "inputTokens": 1776,
+          "outputTokens": 916
+        }
+      ],
+      "tokens": {
+        "gatherIn": 146,
+        "gatherOut": 53,
+        "assembleIn": 1776,
+        "assembleOut": 916,
+        "webSearchToolCalls": 0
+      },
+      "searchApiCalls": 3
+    },
+    {
+      "approach": "search-brave",
+      "topic": "World News",
+      "ok": true,
+      "cascadeStep": "search-api-brave",
+      "gatherMs": 1875,
+      "assembleMs": 5741,
+      "articleCount": 10,
+      "articles": [
+        {
+          "title": "Latest Updates: Iran launches new attacks on U.S. allies after 3 American troops killed in escalating war",
+          "source": "cbsnews.com",
+          "date": "Jul 20, 2026",
+          "summary": "Iran attacks Bahrain, Kuwait, Jordan and a ship in the Strait of Hormuz as at least 3 U.S. forces are killed and dozens wounded in the escalating conflict.",
+          "url": "https://www.cbsnews.com/live-updates/iran-war-trump-us-troops-killed-wounded-jordan-base/"
+        },
+        {
+          "title": "Iran mediators push new ceasefire as Trump eyes all-out war",
+          "source": "axios.com",
+          "date": "Jul 21, 2026",
+          "summary": "Ten straight nights of U.S. bombing have failed to break Iran's grip on the Strait of Hormuz.",
+          "url": "https://www.axios.com/2026/07/21/iran-war-ceasefire-proposal-trump-troops"
+        },
+        {
+          "title": "U.S. and Iran launch new strikes after 3 U.S. service members are killed : NPR",
+          "source": "npr.org",
+          "date": "Jul 20, 2026",
+          "summary": "The U.S. attacks were the ninth consecutive day of bombing since peace talks between the two countries collapsed in dispute over a memorandum of understanding focused on the Strait of Hormuz.",
+          "url": "https://npr.org/2026/07/20/nx-s1-5900601/us-iran-updates"
+        },
+        {
+          "title": "U.S. strikes Iran and Houthis threaten Saudi Arabia shipping as mediators push 10-day ceasefire",
+          "source": "cnbc.com",
+          "date": "Jul 21, 2026",
+          "summary": "The latest cycle of strikes comes amid reports that regional mediators have presented Washington and Tehran with a proposal for a 10-day ceasefire.",
+          "url": "https://www.cnbc.com/2026/07/21/us-iran-war-trump-hormuz-houthis.html"
+        },
+        {
+          "title": "Trump responds as CENTCOM announces 3 US service member deaths in Jordan, Iraq | Live Updates from Fox News Digital",
+          "source": "foxnews.com",
+          "date": "Jul 19, 2026",
+          "summary": "CENTCOM confirms three U.S. service member deaths linked to Iranian attacks in Jordan and Iraq as President Donald Trump calls the losses \"a very sad thing\" while vowing to confront Iran's nuclear ambitions.",
+          "url": "https://foxnews.com/live-news/us-iran-war-irgc-soldiers-death-retaliatory-strikes-jordan-july-19"
+        },
+        {
+          "title": "Mediators Propose 10-Day Ceasefire to Revive Iran-U.S. Interim Deal, Senior Iranian Official Tells Reuters",
+          "source": "usnews.com",
+          "date": "Jul 20, 2026",
+          "summary": "US News is a recognized leader in college, grad school, hospital, mutual fund, and car rankings. Track elected officials, research health conditions, and find news you can use in politics, business, health, and education.",
+          "url": "https://usnews.com/news/world/articles/2026-07-20/mediators-propose-10-day-ceasefire-to-revive-iran-u-s-interim-deal-senior-iranian-official-tells-reuters"
+        },
+        {
+          "title": "Conflict in Yemen and the Red Sea | Global Conflict Tracker",
+          "source": "cfr.org",
+          "date": "Jul 20, 2026",
+          "summary": "Learn about the war in Yemen, how it began and who the major players are. Keep track of the latest developments on the Center for Preventive Action’s Global Conflict Tracker.",
+          "url": "https://www.cfr.org/global-conflict-tracker/conflict/war-yemen"
+        },
+        {
+          "title": "Why is Trump risking midterm disaster by resuming the unpopular Iran war? | US-Israel war on Iran | The Guardian",
+          "source": "theguardian.com",
+          "date": "Jul 18, 2026",
+          "summary": "Less than a month after hailing a ceasefire, Trump resumed strikes on Iran, a move experts warn could prolong the war and hurt Republicans before the midterms",
+          "url": "https://www.theguardian.com/world/2026/jul/18/trump-iran-war-political-midterm-risk"
+        },
+        {
+          "title": "Iran War Updates: U.S. Launches New Strikes, as Tensions Escalate Over Strait of Hormuz - The New York Times",
+          "source": "nytimes.com",
+          "date": "Jul 16, 2026",
+          "summary": "American forces appeared to be focused on infrastructure, hitting bridges and a railway junction, Iranian state media reported.",
+          "url": "https://nytimes.com/live/2026/07/16/world/iran-war-trump-hormuz"
+        },
+        {
+          "title": "US Israel Iran War Latest News: Can Iran and the US Reach an Interim Deal? Mediators Push 10-Day Ceasefire as Pakistan Re-Enters Peace Talks",
+          "source": "sundayguardianlive.com",
+          "date": "Jul 21, 2026",
+          "summary": "By: Nisha Srivastava Last Updated: July 21, 2026 10:54:12 IST · Pakistan Returns to Iran-US Talks as Mediators Push for Temporary Ceasefire (Source: AI) ... US Israel Iran War Latest News: An international mediator team has offered Iran a 10-day ceasefire plan in a bid to restore the interim understanding between the two countries. Diplomatic negotiations to end nearly five months of conflict that",
+          "url": "https://sundayguardianlive.com/world/us-israel-iran-war-latest-news-can-iran-and-the-us-reach-an-interim-deal-mediators-push-10-day-ceasefire-as-pakistan-re-enters-peace-talks-242455"
+        }
+      ],
+      "assembled": {
+        "summary": "Tensions in the Iran-U.S. conflict have intensified sharply, with Iran launching new attacks on U.S. allies and multiple U.S. service members reportedly killed in Jordan and Iraq amid continued strikes around the Strait of Hormuz. Despite mounting costs and escalating exchanges, mediators are now circulating a proposed 10-day ceasefire, as Washington and Tehran remain far apart on key interim terms.",
+        "stories": [
+          {
+            "headline": "Iran launches new attacks on U.S. allies as deaths spike in escalating conflict",
+            "bullets": [
+              "Iran carried out attacks on Bahrain, Kuwait, Jordan and a ship in the Strait of Hormuz, according to CBS News live updates.",
+              "The escalation follows a sustained period of U.S. strikes and amid reports of growing casualties among U.S. forces and regional targets.",
+              "The conflict’s next phase hinges on whether mediator proposals can pause attacks without collapsing broader talks."
+            ],
+            "source": "cbsnews.com",
+            "url": "https://www.cbsnews.com/live-updates/iran-war-trump-us-troops-killed-wounded-jordan-base/",
+            "date": "Jul 20, 2026"
+          },
+          {
+            "headline": "Mediators push 10-day ceasefire as Trump weighs renewed escalation",
+            "bullets": [
+              "Axios reports mediators are urging a new ceasefire effort while the Trump administration weighs options for an extended or expanded campaign.",
+              "The proposed diplomacy comes after nearly two weeks of continued U.S. bombing that failed to loosen Iran’s grip on the Strait of Hormuz.",
+              "Officials are seeking a temporary arrangement to revive an interim framework while disputes remain unresolved."
+            ],
+            "source": "axios.com",
+            "url": "https://www.axios.com/2026/07/21/iran-war-ceasefire-proposal-trump-troops",
+            "date": "Jul 21, 2026"
+          },
+          {
+            "headline": "U.S. and Iran resume strikes after U.S. service members killed in region",
+            "bullets": [
+              "NPR reports new U.S. strikes occurred after the deaths of three U.S. service members, with violence linked to the wider Iran-U.S. standoff.",
+              "The renewed exchange follows the collapse of peace talks over a memorandum of understanding focused on Strait of Hormuz-related issues.",
+              "The reporting describes the fighting as part of a sustained, day-by-day escalation cycle."
+            ],
+            "source": "npr.org",
+            "url": "https://npr.org/2026/07/20/nx-s1-5900601/us-iran-updates",
+            "date": "Jul 20, 2026"
+          },
+          {
+            "headline": "Strikes threaten Saudi shipping as mediators court a 10-day Hormuz pause",
+            "bullets": [
+              "CNBC reports the latest strike cycle raises risks for regional shipping, including routes tied to Saudi Arabia’s maritime interests.",
+              "The update is tied to reports that mediators presented Washington and Tehran with a proposal for a 10-day ceasefire.",
+              "The situation remains fluid as Iran and U.S. actions continue to affect broader Red Sea and Gulf-area security."
+            ],
+            "source": "cnbc.com",
+            "url": "https://www.cnbc.com/2026/07/21/us-iran-war-trump-hormuz-houthis.html",
+            "date": "Jul 21, 2026"
+          },
+          {
+            "headline": "Global Conflict Tracker updates Yemen war context amid wider regional instability",
+            "bullets": [
+              "The CFR Global Conflict Tracker provides updated background on the war in Yemen, including how it began and key players.",
+              "The tracker emphasizes ongoing regional ripple effects that intersect with Red Sea and Gulf security concerns tied to the broader Iran-U.S. confrontation.",
+              "It serves as a reference point for understanding how multiple fronts contribute to instability across the Middle East."
+            ],
+            "source": "cfr.org",
+            "url": "https://www.cfr.org/global-conflict-tracker/conflict/war-yemen",
+            "date": "Jul 20, 2026"
+          }
+        ]
+      },
+      "calls": [
+        {
+          "host": "api.openai.com",
+          "path": "/v1/chat/completions",
+          "status": 200,
+          "ms": 1429,
+          "model": "gpt-5.4-nano-2026-03-17",
+          "inputTokens": 145,
+          "outputTokens": 37
+        },
+        {
+          "host": "api.search.brave.com",
+          "path": "/res/v1/news/search",
+          "status": 429,
+          "ms": 66
+        },
+        {
+          "host": "api.search.brave.com",
+          "path": "/res/v1/news/search",
+          "status": 429,
+          "ms": 138
+        },
+        {
+          "host": "api.search.brave.com",
+          "path": "/res/v1/news/search",
+          "status": 200,
+          "ms": 439
+        },
+        {
+          "host": "api.openai.com",
+          "path": "/v1/chat/completions#assembly",
+          "status": 200,
+          "ms": 0,
+          "model": "gpt-5.4-nano-2026-03-17",
+          "inputTokens": 1610,
+          "outputTokens": 897
+        }
+      ],
+      "tokens": {
+        "gatherIn": 145,
+        "gatherOut": 37,
+        "assembleIn": 1610,
+        "assembleOut": 897,
+        "webSearchToolCalls": 0
+      },
+      "searchApiCalls": 3
+    },
+    {
+      "approach": "search-brave",
+      "topic": "Finance",
+      "ok": true,
+      "cascadeStep": "search-api-brave",
+      "gatherMs": 1639,
+      "assembleMs": 7216,
+      "articleCount": 10,
+      "articles": [
+        {
+          "title": "The Global Economy’s Most Dangerous Decade Since 1945 - LewRockwell",
+          "source": "lewrockwell.com",
+          "date": "Jul 18, 2026",
+          "summary": "For much of the past three decades, economic crises were generally viewed as isolated events. The Asian financial crisis of the late 1990s remained largely regional. The collapse of the dot-com bubble primarily affected technology markets. Even the global financial crisis of 2008, despite its ...",
+          "url": "https://www.lewrockwell.com/2026/07/no_author/the-global-economys-most-dangerous-decade-since-1945/"
+        },
+        {
+          "title": "Intellectia",
+          "source": "intellectia.ai",
+          "date": "Jul 15, 2026",
+          "summary": "The IMF projects global growth at 3.0 percent for 2026 and 3.4 percent for 2027 in its July 2026 World Economic Outlook update. This represents a modest slowdown from the 3.5 percent average observed in 2024-25, reflecting the effects of the Middle East war being partly offset by AI-driven technology momentum. The war creates negative supply shocks that weigh on energy importers and vulnerable ...",
+          "url": "https://intellectia.ai/blog/imf-world-economic-outlook-july-2026-analysis"
+        },
+        {
+          "title": "Ranked: Countries With the Most Government Debt in 2026",
+          "source": "visualcapitalist.com",
+          "date": "Jul 20, 2026",
+          "summary": "The U.S. has a larger government debt than any other country worldwide. Relative to its GDP, though, the country barely makes top ten.",
+          "url": "https://visualcapitalist.com/ranked-countries-with-most-government-debt-in-2026"
+        },
+        {
+          "title": "Stock Market Today: Live Updates 19.07.2026",
+          "source": "ts2.tech",
+          "date": "Jul 19, 2026",
+          "summary": "Stock Market Today: Live Updates 19.07.2026 - TechStock²",
+          "url": "https://ts2.tech/en/stock-market-today-19-07-2026"
+        },
+        {
+          "title": "IMF Cuts India's FY27 GDP Growth Forecast to 6.4%; Flags Rising Crude Oil Prices and Weak Monsoon as Key Risks - Goodreturns",
+          "source": "goodreturns.in",
+          "date": "Jul 21, 2026",
+          "summary": "Higher crude prices usually affect the economy in several ways. They can increase the cost of transporting goods, raise manufacturing expenses and eventually make everyday products more expensive for consumers. If fuel prices remain elevated for a long period, households may end up spending ...",
+          "url": "https://goodreturns.in/news/imf-cuts-indias-fy27-gdp-growth-forecast-to-6-4-flags-rising-crude-oil-prices-and-weak-monsoon-as-1523503.html"
+        },
+        {
+          "title": "Fixed Income Outlook Q3 2026: Looking To The Data When Visibility Is Low | Seeking Alpha",
+          "source": "seekingalpha.com",
+          "date": "Jul 19, 2026",
+          "summary": "Amid turbulence in the Middle East, economic performance has now diverged sharply across regions globally. Read more here.",
+          "url": "https://seekingalpha.com/article/4923285-fixed-income-outlook-q3-2026-looking-to-data-when-visibility-is-low"
+        },
+        {
+          "title": "Why the IMF Keeps Returning | Countercurrents",
+          "source": "countercurrents.org",
+          "date": "Jul 20, 2026",
+          "summary": "In 2022, Sri Lanka defaulted on its sovereign debt for the first time in its post-independence history. Fuel queues stretched for kilometres. Hospitals ran out of medicines. The president fled the country. Within months, Sri Lanka had signed its seventeenth IMF programme a number that is worth ...",
+          "url": "https://countercurrents.org/2026/07/why-the-imf-keeps-returning"
+        },
+        {
+          "title": "IMF must stick to its core competencies - The HinduBusinessLine",
+          "source": "thehindubusinessline.com",
+          "date": "Jul 15, 2026",
+          "summary": "The IMF must pull back from areas like climate finance where it lacks expertise, and focus on resolving the ever-growing debt bubble",
+          "url": "https://www.thehindubusinessline.com/opinion/imf-must-stick-to-its-core-competencies/article71226760.ece"
+        },
+        {
+          "title": "Global Economic Outlook: July 2026 - Mid-Year Forecast Update | Seeking Alpha",
+          "source": "seekingalpha.com",
+          "date": "Jul 17, 2026",
+          "summary": "Lower commodity price assumptions have reduced inflation forecasts and modestly improved the growth outlook for net oil-importing economies. Read more here.",
+          "url": "https://seekingalpha.com/article/4922851-global-economic-outlook-july-2026-mid-year-forecast-update"
+        },
+        {
+          "title": "IMF 2026 Growth Forecast Downgrade: Business Impacts",
+          "source": "quasa.io",
+          "date": "Jul 14, 2026",
+          "summary": "IMF lowers 2026 growth to 3.0% from 3.1% due to Middle East tensions and AI risks. Explore implications for inflation, trade, and strategies for supply chain resilience and cost control.",
+          "url": "https://quasa.io/media/imf-cuts-2026-growth-forecast-to-3-amid-war-and-ai-risks"
+        }
+      ],
+      "assembled": {
+        "summary": "Recent coverage centers on the IMF’s tightening outlook: global growth is projected around 3.0% for 2026, with risks from Middle East conflict and energy price pressures, even as AI-driven momentum helps offset parts of the drag. Regionally, India’s FY27 growth forecast has been cut to 6.4% as crude prices and monsoon uncertainty are flagged, while fixed-income watchers emphasize less visibility and growing regional divergence. Separately, debt remains a structural concern, with the U.S. leading in absolute government debt levels, and discussion continues over the IMF’s role and whether it should refocus on core competencies.",
+        "stories": [
+          {
+            "headline": "IMF projects 3.0% global growth for 2026 amid Middle East and AI effects",
+            "bullets": [
+              "IMF projections in a July 2026 update put global growth at 3.0% for 2026 and 3.4% for 2027.",
+              "The forecast reflects a modest slowdown from the 3.5% average seen in 2024–25.",
+              "Middle East conflict is described as creating negative supply shocks (notably for energy importers), partially offset by AI-driven technology momentum."
+            ],
+            "source": "intellectia.ai",
+            "url": "https://intellectia.ai/blog/imf-world-economic-outlook-july-2026-analysis",
+            "date": "Jul 15, 2026"
+          },
+          {
+            "headline": "IMF cuts India’s FY27 growth forecast to 6.4% on crude and monsoon risks",
+            "bullets": [
+              "India’s FY27 GDP growth forecast is reduced to 6.4% in the IMF’s latest assessment.",
+              "Rising crude oil prices are highlighted as a key risk, with potential knock-on effects across transport costs, manufacturing expenses, and consumer prices.",
+              "A weak monsoon is also flagged as a downside factor for economic performance."
+            ],
+            "source": "goodreturns.in",
+            "url": "https://goodreturns.in/news/imf-cuts-indias-fy27-gdp-growth-forecast-to-6-4-flags-rising-crude-oil-prices-and-weak-monsoon-as-1523503.html",
+            "date": "Jul 21, 2026"
+          },
+          {
+            "headline": "Fixed-income outlook turns cautious as Middle East turbulence diverges regions",
+            "bullets": [
+              "A Q3 2026 fixed-income outlook frames the environment as turbulent, with sharply diverging economic performance across regions.",
+              "The piece emphasizes the challenge of “low visibility” and the need to lean on incoming data rather than forecasts alone.",
+              "Geopolitical stress in the Middle East is presented as a key driver of uncertainty."
+            ],
+            "source": "Seeking Alpha",
+            "url": "https://seekingalpha.com/article/4923285-fixed-income-outlook-q3-2026-looking-to-data-when-visibility-is-low",
+            "date": "Jul 19, 2026"
+          },
+          {
+            "headline": "U.S. tops absolute government debt rankings, debt burden mix varies by GDP",
+            "bullets": [
+              "A 2026 country ranking notes the U.S. has the largest government debt in absolute terms worldwide.",
+              "The article contrasts absolute totals with debt measured relative to GDP, where the U.S. is said to “barely” make the top ten.",
+              "The takeaway underscores how cross-country debt risk comparisons depend heavily on the metric used."
+            ],
+            "source": "visualcapitalist.com",
+            "url": "https://visualcapitalist.com/ranked-countries-with-most-government-debt-in-2026",
+            "date": "Jul 20, 2026"
+          },
+          {
+            "headline": "Debate grows over IMF focus as critics urge returning to core competencies",
+            "bullets": [
+              "The IMF is urged to stick to its core competencies rather than expanding into areas such as climate finance where expertise is questioned.",
+              "The argument points to the “ever-growing debt bubble” as a priority domain for the institution.",
+              "The piece reflects broader concern about whether IMF resources and mandate are best aligned with sovereign debt stabilization needs."
+            ],
+            "source": "The HinduBusinessLine",
+            "url": "https://www.thehindubusinessline.com/opinion/imf-must-stick-to-its-core-competencies/article71226760.ece",
+            "date": "Jul 15, 2026"
+          }
+        ]
+      },
+      "calls": [
+        {
+          "host": "api.openai.com",
+          "path": "/v1/chat/completions",
+          "status": 200,
+          "ms": 1238,
+          "model": "gpt-5.4-nano-2026-03-17",
+          "inputTokens": 144,
+          "outputTokens": 55
+        },
+        {
+          "host": "api.search.brave.com",
+          "path": "/res/v1/news/search",
+          "status": 429,
+          "ms": 55
+        },
+        {
+          "host": "api.search.brave.com",
+          "path": "/res/v1/news/search",
+          "status": 429,
+          "ms": 93
+        },
+        {
+          "host": "api.search.brave.com",
+          "path": "/res/v1/news/search",
+          "status": 200,
+          "ms": 393
+        },
+        {
+          "host": "api.openai.com",
+          "path": "/v1/chat/completions#assembly",
+          "status": 200,
+          "ms": 0,
+          "model": "gpt-5.4-nano-2026-03-17",
+          "inputTokens": 1542,
+          "outputTokens": 970
+        }
+      ],
+      "tokens": {
+        "gatherIn": 144,
+        "gatherOut": 55,
+        "assembleIn": 1542,
+        "assembleOut": 970,
+        "webSearchToolCalls": 0
+      },
+      "searchApiCalls": 3
+    },
+    {
+      "approach": "search-tavily",
+      "topic": "AI & Tech",
+      "ok": false,
+      "error": "Error: All tavily queries failed for \"AI & Tech\"",
+      "gatherMs": 1622,
+      "assembleMs": 0,
+      "articleCount": 0,
+      "articles": [],
+      "calls": [
+        {
+          "host": "api.openai.com",
+          "path": "/v1/chat/completions",
+          "status": 200,
+          "ms": 1059,
+          "model": "gpt-5.4-nano-2026-03-17",
+          "inputTokens": 146,
+          "outputTokens": 47
+        },
+        {
+          "host": "api.tavily.com",
+          "path": "/search",
+          "status": 401,
+          "ms": 341
+        },
+        {
+          "host": "api.tavily.com",
+          "path": "/search",
+          "status": 401,
+          "ms": 416
+        },
+        {
+          "host": "api.tavily.com",
+          "path": "/search",
+          "status": 401,
+          "ms": 560
+        }
+      ],
+      "tokens": {
+        "gatherIn": 0,
+        "gatherOut": 0,
+        "assembleIn": 0,
+        "assembleOut": 0,
+        "webSearchToolCalls": 0
+      },
+      "searchApiCalls": 0
+    },
+    {
+      "approach": "search-tavily",
+      "topic": "World News",
+      "ok": false,
+      "error": "Error: All tavily queries failed for \"World News\"",
+      "gatherMs": 1357,
+      "assembleMs": 0,
+      "articleCount": 0,
+      "articles": [],
+      "calls": [
+        {
+          "host": "api.openai.com",
+          "path": "/v1/chat/completions",
+          "status": 200,
+          "ms": 1124,
+          "model": "gpt-5.4-nano-2026-03-17",
+          "inputTokens": 145,
+          "outputTokens": 49
+        },
+        {
+          "host": "api.tavily.com",
+          "path": "/search",
+          "status": 401,
+          "ms": 88
+        },
+        {
+          "host": "api.tavily.com",
+          "path": "/search",
+          "status": 401,
+          "ms": 90
+        },
+        {
+          "host": "api.tavily.com",
+          "path": "/search",
+          "status": 401,
+          "ms": 229
+        }
+      ],
+      "tokens": {
+        "gatherIn": 0,
+        "gatherOut": 0,
+        "assembleIn": 0,
+        "assembleOut": 0,
+        "webSearchToolCalls": 0
+      },
+      "searchApiCalls": 0
+    },
+    {
+      "approach": "search-tavily",
+      "topic": "Finance",
+      "ok": false,
+      "error": "Error: All tavily queries failed for \"Finance\"",
+      "gatherMs": 1140,
+      "assembleMs": 0,
+      "articleCount": 0,
+      "articles": [],
+      "calls": [
+        {
+          "host": "api.openai.com",
+          "path": "/v1/chat/completions",
+          "status": 200,
+          "ms": 1071,
+          "model": "gpt-5.4-nano-2026-03-17",
+          "inputTokens": 144,
+          "outputTokens": 53
+        },
+        {
+          "host": "api.tavily.com",
+          "path": "/search",
+          "status": 401,
+          "ms": 63
+        },
+        {
+          "host": "api.tavily.com",
+          "path": "/search",
+          "status": 401,
+          "ms": 64
+        },
+        {
+          "host": "api.tavily.com",
+          "path": "/search",
+          "status": 401,
+          "ms": 66
+        }
+      ],
+      "tokens": {
+        "gatherIn": 0,
+        "gatherOut": 0,
+        "assembleIn": 0,
+        "assembleOut": 0,
+        "webSearchToolCalls": 0
+      },
+      "searchApiCalls": 0
+    },
+    {
+      "approach": "search-exa",
+      "topic": "AI & Tech",
+      "ok": true,
+      "cascadeStep": "search-api-exa",
+      "gatherMs": 17926,
+      "assembleMs": 6468,
+      "articleCount": 12,
+      "articles": [
+        {
+          "title": "EU's AI labeling rules take effect next month",
+          "source": "theregister.com",
+          "date": "Jul 20, 2026",
+          "summary": "EU's AI labeling rules take effect next month\n...\nFrom August 2, providers of AI systems in the EU will have to tell people when they are interacting with a machine and add machine-readable marks to AI-generated or manipulated content under new transparency rules.\n...\nVirkkunen\n...\nfor tech sovereignty, security and democracy,\n...\n\"The Commission supports the smooth and effective application of th",
+          "url": "https://www.theregister.com/ai-and-ml/2026/07/20/eus-ai-labeling-rules-take-effect-next-month/5274917"
+        },
+        {
+          "title": "Guidelines on transparency obligations for providers and deployers of AI systems | Shaping Europe’s digital future",
+          "source": "digital-strategy.ec.europa.eu",
+          "date": "Jul 20, 2026",
+          "summary": "# Guidelines on transparency obligations for providers and deployers of AI systems\n...\ns digital future\n...\nPublished: 2026-07-20T10:22:47+00:00\n...\n1. Guidelines on transparency obligations for providers and deployers of AI systems\n...\n# Guidelines on transparency obligations for providers and deployers of AI systems\n...\n- POLICY AND LEGISLATION\n- Publication 20 July 2026\n...\nThese guidelines def",
+          "url": "https://digital-strategy.ec.europa.eu/en/library/guidelines-transparency-obligations-providers-and-deployers-ai-systems"
+        },
+        {
+          "title": "Trump administration seizing control of frontier AI model access",
+          "source": "qz.com",
+          "date": "Jul 20, 2026",
+          "summary": "The Trump administration is moving to take control of decisions about which companies and entities can access the most powerful artificial intelligence models from Anthropic and OpenAI, according to CNBC.\n...\nAccording to CNBC, citing a person familiar with the matter, the newly launched \"Gold Eagle\" program would create a centralized government body with authority to determine which partners gain",
+          "url": "https://qz.com/trump-white-house-ai-model-access-anthropic-openai-072026"
+        },
+        {
+          "title": "The EU AI Act Deadline That Did Not Move: What US AI Companies Owe by August 2, 2026 | Astraea Counsel",
+          "source": "astraea.law",
+          "date": "Jul 18, 2026",
+          "summary": "On June 29, 2026, the Council of the European Union gave its final green light to the Digital Omnibus on AI, and the coverage wrote itself: the EU delayed the AI Act.1 The headlines are half right. The high-risk compliance dates moved to December 2, 2027 and August 2, 2028.2 The two obligations that reach US AI companies first did not move at all — and they take effect on August 2, 2026, sixteen d",
+          "url": "https://astraea.law/insights/eu-ai-act-august-2026-us-companies"
+        },
+        {
+          "title": "The EU’s AI Act starts requiring chatbot and deepfake labels on August 2 — while its tougher rules on hiring, biometrics and migration are pushed back to December 2027 - Silicon Canals",
+          "source": "siliconcanals.com",
+          "date": "Jul 18, 2026",
+          "summary": "On August 2, 2026, the European Union’s AI Act reaches the deadline that turns much of it from text into enforceable law. From that date, the rules covering one slice of artificial intelligence — transparency — start to apply across all 27 member states. Companies will have to tell people when they are talking to a chatbot rather than a person, mark images, audio and text that a machine generated,",
+          "url": "https://siliconcanals.com/the-eus-ai-act-starts-requiring-chatbot-and-deepfake-labels-on-august-2-while-its-tougher-rules-on-hiring-biometrics-and-migration-are-pushed-back-to-december-2027/"
+        },
+        {
+          "title": "China Anchors a New AI Governance Bloc in Shanghai – Unite.AI",
+          "source": "unite.ai",
+          "date": "Jul 20, 2026",
+          "summary": "China now has its own intergovernmental institution for setting the rules of artificial intelligence. On July 16, 2026, representatives of 29 governments signed an agreement in Shanghai establishing the World Artificial Intelligence Cooperation Organization, or WAICO, an independent intergovernmental body that will be headquartered in the city — and no G7 economy is among its founding members.\n...",
+          "url": "https://www.unite.ai/china-anchors-a-new-ai-governance-bloc-in-shanghai/"
+        },
+        {
+          "title": "AI data training notifications mandatory in Singapore | The Straits Times",
+          "source": "straitstimes.com",
+          "date": "Jul 20, 2026",
+          "summary": "- Singapore requires companies to notify users when their personal data is used to train generative AI, promoting transparency but without strict rules on how to present notices.\n- The advisory guidelines encourage firms to explain AI training data types, purposes, and opt-out options.\n- Separately, voluntary guidelines are being rolled out for chatbot \"information cards\" that will give users deta",
+          "url": "https://www.straitstimes.com/tech/ai-specific-notifications-mandatory-for-firms-using-personal-data-to-train-ai-models-pdpc"
+        },
+        {
+          "title": "Illinois Enacts AI Safety and Transparency Law for Frontier AI Developers | Wilson Sonsini",
+          "source": "wsgr.com",
+          "date": "Jul 17, 2026",
+          "summary": "On July 6, 2026, Illinois Governor JB Pritzker signed into law Senate Bill 315, the Artificial Intelligence Safety Measures Act (AISMA), which will require large AI developers to publicly disclose how they plan to mitigate potentially “catastrophic risks” posed by advanced frontier AI models. In a first for a U.S. state AI law, AISMA also requires covered entities to retain independent auditors to",
+          "url": "https://www.wsgr.com/en/insights/illinois-enacts-ai-safety-and-transparency-law-for-frontier-ai-developers.html"
+        },
+        {
+          "title": "Germany puts Google's AI Overviews and Perplexity under media law in first-of-its-kind ruling",
+          "source": "the-decoder.com",
+          "date": "Jul 16, 2026",
+          "summary": "- German media regulators have for the first time classified AI search engines and chatbots as content providers, issuing legal rulings against Google and Perplexity.\n- The regulators argue that the liability exemption under the Digital Services Act does not apply to AI-generated outputs, as these are considered independently created content rather than redistributed third-party material.\n- Google",
+          "url": "https://the-decoder.com/germany-puts-googles-ai-overviews-and-perplexity-under-media-law-in-first-of-its-kind-ruling/"
+        },
+        {
+          "title": "Digital Omnibus on AI: The EU's AI Act simplification and new AI Office powers | Digital Watch Observatory",
+          "source": "dig.watch",
+          "date": "Jul 15, 2026",
+          "summary": "The Council of the EU has approved the Digital Omnibus on AI, legislation that simplifies the AI Act and expands the AI Office’s oversight of platforms regulated under the DSA.\n...\nOn 29 June 2026, the Council of the European Union gave its final green light to the Digital Omnibus on AI, a package of amendments that eases and delays parts of the EU AI Act, completing a legislative procedure that b",
+          "url": "https://dig.watch/updates/digital-omnibus-eu-ai-act-new-ai-office-powers"
+        },
+        {
+          "title": "AI Chips Drive Around A Third Of TSMC Revenues",
+          "source": "nextplatform.com",
+          "date": "Jul 16, 2026",
+          "summary": "At the moment, CC Wei, the foundry’s chief executive officer and chairman, is not ready to update its forecast for its AI-related businesses. Back in January, TSMC said that it expected for its AI business would grow in the mid-to-high 50 percents at a compound annual growth rate between 2026 and 2030, inclusive, which is pretty impressive. Wei would not give an updated number during his call with",
+          "url": "https://www.nextplatform.com/ai/2026/07/16/ai-chips-drive-around-a-third-of-tsmc-revenues/5273929"
+        },
+        {
+          "title": "TSMC Posts Record Quarter as AI Chip Demand Pushes Full-Year Growth Outlook Past 40%",
+          "source": "techtimes.com",
+          "date": "Jul 16, 2026",
+          "summary": "Understanding why CoWoS is sold out requires understanding what it does that conventional packaging cannot. In a standard chip package, a processor connects to memory through a circuit board, with electrical signals traveling millimeters and losing speed and energy along the way. CoWoS places the AI logic die and multiple stacks of high-bandwidth memory side by side on a silicon interposer — a fla",
+          "url": "https://www.techtimes.com/articles/320696/20260716/tsmc-posts-record-quarter-ai-chip-demand-pushes-full-year-growth-outlook-past-40.htm"
+        }
+      ],
+      "assembled": {
+        "summary": "AI regulation and transparency requirements are accelerating across major markets, with the EU’s AI transparency obligations (including chatbot and deepfake labeling) starting Aug 2 and detailed EU guidelines published Jul 20. In the US, Illinois has enacted a frontier-AI safety and disclosure law, while separate reporting indicates the Trump administration is moving toward centralized control of access to frontier model providers. Meanwhile, Singapore is mandating user notifications when personal data is used to train generative AI, and supply-chain demand continues to be driven by AI chips as TSMC reports record performance tied to AI workloads.",
+        "stories": [
+          {
+            "headline": "EU AI transparency rules kick in Aug 2 for chatbots and deepfakes",
+            "bullets": [
+              "From Aug 2, AI providers in the EU must tell users they are interacting with a machine.",
+              "Companies must add machine-readable marks for AI-generated or manipulated content (chatbots, deepfakes, and related media).",
+              "The change follows newly published EU guidelines clarifying transparency obligations for both providers and deployers."
+            ],
+            "source": "theregister.com",
+            "url": "https://www.theregister.com/ai-and-ml/2026/07/20/eus-ai-labeling-rules-take-effect-next-month/5274917",
+            "date": "Jul 20, 2026"
+          },
+          {
+            "headline": "Trump move targets centralized control of frontier AI model access",
+            "bullets": [
+              "Reporting says the Trump administration is seeking authority over which entities can access the most powerful frontier AI models from Anthropic and OpenAI.",
+              "A proposed “Gold Eagle” program would centralize government decisions on model access for selected partners.",
+              "The development suggests tightening of government influence over upstream frontier AI distribution."
+            ],
+            "source": "qz.com",
+            "url": "https://qz.com/trump-white-house-ai-model-access-anthropic-openai-072026",
+            "date": "Jul 20, 2026"
+          },
+          {
+            "headline": "Illinois enacts frontier AI safety and transparency law with auditor requirement",
+            "bullets": [
+              "Illinois Governor JB Pritzker signed the Artificial Intelligence Safety Measures Act (AISMA) on Jul 6, 2026.",
+              "Covered large AI developers must publicly disclose plans to mitigate potentially “catastrophic risks.”",
+              "The law also requires covered entities to retain independent auditors, marking a first-of-its-kind US state approach for frontier AI oversight."
+            ],
+            "source": "Wilson Sonsini",
+            "url": "https://www.wsgr.com/en/insights/illinois-enacts-ai-safety-and-transparency-law-for-frontier-ai-developers.html",
+            "date": "Jul 17, 2026"
+          },
+          {
+            "headline": "Singapore makes AI training notifications mandatory for personal data use",
+            "bullets": [
+              "Singapore requires companies to notify users when their personal data is used to train generative AI under PDPC guidance.",
+              "The advisory approach emphasizes transparency about data types, purposes, and opt-out options rather than prescribing strict notice formatting.",
+              "Related work includes voluntary chatbot “information cards” to communicate user-facing AI details."
+            ],
+            "source": "The Straits Times",
+            "url": "https://www.straitstimes.com/tech/ai-specific-notifications-mandatory-for-firms-using-personal-data-to-train-ai-models-pdpc",
+            "date": "Jul 20, 2026"
+          },
+          {
+            "headline": "TSMC reports record quarter as AI chip demand boosts growth outlook",
+            "bullets": [
+              "TSMC posted a record quarter, attributing strength to AI chip demand.",
+              "The performance pushed its full-year growth outlook to past 40%.",
+              "The results underscore how AI workloads are translating into sustained capacity and advanced packaging demand."
+            ],
+            "source": "techtimes.com",
+            "url": "https://www.techtimes.com/articles/320696/20260716/tsmc-posts-record-quarter-ai-chip-demand-pushes-full-year-growth-outlook-past-40.htm",
+            "date": "Jul 16, 2026"
+          }
+        ]
+      },
+      "calls": [
+        {
+          "host": "api.openai.com",
+          "path": "/v1/chat/completions",
+          "status": 200,
+          "ms": 15821,
+          "model": "gpt-5.4-nano-2026-03-17",
+          "inputTokens": 146,
+          "outputTokens": 49
+        },
+        {
+          "host": "api.exa.ai",
+          "path": "/search",
+          "status": 200,
+          "ms": 1491
+        },
+        {
+          "host": "api.exa.ai",
+          "path": "/search",
+          "status": 200,
+          "ms": 1688
+        },
+        {
+          "host": "api.exa.ai",
+          "path": "/search",
+          "status": 200,
+          "ms": 2101
+        },
+        {
+          "host": "api.openai.com",
+          "path": "/v1/chat/completions#assembly",
+          "status": 200,
+          "ms": 0,
+          "model": "gpt-5.4-nano-2026-03-17",
+          "inputTokens": 2356,
+          "outputTokens": 909
+        }
+      ],
+      "tokens": {
+        "gatherIn": 146,
+        "gatherOut": 49,
+        "assembleIn": 2356,
+        "assembleOut": 909,
+        "webSearchToolCalls": 0
+      },
+      "searchApiCalls": 3
+    },
+    {
+      "approach": "search-exa",
+      "topic": "World News",
+      "ok": true,
+      "cascadeStep": "search-api-exa",
+      "gatherMs": 2921,
+      "assembleMs": 7060,
+      "articleCount": 12,
+      "articles": [
+        {
+          "title": "Iran war updates: US launches new attacks; Houthis announce Saudi blockade | Donald Trump News | Al Jazeera",
+          "source": "aljazeera.com",
+          "date": "Jul 20, 2026",
+          "summary": "Iran war updates: US launches new attacks; Houthis announce Saudi blockade | Donald Trump News | Al Jazeera\n...\ns major developments\n...\n## Iran’s former FM urges US and Gulf states to acknowledge Tehran’s pivotal regional role\n...\n## Houthi blockade signals shift in strategy with ‘clear messaging’ targeting Saudi Arabia\n...\n## Iranian army claims strike on ‘US HIMARS systems’ in Kuwait\n...\n## UN ",
+          "url": "https://www.aljazeera.com/news/liveblog/2026/7/20/iran-war-live-us-military-carries-out-another-wave-of-strikes-on-iran"
+        },
+        {
+          "title": "Russian strike on ship near Odesa kills 10, Ukraine hits Moscow with drones | Russia-Ukraine war News | Al Jazeera",
+          "source": "aljazeera.com",
+          "date": "Jul 20, 2026",
+          "summary": "Russian strike on ship near Odesa kills 10, Ukraine hits Moscow with drones | Russia-Ukraine war News | Al Jazeera\n...\nA Russian strike ⁠on a ship near the southern Ukrainian port city of Odesa has killed at least 10 people, while Ukraine has launched hundreds of drones to attack Moscow, a day after Kyiv was hit by one of the heaviest barrages of ballistic missiles of the war.\n...\n- Ten killed in\n",
+          "url": "https://www.aljazeera.com/news/2026/7/20/russian-strike-on-ship-near-odesa-kills-10-ukraine-hits-moscow-with-drones"
+        },
+        {
+          "title": "Yemen’s Houthis declare naval blockade of Saudi Arabia: What to know | Houthis News | Al Jazeera",
+          "source": "aljazeera.com",
+          "date": "Jul 20, 2026",
+          "summary": "Houthi leaders in Yemen have declared a naval blockade against Saudi Arabia, effective immediately.\n...\nThe announcement on Monday came days after the group, officially known as Ansar Allah, threatened a “siege” on the kingdom in retaliation for an attack on Sanaa International Airport last week.\n...\nThe action marks a new phase in the long-running war between the Iran-aligned Houthis and the Saud",
+          "url": "https://www.aljazeera.com/news/2026/7/20/yemens-houthis-declare-naval-blockade-of-saudi-arabia-what-to-know"
+        },
+        {
+          "title": "US attacks Iran for tenth consecutive night | US-Israel war on Iran News | Al Jazeera",
+          "source": "aljazeera.com",
+          "date": "Jul 21, 2026",
+          "summary": "# US attacks Iran for tenth consecutive night | US-Israel war on Iran News | Al Jazeera\n...\n# US attacks Iran for tenth consecutive night\n...\nWashington vows revenge for US military casualties and Iran claims attacks on US sites across the region.\n...\nThe United States is carrying out its 10th consecutive night of attacks [against Iran](https://www.aljazeera.com/news/liveblog/2026/7/20/iran-war-li",
+          "url": "https://www.aljazeera.com/news/2026/7/21/us-launches-tenth-consecutive-night-of-attacks-on-iran"
+        },
+        {
+          "title": "US renews attacks on Iran after US soldier killed: What’s the latest? | US-Israel war on Iran News | Al Jazeera",
+          "source": "aljazeera.com",
+          "date": "Jul 20, 2026",
+          "summary": "The United States has attacked Iran for a ninth consecutive night after the US military’s Central Command (CENTCOM) announced a US soldier had died in northern Iraq in a controlled detonation of unexploded ordnance from a downed Iranian drone.\n...\nCENTCOM announced in a statement on X that it completed the ninth wave of attacks against Iran at 02:00 GMT on Monday.\n...\nIran’s Islamic Revolutionary ",
+          "url": "https://www.aljazeera.com/news/2026/7/20/us-renews-attacks-on-iran-after-us-soldier-killed-whats-the-latest"
+        },
+        {
+          "title": "U.S. military bombs Iran for 10th consecutive night in renewed push to open Strait of Hormuz - The Globe and Mail",
+          "source": "theglobeandmail.com",
+          "date": "Jul 20, 2026",
+          "summary": "The United States military said late Monday it was carrying out its 10th consecutive night of strikes on Iran in a push to reopen the Strait of Hormuz. The renewed bombings followed the death of another American service member, and came after Iran launched attacks on American allies Kuwait, Jordan and Bahrain, home of the U.S. Navy’s 5th Fleet.\n...\nThe interim deal signed last month that was meant",
+          "url": "https://www.theglobeandmail.com/world/article-us-and-iran-trade-fire/"
+        },
+        {
+          "title": "US hits Iran for ninth night as Khamenei calls ceasefire 'worthless' | Euronews",
+          "source": "euronews.com",
+          "date": "Jul 20, 2026",
+          "summary": "US hits Iran for\n...\n## US Central Command said it targeted military command centres, air defence systems and missile sites overnight, as Iran's ayatollah called Trump's signature on the interim deal \"worthless and invalid\" and a negotiator said Tehran was suspending its commitments.\n...\nThe US military said on Monday it completed its ninth consecutive night of strikes against Iran, targeting mili",
+          "url": "https://www.euronews.com/2026/07/20/iran-launches-retaliatory-attacks-after-us-completes-ninth-night-of-strikes"
+        },
+        {
+          "title": "U.S. and Iran launch new strikes after 3 U.S. service members are killed : NPR",
+          "source": "npr.org",
+          "date": "Jul 20, 2026",
+          "summary": "U.S. and Iran launch new strikes after 3 U.S. service members are killed A collapsed peace effort gives way to an escalating cycle of U.S. and Iranian retaliation. The U.S. military has confirmed that three service members have been killed since Friday.\n...\nA collapsed peace effort gives way to an escalating cycle of U.S. and Iranian retaliation. The U.S. military has confirmed that three service ",
+          "url": "https://www.npr.org/2026/07/20/nx-s1-5899740/u-s-and-iran-launch-new-strikes-after-3-u-s-service-members-are-killed"
+        },
+        {
+          "title": "War in Iran expands as third US soldier killed since end of ceasefire - France 24",
+          "source": "france24.com",
+          "date": "Jul 20, 2026",
+          "summary": "War in Iran expands as third US soldier killed since end of ceasefire - France 24\n...\n# War in Iran expands as third US soldier killed since end of ceasefire\n...\nIssued on: 20/07/2026 - 11:27\n...\n## Israel says Iran missile towards Jordan's Aqaba intercepted\n...\n## Kuwait, Bahrain respond to Iranian attacks amid growing escalation\n...\n## US, Iran exchange new strikes\n...\n## First US soldiers kille",
+          "url": "https://www.france24.com/en/war-in-iran-expands-as-third-us-soldier-killed-since-end-of-ceasefire"
+        },
+        {
+          "title": "Security Council 1533 Sanctions Committee Adds Six Individuals and Two Entities to Its Sanctions List | UN Meetings Coverage and Press Releases",
+          "source": "press.un.org",
+          "date": "Jul 16, 2026",
+          "summary": "Security Council 1533 Sanctions Committee\n...\nSanctions List |\n...\nMeetings Coverage and Press Releases\n...\n16 July 2026\n...\nOn 14 July 2026, the Security Council Committee established pursuant to resolution 1533 (2004) concerning the Democratic Republic of the Congo approved the addition of the entries specified below to its Sanctions List of individuals and entities subject to the measures impos",
+          "url": "https://press.un.org/en/2026/sc16416.doc.htm"
+        },
+        {
+          "title": "Security Council LIVE: Spotlight on Syria as Guterres heads to Damascus | UN News",
+          "source": "news.un.org",
+          "date": "Jul 21, 2026",
+          "summary": "# Security Council\n...\nThe [Security Council](https://main.un.org/securitycouncil/en) is holding its monthly debate on Syria amid reports of an Israeli attack in occupied territory and discussions of a multi-national oil pipeline to counter the closure of the critical Strait of Hormuz – still the focus of the ongoing US-Iran war. The meeting follows UN independent investigators’ findings that secu",
+          "url": "https://news.un.org/en/story/2026/07/1167984"
+        },
+        {
+          "title": "Security Council weighs post-Unifil plan for Lebanon as Israel talks continue | The National",
+          "source": "thenationalnews.com",
+          "date": "Jul 17, 2026",
+          "summary": "- The UN Security Council has yet to hold substantive discussions on a successor to Unifil in southern Lebanon, pending the outcome of US-brokered Israel-Lebanon negotiations.\n...\n- The Trump administration's August 2025 decision to terminate Unifil's operation remains firm, with diplomats acknowledging the closure as inevitable by the end of 2026.\n...\nThe UN Security Council is expected to begin ",
+          "url": "https://www.thenationalnews.com/news/2026/07/17/unifil-lebanon-whats-next/"
+        }
+      ],
+      "assembled": {
+        "summary": "World conflict reporting is dominated by escalating US-Iran retaliation after multiple US service deaths, with the US conducting its ninth and tenth consecutive nights of attacks while Iran dismisses a ceasefire as invalid. Separately, the war’s regional spillover continues: Yemen’s Houthis have declared a naval blockade of Saudi Arabia, and Russia-Ukraine fighting includes strikes near Odesa and drone attacks on Moscow. The UN Security Council is meanwhile holding Syria-focused debate as broader security and oil-route concerns remain in the background.",
+        "stories": [
+          {
+            "headline": "US carries out tenth straight night of attacks on Iran",
+            "bullets": [
+              "The United States launched another wave of strikes for its tenth consecutive night, with Washington citing retaliation tied to US military casualties.",
+              "Iran and regional channels report continued attacks across the area, as the cycle of exchange intensifies after an earlier ceasefire period.",
+              "Coverage describes targeting across military-related sites, with diplomatic rhetoric around the interim deal and ceasefire commitments sharply negative."
+            ],
+            "source": "Al Jazeera",
+            "url": "https://www.aljazeera.com/news/liveblog/2026/7/20/iran-war-live-us-military-carries-out-another-wave-of-strikes-on-iran",
+            "date": "Jul 20, 2026"
+          },
+          {
+            "headline": "Houthi leaders declare naval blockade of Saudi Arabia effective immediately",
+            "bullets": [
+              "Ansar Allah (the Houthis) announced a naval blockade of Saudi Arabia starting immediately, signaling a major escalation in their regional posture.",
+              "The move follows threats of a “siege” in retaliation for an attack on Sanaa International Airport last week.",
+              "The declaration frames the step as part of the long-running conflict between the Iran-aligned Houthis and Saudi Arabia."
+            ],
+            "source": "Al Jazeera",
+            "url": "https://www.aljazeera.com/news/2026/7/20/yemens-houthis-declare-naval-blockade-of-saudi-arabia-what-to-know",
+            "date": "Jul 20, 2026"
+          },
+          {
+            "headline": "Russian strike near Odesa kills 10 as Ukraine hits Moscow with drones",
+            "bullets": [
+              "A Russian strike on a ship near Odesa, Ukraine’s southern port city, killed at least 10 people.",
+              "On the same day, Ukraine launched a large drone campaign aimed at Moscow.",
+              "The reports come amid reference to very heavy Russian missile barrages hitting Kyiv recently."
+            ],
+            "source": "Al Jazeera",
+            "url": "https://www.aljazeera.com/news/2026/7/20/russian-strike-on-ship-near-odesa-kills-10-ukraine-hits-moscow-with-drones",
+            "date": "Jul 20, 2026"
+          },
+          {
+            "headline": "UN Security Council debates Syria amid reports of Israeli strike and oil-route concerns",
+            "bullets": [
+              "The Security Council held its monthly debate on Syria, with attention on reports of an Israeli attack in occupied territory.",
+              "Discussions also referenced a multi-national oil pipeline effort intended to counter risks tied to the Strait of Hormuz.",
+              "UN reporting notes independent investigators’ findings relating to security concerns as diplomats weigh the wider regional picture."
+            ],
+            "source": "UN News",
+            "url": "https://news.un.org/en/story/2026/07/1167984",
+            "date": "Jul 21, 2026"
+          },
+          {
+            "headline": "UN Security Council sanctions committee adds six individuals, two entities",
+            "bullets": [
+              "The Security Council 1533 Sanctions Committee approved additions to its sanctions list for individuals and entities subject to its measures.",
+              "The update was issued as part of the committee’s ongoing work under resolution 1533 (2004) related to the Democratic Republic of the Congo.",
+              "The UN press release formalizes the specified new entries under the sanctions regime."
+            ],
+            "source": "UN Meetings Coverage and Press Releases",
+            "url": "https://press.un.org/en/2026/sc16416.doc.htm",
+            "date": "Jul 16, 2026"
+          }
+        ]
+      },
+      "calls": [
+        {
+          "host": "api.openai.com",
+          "path": "/v1/chat/completions",
+          "status": 200,
+          "ms": 983,
+          "model": "gpt-5.4-nano-2026-03-17",
+          "inputTokens": 145,
+          "outputTokens": 47
+        },
+        {
+          "host": "api.exa.ai",
+          "path": "/search",
+          "status": 200,
+          "ms": 1791
+        },
+        {
+          "host": "api.exa.ai",
+          "path": "/search",
+          "status": 200,
+          "ms": 1921
+        },
+        {
+          "host": "api.exa.ai",
+          "path": "/search",
+          "status": 200,
+          "ms": 1933
+        },
+        {
+          "host": "api.openai.com",
+          "path": "/v1/chat/completions#assembly",
+          "status": 200,
+          "ms": 0,
+          "model": "gpt-5.4-nano-2026-03-17",
+          "inputTokens": 2435,
+          "outputTokens": 915
+        }
+      ],
+      "tokens": {
+        "gatherIn": 145,
+        "gatherOut": 47,
+        "assembleIn": 2435,
+        "assembleOut": 915,
+        "webSearchToolCalls": 0
+      },
+      "searchApiCalls": 3
+    },
+    {
+      "approach": "search-exa",
+      "topic": "Finance",
+      "ok": true,
+      "cascadeStep": "search-api-exa",
+      "gatherMs": 2878,
+      "assembleMs": 6619,
+      "articleCount": 12,
+      "articles": [
+        {
+          "title": "Midyear economic outlook for 2026",
+          "source": "jpmorgan.com",
+          "date": "Jul 18, 2026",
+          "summary": "# Midyear economic outlook for 2026\n...\nFor the remainder of 2026, our outlook for steady economic growth—GDP growth of 1.5–2.0%—is underpinned by three key assumptions: consumer spending stays resilient, AI capex remains robust and the conflict in the Middle East moves toward resolution.\n...\n- U.S. GDP growth of 1.5–2.0% expected for 2026, assuming resilient consumer spending, robust AI capex and",
+          "url": "https://www.jpmorgan.com/insights/markets-and-economy/economy/economic-trends"
+        },
+        {
+          "title": "Renewed Hormuz hostilities drive ECB rates rethink amid ‘extremely volatile’ outlook",
+          "source": "cnbc.com",
+          "date": "Jul 15, 2026",
+          "summary": "- The ECB hiked its key deposit rate by 25 basis points in June as energy prices spiked.\n- Investors had written off a hike at next week’s meeting, but higher oil prices have brought monetary policy back into question.\n- The ECB must make its rate decision weeks ahead of the eurozone’s latest inflation data.\n...\nSeveral consecutive days of strikes exchanged between the U.S. and Iran have once agai",
+          "url": "https://www.cnbc.com/2026/07/15/ecb-interest-rates-outlook-iran-war-hormuz.html"
+        },
+        {
+          "title": "SF FedViews: Labor Market in Balance but Inflation Elevated and Uncertain - San Francisco Fed",
+          "source": "frbsf.org",
+          "date": "Jul 16, 2026",
+          "summary": "The U.S. economy continues to expand at a solid pace. Despite a softer-than-expected employment report in June, the labor market has seen robust job gains over the past few months and appears broadly in balance. Meanwhile, elevated energy prices have pushed inflation further from the Fed’s 2% goal but appear to have had little impact on overall economic activity. A partial normalization of oil pri",
+          "url": "https://www.frbsf.org/research-and-insights/publications/fedviews/2026/07/sf-fedviews-july-16-2026/"
+        },
+        {
+          "title": "Fed: On-hold stance with upside hike risk – TD Securities",
+          "source": "fxstreet.com",
+          "date": "Jul 20, 2026",
+          "summary": "TD Securities expects the Federal Reserve to keep the Fed funds rate unchanged through 2026, as inflation stays above target and the labor market stabilizes. The bank notes a mixed Fedspeak backdrop, a blurrier reaction function under new leadership, and judges that if policy changes this year, a hike is more likely than a cut.\n...\n## Rates seen steady, hike risk skew\n...\n\"June CPI came in far sof",
+          "url": "https://www.fxstreet.com/news/fed-on-hold-stance-with-upside-hike-risk-td-securities-202607201337"
+        },
+        {
+          "title": "Projections - Bank of Canada",
+          "source": "bankofcanada.ca",
+          "date": "Jul 15, 2026",
+          "summary": "Monetary Policy Report—July 2026\n...\nOverview Current conditions Tariff and other assumptions Outlook Global economy Projections Risks War‑related supply disruptions are passing through to consumer prices\n...\nThe outlook for Canadian growth is broadly unchanged. After a weaker‑than‑expected start to 2026, GDP growth is projected to be slightly stronger in 2027 and 2028. Although near‑term inflatio",
+          "url": "https://www.bankofcanada.ca/publications/mpr/mpr-2026-07-15/projections/"
+        },
+        {
+          "title": "U.S. economic outlook",
+          "source": "fxstreet.com",
+          "date": "Jul 16, 2026",
+          "summary": "- Inflation remains the rub, although June data buys the Fed more time to assess the outlook. At 3.4%, the year-over-year rate of core PCE is at a two-and-a-half-year high. The pickup primarily reflects tariffs, the knock-on effects of higher oil prices, and surging demand for tech-related goods—the latter of which Fed officials seem to have a harder time looking through. But, the upturn in inflat",
+          "url": "https://www.fxstreet.com/analysis/us-economic-outlook-202607161746"
+        },
+        {
+          "title": "Current conditions - Bank of Canada",
+          "source": "bankofcanada.ca",
+          "date": "Jul 15, 2026",
+          "summary": "Overview Current conditions Tariff and other assumptions Outlook Global economy Projections Risks War‑related supply disruptions are passing through to consumer prices\n...\nEconomic growth in Canada has been weak but is set to pick up. Headline inflation has risen above 3%. If oil prices and gasoline refinery margins decline as assumed, inflation should ease in the coming months. Inflation excludin",
+          "url": "https://www.bankofcanada.ca/publications/mpr/mpr-2026-07-15/canadian-conditions/"
+        },
+        {
+          "title": "Federal Reserve: Inflation scenarios guide rate path – ABN AMRO",
+          "source": "fxstreet.com",
+          "date": "Jul 15, 2026",
+          "summary": "ABN AMRO’s Rogier Quaedvlieg reviews the latest United States (US) Consumer Price Index (CPI) downside surprise and its implications for the Federal Reserve(Fed). He highlights that both headline and core inflation fell sharply versus consensus, prompting markets to reprice the odds of future hikes. Drawing on the June Federal Open Market Committee (FOMC) minutes, he outlines two main policy scena",
+          "url": "https://www.fxstreet.com/news/federal-reserve-inflation-scenarios-guide-rate-path-abn-amro-202607150738"
+        },
+        {
+          "title": "The Federal Reserve's July Inflation Forecast Is In, and It Contains a Surprising Red Flag | The Motley Fool",
+          "source": "fool.com",
+          "date": "Jul 20, 2026",
+          "summary": "Inflation has become a hot-button issue that's dividing the Federal Reserve's policymakers. The latest inflation forecast for July from the central bank, released on July 16, offers a partial reprieve for consumers. But at the same time, this estimate contains a surprising red flag that can upend Wall Street's historic AI-driven rally.\n...\nHowever, June delivered a pleasant surprise to consumers (",
+          "url": "https://www.fool.com/investing/2026/07/20/federal-reserve-july-inflation-forecast-red-flag/"
+        },
+        {
+          "title": "ECB Policymakers Urge Vigilance on Interest Rates Amid Price Risks",
+          "source": "globalbankingandfinance.com",
+          "date": "Jul 15, 2026",
+          "summary": "FRANKFURT, July 15 (Reuters) - European Central Bank policymakers called for vigilance in setting interest rates on Wednesday but stopped short of advocating for tighter policy, noting long-feared second-round inflation effects had yet to materialise.\n...\nThe ECB raised rates in June and may still pull the trigger again this year, but signals suggest that a second move is not urgent and may not co",
+          "url": "https://www.globalbankingandfinance.com/ecb-policymakers-take-measured-tone-price-risks-urge/"
+        },
+        {
+          "title": "Global Markets: Stocks unsettled as oil climbs, earnings loom for AI - The HinduBusinessLine",
+          "source": "thehindubusinessline.com",
+          "date": "Jul 20, 2026",
+          "summary": "# Global Markets: Stocks unsettled as oil climbs, earnings loom for AI\n...\n## Brent crude climbed above $90 a barrel ⁠for the first time in more than a month as the U.S. military started a ninth straight day of attacks against Iran, which in turn struck targets across the region\n...\nShares slipped with bonds on Monday as the escalating conflict in the ‌Gulf lifted oil prices and fanned fears of in",
+          "url": "https://www.thehindubusinessline.com/markets/global-markets-stocks-unsettled-as-oil-climbs-earnings-loom-for-ai/article71243989.ece"
+        },
+        {
+          "title": "Market Quick Take - Oil surges as chips crack - 20 July 2026 | Saxo Bank",
+          "source": "home.saxo",
+          "date": "Jul 20, 2026",
+          "summary": "- Equities: US stocks fell with chips, Europe slipped modestly, while Asia split between a Korean rout and a China rebound.\n- Volatility: Middle East escalation and the chip selloff lifted vol into a heavy earnings week\n- Digital Assets: Spot held steady while miners tracked the tech retreat and stablecoin rulemaking slipped\n- Commodities: Brent tops $91 on Hormuz disruption while gold holds near ",
+          "url": "https://www.home.saxo/en-mena/content/articles/macro/market-quick-take---oil-surges-as-chips-crack---20-july-2026-20072026"
+        }
+      ],
+      "assembled": {
+        "summary": "Markets are balancing a still-fragile inflation outlook against renewed Middle East-related energy shocks. Recent commentary points to oil-driven volatility reshaping central bank rate expectations, with the ECB reconsidering near-term cuts/hikes and the U.S. Fed facing “on-hold” guidance with asymmetric upside hike risk. At the same time, major institutions project steady growth in 2026 but flag war-related supply disruptions and elevated uncertainty around inflation persistence.",
+        "stories": [
+          {
+            "headline": "Hormuz escalation jolts oil prices, forcing ECB rate outlook reassessment",
+            "bullets": [
+              "The ECB hiked its deposit rate by 25 basis points in June after energy prices spiked.",
+              "Investors had leaned away from another hike, but higher oil prices have revived debate on the next move.",
+              "The ECB must decide rates ahead of the eurozone’s latest inflation data, with the outlook described as “extremely volatile.”"
+            ],
+            "source": "CNBC",
+            "url": "https://www.cnbc.com/2026/07/15/ecb-interest-rates-outlook-iran-war-hormuz.html",
+            "date": "Jul 15, 2026"
+          },
+          {
+            "headline": "San Francisco Fed sees balanced jobs, but inflation remains above target",
+            "bullets": [
+              "The U.S. economy continues expanding at a solid pace, with job gains robust over recent months despite softer June employment data.",
+              "The labor market is described as broadly in balance.",
+              "Elevated energy prices have pushed inflation further from the Fed’s 2% goal, though they appear to have limited impact on overall economic activity."
+            ],
+            "source": "San Francisco Fed",
+            "url": "https://www.frbsf.org/research-and-insights/publications/fedviews/2026/07/sf-fedviews-july-16-2026/",
+            "date": "Jul 16, 2026"
+          },
+          {
+            "headline": "TD Securities: Fed likely on hold, with upside risk to a hike",
+            "bullets": [
+              "TD Securities expects the Federal Reserve to keep the fed funds rate unchanged through 2026.",
+              "Inflation is still above target while the labor market has stabilized.",
+              "If policy changes this year, a hike is viewed as more likely than a cut, given “upside hike risk.”"
+            ],
+            "source": "FXStreet",
+            "url": "https://www.fxstreet.com/news/fed-on-hold-stance-with-upside-hike-risk-td-securities-202607201337",
+            "date": "Jul 20, 2026"
+          },
+          {
+            "headline": "Oil surges and chip weakness unsettle global markets as AI earnings near",
+            "bullets": [
+              "Brent crude climbed above $90 a barrel as Gulf conflict escalated, lifting energy-price risk.",
+              "Equities slipped while bonds also moved lower, reflecting renewed macro uncertainty.",
+              "Markets are also focused on a heavy earnings week, including attention on AI-related results amid a chip selloff."
+            ],
+            "source": "The Hindu BusinessLine",
+            "url": "https://www.thehindubusinessline.com/markets/global-markets-stocks-unsettled-as-oil-climbs-earnings-loom-for-ai/article71243989.ece",
+            "date": "Jul 20, 2026"
+          },
+          {
+            "headline": "JPMorgan midyear 2026 outlook: steady growth anchored by AI capex resilience",
+            "bullets": [
+              "JPMorgan expects 2026 GDP growth in the 1.5%–2.0% range for the remainder of the year.",
+              "Key assumptions include resilient consumer spending and robust AI capital expenditures.",
+              "The forecast also depends on the conflict in the Middle East moving toward resolution, underscoring sensitivity to energy and supply disruptions."
+            ],
+            "source": "JPMorgan",
+            "url": "https://www.jpmorgan.com/insights/markets-and-economy/economy/economic-trends",
+            "date": "Jul 18, 2026"
+          }
+        ]
+      },
+      "calls": [
+        {
+          "host": "api.openai.com",
+          "path": "/v1/chat/completions",
+          "status": 200,
+          "ms": 1115,
+          "model": "gpt-5.4-nano-2026-03-17",
+          "inputTokens": 144,
+          "outputTokens": 58
+        },
+        {
+          "host": "api.exa.ai",
+          "path": "/search",
+          "status": 200,
+          "ms": 1034
+        },
+        {
+          "host": "api.exa.ai",
+          "path": "/search",
+          "status": 200,
+          "ms": 1428
+        },
+        {
+          "host": "api.exa.ai",
+          "path": "/search",
+          "status": 200,
+          "ms": 1759
+        },
+        {
+          "host": "api.openai.com",
+          "path": "/v1/chat/completions#assembly",
+          "status": 200,
+          "ms": 0,
+          "model": "gpt-5.4-nano-2026-03-17",
+          "inputTokens": 2301,
+          "outputTokens": 896
+        }
+      ],
+      "tokens": {
+        "gatherIn": 144,
+        "gatherOut": 58,
+        "assembleIn": 2301,
+        "assembleOut": 896,
+        "webSearchToolCalls": 0
+      },
+      "searchApiCalls": 3
+    },
+    {
+      "approach": "search-newsdata",
+      "topic": "AI & Tech",
+      "ok": true,
+      "cascadeStep": "search-api-newsdata",
+      "gatherMs": 2128,
+      "assembleMs": 0,
+      "articleCount": 0,
+      "articles": [],
+      "assembled": {
+        "summary": "",
+        "stories": []
+      },
+      "calls": [
+        {
+          "host": "api.openai.com",
+          "path": "/v1/chat/completions",
+          "status": 200,
+          "ms": 1114,
+          "model": "gpt-5.4-nano-2026-03-17",
+          "inputTokens": 146,
+          "outputTokens": 65
+        },
+        {
+          "host": "newsdata.io",
+          "path": "/api/1/latest",
+          "status": 422,
+          "ms": 735
+        },
+        {
+          "host": "newsdata.io",
+          "path": "/api/1/latest",
+          "status": 200,
+          "ms": 854
+        },
+        {
+          "host": "newsdata.io",
+          "path": "/api/1/latest",
+          "status": 200,
+          "ms": 1010
+        }
+      ],
+      "tokens": {
+        "gatherIn": 146,
+        "gatherOut": 65,
+        "assembleIn": 0,
+        "assembleOut": 0,
+        "webSearchToolCalls": 0
+      },
+      "searchApiCalls": 3
+    },
+    {
+      "approach": "search-newsdata",
+      "topic": "World News",
+      "ok": true,
+      "cascadeStep": "search-api-newsdata",
+      "gatherMs": 1749,
+      "assembleMs": 6509,
+      "articleCount": 8,
+      "articles": [
+        {
+          "title": "Former Holiday Hills police chief charged with making nearly 300 unauthorized searches: court records",
+          "source": "Chicago Suntimes",
+          "date": "Jul 20, 2026",
+          "summary": "<p>A former Holiday Hills police chief and part-time Prairie Grove officer was charged with making hundreds of unauthorized searches during his time with the departments. </p><p>William Copp, 54, was charged with 12 felony counts of official misconduct, according to McHenry County court records. </p><p>Between February 2024 and November 2025, Copp allegedly used the LEADS network and LEADS data fo",
+          "url": "https://chicago.suntimes.com/rss/index.xml"
+        },
+        {
+          "title": "Billboard’s 2026 Top Music Lawyers Revealed",
+          "source": "Billboard",
+          "date": "Jul 20, 2026",
+          "summary": "The savviest legal minds in the business are advising superstars, guiding executives, buying catalogs — and watching over their shoulders as AI rises.",
+          "url": "https://www.billboard.com/pro/top-music-lawyers-2026-billboard-list/"
+        },
+        {
+          "title": "School Assembly News Headlines (July 21): Top National, International, Sports News",
+          "source": "Ndtv",
+          "date": "Jul 20, 2026",
+          "summary": "In sports, the football world is still reeling from World Cup final fallout.",
+          "url": "https://www.ndtv.com/education/school-assembly-news-headlines-july-21-top-national-international-sports-news-11797181"
+        },
+        {
+          "title": "EV Sales Only Fell A Little Bit In May, And That's Actually An Improvement",
+          "source": "Jalopnik",
+          "date": "Jul 20, 2026",
+          "summary": "Also, Canadian Ford workers have ratified a new three-year union contract, Honda is thinking about adding a new factory in North America and more.",
+          "url": "https://www.jalopnik.com/2218566/ev-sales-fell-may-improvement/"
+        },
+        {
+          "title": "School Assembly News Headlines Today July 21: Top National, International, Sports, Business events that students should know",
+          "source": "The Economic Times",
+          "date": "Jul 20, 2026",
+          "summary": "School Assembly News Headlines Today July 21: Parliament faced disruptions as opposition demanded discussions on alleged paper leaks. Heavy rainfall hampered rescue efforts in flood-hit Jammu and Kashmir. Spain secured both men's and women's FIFA World Cup titles simultaneously. Rohit Sharma dismissed retirement speculation after his century at Lord's. P.V. Sindhu won her maiden Japan Open title a",
+          "url": "https://economictimes.indiatimes.com/news/new-updates/school-assembly-news-headlines-today-july-21-top-national-international-sports-business-events-that-students-should-know/articleshow/132516010.cms"
+        },
+        {
+          "title": "School Assembly News Headlines (July 21, 2026): India Hosts 8th BRICS, Monsoon Session at Parliament, FIFA World Cup 2026 and Other News",
+          "source": "Jagran Josh",
+          "date": "Jul 20, 2026",
+          "summary": "Get today's top school assembly news headlines for July 21, 2026. Stay updated with the latest national, international, sports, business, and education news, plus a motivating 'Thought of the Day' for students.",
+          "url": "https://www.jagranjosh.com/articles/school-assembly-news-headlines-july-21-2026-india-hosts-8th-brics-monsoon-session-at-parliament-fifa-world-cup-2026-and-other-news-1800014283-1"
+        },
+        {
+          "title": "Today News Headlines for School Assembly, July 21, 2026: CJP leaders meet JP Nadda, 12 countries adopt India’s UPI",
+          "source": "The Indian Express",
+          "date": "Jul 20, 2026",
+          "summary": "Today News Headlines for School Assembly, July 21, 2026: Get important National, International, Sports, Business, and GK current affairs updates curated for students, teachers, and morning assemblies.",
+          "url": "https://indianexpress.com/article/education/today-news-headlines-for-school-assembly-21-july-2026-cjp-leaders-meet-jp-nadda-new-robotics-paper-for-gate-2027-iit-madras-new-uk-pm-andy-burnham-10795288/"
+        },
+        {
+          "title": "Stock Market Today (July 20, 2026): Sensex Falls Over 500 Points, Nifty Slips As Middle East Tensions Escalate",
+          "source": "Times Now News",
+          "date": "Jul 20, 2026",
+          "summary": "GIFT Nifty futures indicated a muted start to the trading session and week on Monday as investors monitored the escalating US-Iran conflict.",
+          "url": "https://www.timesnownews.com/business-economy/markets/stock-market-today-july-20-2026-sensex-falls-over-500-points-nifty-slips-as-middle-east-tensions-escalate-article-155135916"
+        }
+      ],
+      "assembled": {
+        "summary": "Recent world news coverage is dominated by security and governance concerns, alongside broader economic and regional pressures. A US court filing alleges a former police chief conducted nearly 300 unauthorized searches using the LEADS system (Chicago Suntimes, Jul 20, 2026), while markets react to escalating Middle East tensions tied to a US-Iran conflict (Times Now News, Jul 20, 2026).",
+        "stories": [
+          {
+            "headline": "Former police chief charged over nearly 300 unauthorized LEADS searches",
+            "bullets": [
+              "William Copp, 54, faces 12 felony counts of official misconduct, according to McHenry County court records.",
+              "Prosecutors allege he conducted hundreds of unauthorized searches between Feb 2024 and Nov 2025.",
+              "The charges cite use of the LEADS network and LEADS data during his law enforcement work."
+            ],
+            "source": "Chicago Suntimes",
+            "url": "https://chicago.suntimes.com/rss/index.xml",
+            "date": "Jul 20, 2026"
+          },
+          {
+            "headline": "Markets wobble as Middle East tensions tied to US-Iran escalate",
+            "bullets": [
+              "India’s Sensex fell over 500 points and the Nifty slipped as traders monitored developments around the US-Iran conflict.",
+              "GIFT Nifty futures signaled a muted start to the session and week.",
+              "The report frames investor sentiment as closely linked to risks rising in the Middle East."
+            ],
+            "source": "Times Now News",
+            "url": "https://www.timesnownews.com/business-economy/markets/stock-market-today-july-20-2026-sensex-falls-over-500-points-nifty-slips-as-middle-east-tensions-escalate-article-155135916",
+            "date": "Jul 20, 2026"
+          },
+          {
+            "headline": "Ford Canada workers ratify new three-year union contract",
+            "bullets": [
+              "Canadian Ford workers have approved a new three-year union contract.",
+              "The development is reported alongside broader industry signals affecting North American manufacturing planning.",
+              "The move reflects ongoing negotiations and labor dynamics in major auto supply chains."
+            ],
+            "source": "Jalopnik",
+            "url": "https://www.jalopnik.com/2218566/ev-sales-fell-may-improvement/",
+            "date": "Jul 20, 2026"
+          },
+          {
+            "headline": "UPI adoption highlighted in India school-assembly headlines roundup",
+            "bullets": [
+              "A school-assembly news digest flags “12 countries adopt India’s UPI” as a key current affairs item.",
+              "The roundup also notes other national and international updates for students and teachers.",
+              "It reflects continued international traction for India’s payments infrastructure."
+            ],
+            "source": "The Indian Express",
+            "url": "https://indianexpress.com/article/education/today-news-headlines-for-school-assembly-21-july-2026-cjp-leaders-meet-jp-nadda-new-robotics-paper-for-gate-2027-iit-madras-new-uk-pm-andy-burnham-10795288/",
+            "date": "Jul 20, 2026"
+          },
+          {
+            "headline": "India hosts BRICS as monsoon session faces opposition disruptions",
+            "bullets": [
+              "School-assembly headlines cite India hosting the 8th BRICS event alongside a monsoon session at Parliament.",
+              "The digest reports disruptions after opposition demanded discussions on alleged paper leaks.",
+              "It also mentions heavy rainfall affecting rescue efforts in flood-hit Jammu and Kashmir."
+            ],
+            "source": "Jagran Josh",
+            "url": "https://www.jagranjosh.com/articles/school-assembly-news-headlines-july-21-2026-india-hosts-8th-brics-monsoon-session-at-parliament-fifa-world-cup-2026-and-other-news-1800014283-1",
+            "date": "Jul 20, 2026"
+          }
+        ]
+      },
+      "calls": [
+        {
+          "host": "api.openai.com",
+          "path": "/v1/chat/completions",
+          "status": 200,
+          "ms": 1162,
+          "model": "gpt-5.4-nano-2026-03-17",
+          "inputTokens": 145,
+          "outputTokens": 41
+        },
+        {
+          "host": "newsdata.io",
+          "path": "/api/1/latest",
+          "status": 200,
+          "ms": 389
+        },
+        {
+          "host": "newsdata.io",
+          "path": "/api/1/latest",
+          "status": 200,
+          "ms": 470
+        },
+        {
+          "host": "newsdata.io",
+          "path": "/api/1/latest",
+          "status": 200,
+          "ms": 585
+        },
+        {
+          "host": "api.openai.com",
+          "path": "/v1/chat/completions#assembly",
+          "status": 200,
+          "ms": 0,
+          "model": "gpt-5.4-nano-2026-03-17",
+          "inputTokens": 1482,
+          "outputTokens": 883
+        }
+      ],
+      "tokens": {
+        "gatherIn": 145,
+        "gatherOut": 41,
+        "assembleIn": 1482,
+        "assembleOut": 883,
+        "webSearchToolCalls": 0
+      },
+      "searchApiCalls": 3
+    },
+    {
+      "approach": "search-newsdata",
+      "topic": "Finance",
+      "ok": true,
+      "cascadeStep": "search-api-newsdata",
+      "gatherMs": 1654,
+      "assembleMs": 0,
+      "articleCount": 0,
+      "articles": [],
+      "assembled": {
+        "summary": "",
+        "stories": []
+      },
+      "calls": [
+        {
+          "host": "api.openai.com",
+          "path": "/v1/chat/completions",
+          "status": 200,
+          "ms": 1056,
+          "model": "gpt-5.4-nano-2026-03-17",
+          "inputTokens": 144,
+          "outputTokens": 51
+        },
+        {
+          "host": "newsdata.io",
+          "path": "/api/1/latest",
+          "status": 200,
+          "ms": 283
+        },
+        {
+          "host": "newsdata.io",
+          "path": "/api/1/latest",
+          "status": 200,
+          "ms": 306
+        },
+        {
+          "host": "newsdata.io",
+          "path": "/api/1/latest",
+          "status": 200,
+          "ms": 591
+        }
+      ],
+      "tokens": {
+        "gatherIn": 144,
+        "gatherOut": 51,
+        "assembleIn": 0,
+        "assembleOut": 0,
+        "webSearchToolCalls": 0
+      },
+      "searchApiCalls": 3
+    }
+  ]
+}
