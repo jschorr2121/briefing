@@ -1,5 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getTTSProvider } from '@/lib/models';
+import { getAuthenticatedUser } from '@/lib/auth-helper';
+
+export const maxDuration = 60;
+
+const OPENAI_VOICES = ['alloy', 'ash', 'coral', 'echo', 'fable', 'onyx', 'nova', 'sage', 'shimmer'];
+const MAX_SCRIPT_CHARS = 12000;
 
 interface StoryCard {
   headline: string;
@@ -211,25 +217,36 @@ async function generateGoogleTTS(script: string, voiceName: string = 'en-US-Neur
 
 export async function POST(request: NextRequest) {
   try {
+    const user = await getAuthenticatedUser(request);
+    if (!user?.email) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const { briefings, voice: requestedVoice } = await request.json() as { 
       briefings: Briefing[]; 
       voice?: VoiceOption;
     };
 
-    if (!briefings || briefings.length === 0) {
-      return NextResponse.json({ error: 'No briefings provided' }, { status: 400 });
+    if (!Array.isArray(briefings) || briefings.length === 0 || briefings.length > 10) {
+      return NextResponse.json({ error: 'Provide 1-10 briefings' }, { status: 400 });
     }
 
-    const script = buildScript(briefings);
+    let script = buildScript(briefings);
+    let truncated = false;
+    if (script.length > MAX_SCRIPT_CHARS) {
+      const cut = script.slice(0, MAX_SCRIPT_CHARS);
+      const end = Math.max(cut.lastIndexOf('. '), cut.lastIndexOf('.\n'), cut.lastIndexOf('! '), cut.lastIndexOf('? '));
+      script = end > 0 ? cut.slice(0, end + 1) : cut;
+      truncated = true;
+    }
     const provider = getTTSProvider();
     const defaultVoice = provider === 'google' ? 'en-US-Neural2-C' : 'nova';
     const voice = requestedVoice || (process.env.OPENAI_TTS_VOICE as VoiceOption) || defaultVoice;
     
     // Validate voice matches provider - fall back to default if mismatched
-    const isGoogleVoice = typeof voice === 'string' && voice.startsWith('en-');
     const isOpenAIVoice = typeof voice === 'string' && !voice.startsWith('en-');
     const finalVoice = (provider === 'google' && isOpenAIVoice) ? 'en-US-Neural2-C' 
-                     : (provider === 'openai' && isGoogleVoice) ? 'nova' 
+                     : (provider === 'openai' && !OPENAI_VOICES.includes(voice)) ? 'nova'
                      : voice;
 
     console.log(`Generating TTS with ${provider}, script length: ${script.length} chars`);
@@ -248,6 +265,7 @@ export async function POST(request: NextRequest) {
         'Content-Length': audioBuffer.byteLength.toString(),
         'Content-Disposition': `attachment; filename="briefing-${new Date().toISOString().split('T')[0]}.mp3"`,
         'X-TTS-Provider': provider,
+        ...(truncated ? { 'X-Audio-Truncated': 'true' } : {}),
       },
     });
   } catch (error) {

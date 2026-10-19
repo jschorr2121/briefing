@@ -18,6 +18,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Fail closed: never grant Pro from an unverified JWS (it is trivially forgeable).
+    if (process.env.APPLE_RECEIPT_VERIFICATION !== 'enabled') {
+      return NextResponse.json(
+        { error: 'App Store receipt verification is not configured' },
+        { status: 501 }
+      );
+    }
+    // TODO(security): real verification is required before enabling the flag above:
+    //  - verify the JWS signature (x5c chain) against Apple's root CA certs
+    //    (e.g. @apple/app-store-server-library SignedDataVerifier)
+    //  - check bundleId matches our app and environment (Production/Sandbox)
+    //  - check expiresDate is in the future and revocationDate is unset
+    //  - use the *verified* payload only; ignore client-supplied productId
+
     // Decode JWS payload (middle segment) to extract transaction info
     // In production, verify the JWS signature with Apple's public key
     const parts = transactionJWS.split('.');

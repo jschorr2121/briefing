@@ -1,3 +1,17 @@
+# Changelog
+
+## Oct 19, 2026 — pipeline rebuild (branch `fable/oct-2026-rebuild`)
+
+- **One gather path**: Brave News (rate-gated for the Free plan) → nano relevance gate → Exa fallback for sparse/niche topics. Perigon, agentic OpenAI web-search, search-api switchboard and the legacy single-call paths are deleted. Decision data: `docs/ARCHITECTURE.md`.
+- **Assembly model** default `gpt-5-nano` → `gpt-5.4-nano` (51–76s → 5–7s per topic, same cost, better picks), JSON mode, story URLs restricted to gathered URLs.
+- **Live result**: 4-topic briefing 150s → 36s; speedcubing/keyboards now get real community sources.
+- **Redis**: 1.5s timeout + 60s circuit breaker; dead Redis no longer stalls requests. Shared client everywhere.
+- **Security**: session required on `/api/generate`, `/api/audio`, `/api/email`; email only to the signed-in address and fully HTML-escaped; `/api/admin/schedules` gated; schedules input validated (no raw spread); cron routes fail closed without `CRON_SECRET`; App Store receipt verification fails closed; mobile-login token encoded.
+- **Cron**: `vercel.json` crons added (previously none); `lastSentAt` prevents double sends; failed sends stay queued; per-email merge on regenerate.
+- **Stripe**: `current_period_end` read from subscription items (2026 API).
+- **Frontend**: TTS voice list matches the API (verse/juniper/ballad never worked), voice-picker stale-closure fix, guarded localStorage + hydration gate, 401 → login redirect, empty-coverage cards.
+- **Removed**: ~20k lines — three pipelines, orphaned `src/lib/news/*` (cache kept), duplicated cron/email code, `/api/topics*`, `/api/cron/test`, diagnostic harness, sample dumps, MP3s, stale docs, tracked `tsconfig.tsbuildinfo`.
+
 # Dev Branch Changelog
 
 ## Jul 17, 2026 — Agentic newsletter pipeline (branch `fable/newsletter-pipeline`)

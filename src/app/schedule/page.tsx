@@ -34,7 +34,6 @@ export default function SchedulePage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   
   // Form state
-  const [email, setEmail] = useState('');
   const [topics, setTopics] = useState<string[]>([]);
   const [topicInput, setTopicInput] = useState('');
   
@@ -46,7 +45,6 @@ export default function SchedulePage() {
 
   useEffect(() => {
     if (session?.user?.email) {
-      setEmail(session.user.email);
       fetchSchedules();
     }
   }, [session]);
@@ -79,13 +77,12 @@ export default function SchedulePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || topics.length === 0) return;
+    if (topics.length === 0) return;
 
     setSaving(true);
     try {
       const body = {
         id: editingId,
-        email,
         topics,
         frequency: 'daily',
         time: '08:00',
@@ -111,7 +108,6 @@ export default function SchedulePage() {
 
   const handleEdit = (schedule: ScheduledBrief) => {
     setEditingId(schedule.id);
-    setEmail(schedule.email);
     setTopics(schedule.topics);
     setShowForm(true);
   };
@@ -154,9 +150,6 @@ export default function SchedulePage() {
     setShowForm(false);
     setEditingId(null);
     setTopics([]);
-    if (session?.user?.email) {
-      setEmail(session.user.email);
-    }
   };
 
   if (status === 'loading' || loading) {
@@ -189,7 +182,7 @@ export default function SchedulePage() {
         <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-xl flex items-start gap-3">
           <Info className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
           <div className="text-sm text-blue-800">
-            <p className="font-medium">Daily briefings at 8:00 AM ET</p>
+            <p className="font-medium">Delivered every morning (around 8:00 AM US Eastern)</p>
             <p className="text-blue-600 mt-0.5">All scheduled briefings are sent every morning. Choose your topics below.</p>
           </div>
         </div>
@@ -209,24 +202,8 @@ export default function SchedulePage() {
         {showForm && (
           <form onSubmit={handleSubmit} className="mb-8 p-6 bg-[var(--card)] border border-[var(--border)] rounded-xl">
             <h2 className="font-semibold mb-1">{editingId ? 'Edit' : 'New'} Daily Brief</h2>
-            <p className="text-sm text-[var(--muted)] mb-4">You'll receive this briefing every day at 8:00 AM ET</p>
+            <p className="text-sm text-[var(--muted)] mb-4">Delivered every morning (around 8:00 AM US Eastern) to {session?.user?.email}</p>
             
-            {/* Email */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium mb-1.5">Email</label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--muted)]" />
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="your@email.com"
-                  required
-                  className="input pl-10"
-                />
-              </div>
-            </div>
-
             {/* Topics */}
             <div className="mb-4">
               <label className="block text-sm font-medium mb-1.5">Topics <span className="text-[var(--muted)] font-normal">({topics.length}/4 max)</span></label>
@@ -292,7 +269,7 @@ export default function SchedulePage() {
               </button>
               <button 
                 type="submit" 
-                disabled={!email || topics.length === 0 || saving}
+                disabled={topics.length === 0 || saving}
                 className="btn-primary flex-1 disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {saving && <Loader2 className="w-4 h-4 animate-spin" />}
@@ -319,7 +296,7 @@ export default function SchedulePage() {
                     </div>
                     <div className="flex items-center gap-2 text-sm text-[var(--muted)]">
                       <Clock className="w-3.5 h-3.5" />
-                      <span>Every day at 8:00 AM ET</span>
+                      <span>Every morning, around 8:00 AM US Eastern</span>
                     </div>
                     {schedule.lastSentAt && (
                       <p className="text-xs text-[var(--muted)] mt-1">
@@ -363,7 +340,7 @@ export default function SchedulePage() {
           <div className="text-center py-12 text-[var(--muted)]">
             <Clock className="w-12 h-12 mx-auto mb-3 opacity-30" />
             <p>No daily briefs yet</p>
-            <p className="text-sm">Create one to get briefings in your inbox every morning at 8 AM ET</p>
+            <p className="text-sm">Create one to get briefings in your inbox every morning (around 8:00 AM US Eastern)</p>
           </div>
         )}
       </main>

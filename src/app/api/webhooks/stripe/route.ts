@@ -56,11 +56,12 @@ export async function POST(request: NextRequest) {
         if (email) {
           const sub = await getUserSubscription(email);
           sub.subscriptionStatus = subscription.status;
-          sub.currentPeriodEnd = new Date(subscription.current_period_end * 1000).toISOString();
+          const periodEnd = subscription.items?.data?.[0]?.current_period_end ?? subscription.current_period_end;
+          sub.currentPeriodEnd = typeof periodEnd === 'number' ? new Date(periodEnd * 1000).toISOString() : sub.currentPeriodEnd;
 
           if (subscription.status === 'active') {
             sub.tier = 'pro';
-          } else if (subscription.status === 'canceled' || subscription.status === 'unpaid') {
+          } else if (['unpaid', 'canceled', 'incomplete_expired'].includes(subscription.status)) {
             sub.tier = 'free';
           }
 

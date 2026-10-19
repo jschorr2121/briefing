@@ -7,12 +7,12 @@ export async function POST(request: NextRequest) {
   try {
     const { idToken } = await request.json();
 
-    if (!idToken) {
+    if (!idToken || typeof idToken !== 'string' || idToken.length > 4096) {
       return NextResponse.json({ error: 'idToken required' }, { status: 400 });
     }
 
     // Verify Google ID token
-    const verifyRes = await fetch(`${GOOGLE_TOKEN_INFO_URL}?id_token=${idToken}`);
+    const verifyRes = await fetch(`${GOOGLE_TOKEN_INFO_URL}?id_token=${encodeURIComponent(idToken)}`);
     if (!verifyRes.ok) {
       return NextResponse.json({ error: 'Invalid Google token' }, { status: 401 });
     }

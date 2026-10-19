@@ -1,5 +1,5 @@
 // Schedule storage using Upstash Redis
-import { Redis } from '@upstash/redis';
+import { getRedis } from '@/lib/news/cache';
 
 export interface ScheduledBrief {
   id: string;
@@ -15,15 +15,11 @@ export interface ScheduledBrief {
   updatedAt: string;
 }
 
-// Initialize Redis client (Vercel's Upstash integration uses KV_REST_API_* env vars)
-const redis = new Redis({
-  url: process.env.KV_REST_API_URL!,
-  token: process.env.KV_REST_API_TOKEN!,
-});
-
 const SCHEDULES_KEY = 'briefing:schedules';
 
 export async function getSchedules(): Promise<ScheduledBrief[]> {
+  const redis = getRedis();
+  if (!redis) return [];
   try {
     const schedules = await redis.get<ScheduledBrief[]>(SCHEDULES_KEY);
     return schedules || [];
@@ -44,6 +40,8 @@ export async function getScheduleById(id: string): Promise<ScheduledBrief | null
 }
 
 export async function saveSchedule(schedule: ScheduledBrief): Promise<void> {
+  const redis = getRedis();
+  if (!redis) return;
   try {
     const schedules = await getSchedules();
     const existingIndex = schedules.findIndex(s => s.id === schedule.id);
@@ -62,6 +60,8 @@ export async function saveSchedule(schedule: ScheduledBrief): Promise<void> {
 }
 
 export async function deleteSchedule(id: string): Promise<void> {
+  const redis = getRedis();
+  if (!redis) return;
   try {
     const schedules = await getSchedules();
     const filtered = schedules.filter(s => s.id !== id);
@@ -72,17 +72,23 @@ export async function deleteSchedule(id: string): Promise<void> {
   }
 }
 
+export async function markScheduleSent(id: string): Promise<void> {
+  const s = await getScheduleById(id);
+  if (s) await saveSchedule({ ...s, lastSentAt: new Date().toISOString() });
+}
+
 export function shouldSendNow(schedule: ScheduledBrief): boolean {
   if (!schedule.enabled) return false;
   
   const now = new Date();
-  
+  if (schedule.lastSentAt?.slice(0, 10) === now.toISOString().slice(0, 10)) return false;
+
   // Convert to user's timezone for day-of-week check
   const userTime = new Date(now.toLocaleString('en-US', { timeZone: schedule.timezone }));
   const currentDay = userTime.getDay(); // 0 = Sunday
   
-  // NOTE: Vercel Hobby only allows 1 daily cron (runs at 8 AM ET).
-  // Cron runs once per day, so no need to track lastSentAt.
+  // Two Vercel crons run once per day: generate-briefs, then send-briefs.
+  // lastSentAt (UTC date) guards against double sends.
   
   // Check frequency (day of week)
   if (schedule.frequency === 'weekdays' && (currentDay === 0 || currentDay === 6)) {

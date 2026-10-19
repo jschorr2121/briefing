@@ -1,43 +1,24 @@
-// Model configuration via environment variables
-// Set BRIEFING_MODEL to change the generation model
-// Options: gpt-5-nano, gpt-5.4-nano, gpt-5.4-mini, gpt-4o, gpt-4o-mini, perplexity
-// Set TTS_PROVIDER to change TTS provider
-// Options: openai, google
+// Model selection via env vars. Any OpenAI chat model id is accepted.
+//
+// Defaults measured Oct 19 2026 on the real assembly prompt (same 10-article
+// input, per topic):
+//   gpt-5-nano      51–76s  $0.002–0.003  reasons into 4–8k output tokens, picked ads
+//   gpt-5.4-nano     5–7s   $0.0015       clean picks, skipped junk hosts    ← default
+//   gpt-5.6-luna    12–14s  $0.0017       same quality, nicer headlines
+//   claude-sonnet-5.5 13s   $0.025        best prose; 16× the price
+// Set BRIEFING_MODEL=gpt-5.6-luna (or gpt-5.4-mini) to trade speed for polish.
 
-export type GenerationModel = 'gpt-5-nano' | 'gpt-5.4-nano' | 'gpt-5.4-mini' | 'gpt-4o' | 'gpt-4o-mini' | 'perplexity';
+export function getAssemblyModel(): string {
+  return process.env.BRIEFING_MODEL || 'gpt-5.4-nano';
+}
+
+/** Query planner + relevance gate: tiny prompts, nano is plenty. */
+export function getPlannerModel(): string {
+  return process.env.SEARCH_PLANNER_MODEL || 'gpt-5.4-nano';
+}
+
 export type TTSProvider = 'openai' | 'google';
 
-export function getGenerationModel(): GenerationModel {
-  const model = process.env.BRIEFING_MODEL?.toLowerCase() || 'gpt-5-nano';
-  if (['gpt-5-nano', 'gpt-5.4-nano', 'gpt-5.4-mini', 'gpt-4o', 'gpt-4o-mini', 'perplexity'].includes(model)) {
-    return model as GenerationModel;
-  }
-  return 'gpt-5-nano';
-}
-
 export function getTTSProvider(): TTSProvider {
-  const provider = process.env.TTS_PROVIDER?.toLowerCase() || 'openai';
-  if (['openai', 'google'].includes(provider)) {
-    return provider as TTSProvider;
-  }
-  return 'openai';
+  return process.env.TTS_PROVIDER?.toLowerCase() === 'google' ? 'google' : 'openai';
 }
-
-export function getOpenAIModel(): string {
-  const model = getGenerationModel();
-  if (model === 'perplexity') return 'gpt-5-nano'; // fallback
-  return model;
-}
-
-// Model pricing info (per 1K tokens/chars)
-export const MODEL_PRICING = {
-  'gpt-5-nano': { input: 0.00015, output: 0.0006 },
-  // developers.openai.com/api/docs/pricing, fetched Jul 21 2026 (per 1K tokens)
-  'gpt-5.4-nano': { input: 0.0002, output: 0.00125 },
-  'gpt-5.4-mini': { input: 0.00075, output: 0.0045 },
-  'gpt-4o': { input: 0.005, output: 0.015 },
-  'gpt-4o-mini': { input: 0.00015, output: 0.0006 },
-  'perplexity': { request: 0.005 }, // per request for sonar-small
-  'openai-tts': { chars: 0.015 },
-  'google-tts': { chars: 0.004 },
-};

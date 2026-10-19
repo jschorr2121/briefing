@@ -1,81 +1,34 @@
-# CLAUDE.md — Briefing Development Log
+# CLAUDE.md — Briefing
 
-## What Is Briefing
-A personalized AI news briefing app. Users choose topics, generate briefings with real-time web search, listen via audio (12 OpenAI voices), get daily scheduled emails, and export as markdown.
+Personalized AI news briefings: pick topics → get a dated, sourced briefing per
+topic on the web, by scheduled email, or as audio.
 
-## Tech Stack
-- **Frontend**: Next.js 14 (App Router), Tailwind CSS, dark theme
-- **Auth**: NextAuth.js with Google OAuth
-- **AI**: OpenAI Responses API with web_search tool
-- **Audio**: OpenAI TTS API (with chunking for long briefings)
-- **Email**: Gmail SMTP (nodemailer) for scheduled briefings
-- **Payments**: Stripe Checkout (subscription model)
-- **Storage**: Upstash Redis (schedules, briefing cache, usage tracking)
-- **Hosting**: Vercel
-- **Mobile**: Capacitor (iOS + Android WebView shell)
+## Stack
+Next.js 14 (App Router) · NextAuth (Google) · Upstash Redis · Brave News + Exa
+for gathering · OpenAI gpt-5.4-nano for planning/assembly · OpenAI TTS · Gmail
+SMTP · Stripe · Vercel. Native iOS app in `briefing-ios/` talks to the same API.
 
-## Current State (Feb 4, 2026)
-- Web app is live and functional at briefing-five.vercel.app
-- 3 users receiving daily scheduled briefings
-- Capacitor mobile scaffolding complete (iOS + Android projects, native plugins)
-- Stripe integration built but env vars not yet configured on Vercel
-- News Hub feature removed (was unnecessary complexity)
+## Read first
+- `docs/ARCHITECTURE.md` — the pipeline, every decision, and the measurements behind it (Oct 19, 2026).
+- `CODEBASE.md` — where things live.
 
-## Recent Changes
-- Removed News Hub (page, API, components, taste profiling)
-- Removed health tips from scheduled emails (product emails should be pure news)
-- Added default topics for new users (AI & Tech, World News, Finance)
-- Added localStorage persistence for user topics
-- Competitive landscape analysis in docs/
+## Working rules
+- One pipeline: `src/lib/briefing-pipeline.ts` → `gather.ts` → `briefing-assembler.ts`. Don't add a second gather path behind an env switch; add a provider inside `gather.ts`.
+- Paid endpoints (`/api/generate`, `/api/audio`, `/api/email`) require a session. Keep it that way.
+- Redis is optional: every cache/lock call fails open and the circuit breaker in `src/lib/news/cache.ts` keeps a dead Redis from slowing requests.
+- Offline checks, no keys: `npx tsx scripts/check-gather.ts` and `npx tsx scripts/check-news-cache.ts`. Run both before committing pipeline changes.
+- Live run: `npx next dev -p 3100`, `GET /api/test/auth-setup` for a dev session cookie (use the `__Secure-` cookie name when `NEXTAUTH_URL` is https), then `POST /api/generate`.
 
-## Key Files
-- `src/app/page.tsx` — Main briefing generation page
-- `src/app/api/generate/route.ts` — Briefing generation API
-- `src/app/api/cron/generate-briefs/route.ts` — Pre-generate briefings (runs before send)
-- `src/app/api/cron/send-briefs/route.ts` — Send scheduled briefing emails
-- `src/lib/query-planner.ts` — LLM query planner (routes topics to Perigon endpoints)
-- `src/lib/briefing-generator.ts` — Perigon pipeline: query execution, cascade fallback, LLM assembly
-- `src/lib/perigon.ts` — Perigon API client (articles, stories, vector, summarizer)
-- `src/lib/alert.ts` — Email alerts for cron job failures
-- `src/lib/capacitor.ts` — Native bridge utilities
-- `capacitor.config.ts` — Mobile app config
-- `MOBILE_SETUP.md` — Full guide for iOS/Android build + submission
+## Env vars
+See README.md. Required for a working briefing: `OPENAI_API_KEY`, `BRAVE_API_KEY`
+(+ `EXA_API_KEY` for niche topics), Google OAuth + `NEXTAUTH_*`. `CRON_SECRET`
+is mandatory for the cron routes. Brave Free plan is 1 req/s: `BRAVE_MIN_INTERVAL_MS`
+defaults to 1100; set 0 on a paid plan.
 
-## Perigon API Reference
-Full Perigon API documentation is in `docs/perigon/`:
-- `overview.md` — All endpoints, auth, pagination
-- `articles.md` — `/v1/articles/all` params, query syntax, response schema
-- `stories.md` — `/v1/stories/all` story clusters, when to use
-- `vector-search.md` — `/v1/vector/news/all` semantic search
-- `taxonomy.md` — Categories, topic tags, labels, source groups
-- `summarizer.md` — `/v1/summarize` endpoint
-- `entity-search.md` — Companies, journalists, companyName usage
+## Deploy
+Push to `master` → Vercel. Crons are in `vercel.json` (generate 11:30 UTC, send 12:00 UTC).
 
-Refer to these docs when modifying the query planner or Perigon API integration.
-
-## Deployment
-- Push to master → Vercel auto-deploys (or trigger: `curl -X POST "https://api.vercel.com/v1/integrations/deploy/prj_dDB96HruN79Qm1VQzc1aulyhz0Vz/vIAVZAlqNx"`)
-- Mobile: `npm run mobile:ios` / `npm run mobile:android` (requires Mac for iOS)
-
-## Next Steps → App Store Submission
-See latest progress notes below.
-
----
-
-## Progress Log
-
-### Jul 21, 2026 (PM) — live-measured gather A/B
-- Ran `scripts/live-ab-compare.ts`: agentic web_search tool vs direct search APIs, live, same 3 topics; evidence in `samples/live-ab/2026-07-21/`, analysis in `docs/COST_ANALYSIS.md` (revision 2, all numbers measured)
-- Winner: hybrid — Brave News direct (2 short queries) + nano relevance gate + agentic fallback for sparse topics; $0.035/briefing vs $0.056–0.077 agentic-nano, 4–6× faster
-- search-fetcher hardening from measured failures: short-query planner prompt, per-host cap, relevance gate (Brave returned FIFA articles for "speedcubing"), sequential queries + 429 retry (Brave ~1 QPS), NewsData query clamp, 60s timeout on agentic gather (saw a 194s hang)
-
-### Jul 21, 2026
-- **NEWS_SOURCE=search-api**: direct search-API gathering (Brave News primary, Tavily/Exa fallback) with gpt-5.4-nano query planning; snippet-only LLM context. ~$0.035/3-topic briefing vs $0.077 agentic-nano (analysis: `docs/COST_ANALYSIS.md`)
-- **Cache coalescing fixed**: topic gathers now single-flight across serverless instances (90s lock, waiters await the winner's result); previously concurrent identical requests duplicated the gather
-- **Canonical topic keys**: "AI news" ≡ "artificial intelligence" share one cache entry across users (`canonicalTopicId` in `src/lib/news/cache.ts`)
-- Offline checks: `scripts/check-news-cache.ts`, `scripts/check-search-fetcher.ts`
-
-### Feb 4, 2026
-- Removed Hub, health tips from product emails
-- Default topics + topic persistence shipped
-- Preparing for App Store submission (see checklist in notes)
+## Log
+- **Oct 19, 2026** — Rebuilt around one pipeline (Brave News + Exa fallback, gpt-5.4-nano). Deleted Perigon/agentic/legacy paths (~20k lines). Auth on paid endpoints, HTML-escaped email, cron fail-closed + no double sends, Stripe period-end fix, TTS voice list fixed, Redis circuit breaker. Live: 4-topic briefing 150s → 36s. Details in `docs/ARCHITECTURE.md`.
+- **Jul 21, 2026** — Live A/B of search APIs vs LLM web search (superseded by the Oct rebuild).
+- **Feb 4, 2026** — Hub removed, default topics, App Store prep.

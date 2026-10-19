@@ -1,4 +1,4 @@
-import { Redis } from '@upstash/redis';
+import { getRedis } from './news/cache';
 
 // ─── Types ────────────────────────────────────────────────────────────
 export interface UserSubscription {
@@ -15,14 +15,6 @@ export interface UserSubscription {
 export const FREE_DAILY_LIMIT = 3;
 export const FREE_TOPIC_LIMIT = 4;
 export const MAX_TOPICS = 4;
-
-// ─── Redis helpers ────────────────────────────────────────────────────
-function getRedis(): Redis | null {
-  const url = process.env.KV_REST_API_URL;
-  const token = process.env.KV_REST_API_TOKEN;
-  if (!url || !token) return null;
-  return new Redis({ url, token });
-}
 
 function subKey(email: string) {
   return `subscription:${email.toLowerCase()}`;

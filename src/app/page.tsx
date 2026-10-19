@@ -3,13 +3,13 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Headphones, Mail, Download, Check, Loader2, Newspaper, Calendar, Settings as SettingsIcon } from 'lucide-react';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 import { AuthGuard } from '@/components/AuthGuard';
 import { TopicSelector } from '@/components/TopicSelector';
 import { BriefingCard } from '@/components/BriefingCard';
 import { GenerateButton } from '@/components/GenerateButton';
 import { Header } from '@/components/Header';
 import { SettingsModal } from '@/components/SettingsModal';
-import { AddTopicModal } from '@/components/AddTopicModal';
 import { HistoryPanel } from '@/components/HistoryPanel';
 import { KeyboardHints } from '@/components/KeyboardHints';
 import { BriefingStats } from '@/components/BriefingStats';
@@ -35,7 +35,6 @@ export default function Home() {
   const [briefings, setBriefings] = useState<Briefing[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
-  const [showAddTopic, setShowAddTopic] = useState(false);
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
   const [lastGenerated, setLastGenerated] = useState<Date | null>(null);
   const [error, setError] = useState<{ message: string; type: 'briefing' | 'audio' | 'email' } | null>(null);
@@ -44,12 +43,14 @@ export default function Home() {
   const [isSendingEmail, setIsSendingEmail] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
   const [showEmailModal, setShowEmailModal] = useState(false);
-  const [emailInput, setEmailInput] = useState('');
   const [history, setHistory] = useState<BriefingHistory[]>([]);
   const [refreshingTopic, setRefreshingTopic] = useState<string | null>(null);
   const [playbackSpeed, setPlaybackSpeed] = useState(1);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [showVoicePicker, setShowVoicePicker] = useState(false);
+  const { data: session } = useSession();
+  const userEmail = session?.user?.email;
+  const [isHydrated, setIsHydrated] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
   const voicePickerRef = useRef<HTMLDivElement>(null);
 
@@ -60,32 +61,43 @@ export default function Home() {
 
   // Load saved state from localStorage
   useEffect(() => {
-    const savedSettings = localStorage.getItem('briefing-settings');
-    const savedBriefings = localStorage.getItem('briefing-cache');
-    const savedTime = localStorage.getItem('briefing-time');
-    const savedHistory = localStorage.getItem('briefing-history');
-    const savedTopics = localStorage.getItem('briefing-topics');
+    const read = <T,>(key: string): T | null => {
+      try {
+        const raw = localStorage.getItem(key);
+        return raw ? (JSON.parse(raw) as T) : null;
+      } catch {
+        return null;
+      }
+    };
+    const savedSettings = read<Settings>('briefing-settings');
+    const savedBriefings = read<Briefing[]>('briefing-cache');
+    const savedHistory = read<BriefingHistory[]>('briefing-history');
+    const savedTopics = read<Topic[]>('briefing-topics');
+    let savedTime: string | null = null;
+    try { savedTime = localStorage.getItem('briefing-time'); } catch {}
 
-    if (savedSettings) setSettings(JSON.parse(savedSettings));
-    if (savedBriefings) setBriefings(JSON.parse(savedBriefings));
-    if (savedTime) setLastGenerated(new Date(savedTime));
-    if (savedHistory) setHistory(JSON.parse(savedHistory));
-    if (savedTopics) setTopics(JSON.parse(savedTopics));
+    if (savedSettings && typeof savedSettings === 'object') setSettings({ ...DEFAULT_SETTINGS, ...savedSettings });
+    if (Array.isArray(savedBriefings)) setBriefings(savedBriefings);
+    if (savedTime && !isNaN(new Date(savedTime).getTime())) setLastGenerated(new Date(savedTime));
+    if (Array.isArray(savedHistory)) setHistory(savedHistory);
+    if (Array.isArray(savedTopics)) setTopics(savedTopics);
+    setIsHydrated(true);
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('briefing-settings', JSON.stringify(settings));
-  }, [settings]);
+    if (!isHydrated) return;
+    try { localStorage.setItem('briefing-settings', JSON.stringify(settings)); } catch {}
+  }, [settings, isHydrated]);
 
   useEffect(() => {
-    localStorage.setItem('briefing-topics', JSON.stringify(topics));
-  }, [topics]);
+    if (!isHydrated) return;
+    try { localStorage.setItem('briefing-topics', JSON.stringify(topics)); } catch {}
+  }, [topics, isHydrated]);
 
   useEffect(() => {
-    if (history.length > 0) {
-      localStorage.setItem('briefing-history', JSON.stringify(history));
-    }
-  }, [history]);
+    if (!isHydrated || history.length === 0) return;
+    try { localStorage.setItem('briefing-history', JSON.stringify(history)); } catch {}
+  }, [history, isHydrated]);
 
   // Close voice picker on click outside
   useEffect(() => {
@@ -115,12 +127,13 @@ export default function Home() {
     },
     onEscape: () => {
       setShowSettings(false);
-      setShowAddTopic(false);
       setShowUpgradeModal(false);
     },
   });
 
-  const addToHistory = useCallback((newBriefings: Briefing[]) => {
+  const addToHistory = useCallback((allBriefings: Briefing[]) => {
+    const newBriefings = allBriefings.filter(b => !b.empty);
+    if (newBriefings.length === 0) return;
     const entry: BriefingHistory = {
       id: generateId(),
       briefings: newBriefings,
@@ -177,6 +190,11 @@ export default function Home() {
         body: JSON.stringify({ topics: enabledTopics, settings }),
       });
 
+      if (response.status === 401) {
+        window.location.href = '/login';
+        return;
+      }
+
       if (response.status === 429) {
         const data = await response.json();
         if (data.code === 'LIMIT_REACHED') {
@@ -205,7 +223,7 @@ export default function Home() {
     }
   };
 
-  const generateAudio = async () => {
+  const generateAudio = async (voice?: string) => {
     if (briefings.length === 0 || isGeneratingAudio) return;
 
     setIsGeneratingAudio(true);
@@ -213,7 +231,7 @@ export default function Home() {
       const response = await fetch('/api/audio', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ briefings, voice: settings.voice }),
+        body: JSON.stringify({ briefings, voice: voice ?? settings.voice }),
       });
 
       if (!response.ok) {
@@ -232,15 +250,15 @@ export default function Home() {
     }
   };
 
-  const sendEmail = async (email: string) => {
-    if (briefings.length === 0 || !email || isSendingEmail) return;
+  const sendEmail = async () => {
+    if (briefings.length === 0 || isSendingEmail) return;
 
     setIsSendingEmail(true);
     try {
       const response = await fetch('/api/email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ briefings, email }),
+        body: JSON.stringify({ briefings }),
       });
 
       if (!response.ok) {
@@ -250,7 +268,6 @@ export default function Home() {
 
       setEmailSent(true);
       setShowEmailModal(false);
-      setEmailInput('');
     } catch (err) {
       console.error('Email error:', err);
       setError({ message: err instanceof Error ? err.message : 'Failed to send email', type: 'email' });
@@ -265,11 +282,11 @@ export default function Home() {
     let markdown = '# Daily Briefing\n\n';
     markdown += `*Generated: ${lastGenerated?.toLocaleString()}*\n\n---\n\n`;
 
-    for (const briefing of briefings) {
+    for (const briefing of briefings.filter(b => !b.empty)) {
       markdown += `## ${briefing.topic}\n\n`;
       markdown += `${briefing.summary}\n\n`;
 
-      if (briefing.articles.length > 0) {
+      if (briefing.articles?.length > 0) {
         markdown += '### Sources\n\n';
         for (const article of briefing.articles) {
           markdown += `- [${article.title}](${article.url}) - ${article.source}\n`;
@@ -296,7 +313,7 @@ export default function Home() {
     let md = '# Daily Briefing (Dev Export)\n\n';
     md += `*Generated: ${lastGenerated?.toLocaleString()}*\n\n`;
 
-    for (const briefing of briefings) {
+    for (const briefing of briefings.filter(b => !b.empty)) {
       md += `---\n\n## ${briefing.emoji ? briefing.emoji + ' ' : ''}${briefing.topic}\n\n`;
 
       // Dev mode: Perigon search parameters
@@ -341,7 +358,7 @@ export default function Home() {
         }
       }
 
-      if (briefing.articles.length > 0) {
+      if (briefing.articles?.length > 0) {
         md += '### Sources\n\n';
         for (const article of briefing.articles) {
           md += `- [${article.title}](${article.url}) — ${article.source}\n`;
@@ -463,16 +480,13 @@ export default function Home() {
                       {[
                         { id: 'alloy', name: 'Alloy', desc: 'Neutral & balanced' },
                         { id: 'ash', name: 'Ash', desc: 'Clear & direct' },
-                        { id: 'ballad', name: 'Ballad', desc: 'Warm & melodic' },
                         { id: 'coral', name: 'Coral', desc: 'Warm & engaging' },
                         { id: 'echo', name: 'Echo', desc: 'Smooth & calm' },
                         { id: 'fable', name: 'Fable', desc: 'Expressive & British' },
-                        { id: 'juniper', name: 'Juniper', desc: 'Lively & conversational' },
                         { id: 'nova', name: 'Nova', desc: 'Friendly & upbeat' },
                         { id: 'onyx', name: 'Onyx', desc: 'Deep & authoritative' },
                         { id: 'sage', name: 'Sage', desc: 'Soft & thoughtful' },
                         { id: 'shimmer', name: 'Shimmer', desc: 'Bright & cheerful' },
-                        { id: 'verse', name: 'Verse', desc: 'Confident & polished' },
                       ].map((voice) => (
                         <button
                           key={voice.id}
@@ -481,7 +495,7 @@ export default function Home() {
                             setSettings(newSettings);
                             localStorage.setItem('briefing-settings', JSON.stringify(newSettings));
                             setShowVoicePicker(false);
-                            generateAudio();
+                            generateAudio(voice.id);
                           }}
                           className={`w-full px-4 py-2.5 text-left text-sm hover:bg-[var(--card-hover)] transition-colors ${
                             settings.voice === voice.id ? 'text-[var(--accent)] font-medium' : 'text-[var(--foreground)]'
@@ -495,6 +509,7 @@ export default function Home() {
                   </div>
                 )}
               </div>
+              {userEmail && (
               <button
                 onClick={() => setShowEmailModal(true)}
                 disabled={emailSent}
@@ -512,6 +527,7 @@ export default function Home() {
                   </>
                 )}
               </button>
+              )}
               <button
                 onClick={exportBriefing}
                 className="btn-secondary px-5 py-3 rounded-xl font-medium flex items-center gap-2"
@@ -721,13 +737,6 @@ export default function Home() {
         onSave={setSettings}
       />
 
-      {/* Add Topic Modal */}
-      <AddTopicModal
-        isOpen={showAddTopic}
-        onClose={() => setShowAddTopic(false)}
-        onAdd={addCustomTopic}
-      />
-
       {/* Upgrade Modal */}
       <UpgradeModal
         isOpen={showUpgradeModal}
@@ -744,34 +753,18 @@ export default function Home() {
               <Mail className="w-5 h-5" /> Email Briefing
             </h2>
             <p className="text-[var(--muted)] text-sm mb-4">
-              Enter your email to receive this briefing in your inbox.
+              Send this briefing to <span className="text-[var(--foreground)] font-medium">{userEmail}</span>
             </p>
-            <input
-              type="email"
-              value={emailInput}
-              onChange={(e) => setEmailInput(e.target.value)}
-              placeholder="your@email.com"
-              className="w-full px-4 py-3 rounded-xl bg-[var(--background)] border border-[var(--border)] focus:border-[var(--accent)] focus:outline-none mb-4"
-              autoFocus
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && emailInput.includes('@')) {
-                  sendEmail(emailInput);
-                }
-              }}
-            />
             <div className="flex gap-3">
               <button
-                onClick={() => {
-                  setShowEmailModal(false);
-                  setEmailInput('');
-                }}
+                onClick={() => setShowEmailModal(false)}
                 className="flex-1 px-4 py-3 rounded-xl bg-[var(--card-hover)] hover:bg-[var(--border)] transition-colors"
               >
                 Cancel
               </button>
               <button
-                onClick={() => sendEmail(emailInput)}
-                disabled={!emailInput.includes('@') || isSendingEmail}
+                onClick={sendEmail}
+                disabled={isSendingEmail}
                 className="flex-1 px-4 py-3 rounded-xl bg-[var(--accent)] text-white font-medium disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {isSendingEmail ? (

@@ -9,13 +9,31 @@
 
 import { Redis } from '@upstash/redis';
 
-function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+// Circuit breaker: when Redis is unreachable (the Oct 2026 live run hit a
+// deleted Upstash host and paid a 3s timeout on every one of ~40 cache ops,
+// turning a 10s briefing into 150s), skip Redis for a cooldown instead of
+// timing out on each call. Everything stays fail-open.
+const REDIS_OP_TIMEOUT_MS = 1500;
+const REDIS_COOLDOWN_MS = 60_000;
+let redisDownUntil = 0;
+
+function redisAvailable(): boolean {
+  return Date.now() >= redisDownUntil;
+}
+
+function markRedisDown(err: unknown): void {
+  if (redisAvailable()) console.error(`[news/cache] Redis unavailable, pausing cache for ${REDIS_COOLDOWN_MS / 1000}s:`, err);
+  redisDownUntil = Date.now() + REDIS_COOLDOWN_MS;
+}
+
+function withTimeout<T>(promise: Promise<T>, ms: number = REDIS_OP_TIMEOUT_MS): Promise<T> {
+  let timer: ReturnType<typeof setTimeout>;
   return Promise.race([
     promise,
-    new Promise<T>((_, reject) =>
-      setTimeout(() => reject(new Error(`Redis timeout after ${ms}ms`)), ms)
-    ),
-  ]);
+    new Promise<T>((_, reject) => {
+      timer = setTimeout(() => reject(new Error(`Redis timeout after ${ms}ms`)), ms);
+    }),
+  ]).finally(() => clearTimeout(timer));
 }
 
 // ─── Redis ───────────────────────────────────────────────────────────
@@ -41,6 +59,7 @@ export function getRedis(): Redis | null {
  */
 export function _setRedisForTests(client: Redis | null | undefined): void {
   _redis = client;
+  redisDownUntil = 0;
 }
 
 // ─── Canonical topic keys ────────────────────────────────────────────
@@ -100,23 +119,23 @@ export const EMPTY_TTL_SECONDS = 30 * 60;
 
 export async function getCached<T>(key: string): Promise<T | null> {
   const redis = getRedis();
-  if (!redis) return null;
+  if (!redis || !redisAvailable()) return null;
   try {
-    const v = await withTimeout(redis.get<T>(key), 3000);
+    const v = await withTimeout(redis.get<T>(key));
     return v ?? null;
   } catch (err) {
-    console.error(`[news/cache] get failed for ${key}:`, err);
+    markRedisDown(err);
     return null;
   }
 }
 
 export async function setCached<T>(key: string, value: T, ttlSeconds: number): Promise<void> {
   const redis = getRedis();
-  if (!redis) return;
+  if (!redis || !redisAvailable()) return;
   try {
-    await withTimeout(redis.set(key, value, { ex: ttlSeconds }), 3000);
+    await withTimeout(redis.set(key, value, { ex: ttlSeconds }));
   } catch (err) {
-    console.error(`[news/cache] set failed for ${key}:`, err);
+    markRedisDown(err);
   }
 }
 
@@ -154,35 +173,36 @@ const LOCK_MAX_WAIT_MS = 60_000; // losers wait out a full slow gather before fa
  */
 async function acquireLock(lockKey: string, ttlSeconds: number): Promise<boolean> {
   const redis = getRedis();
-  if (!redis) return true; // no Redis → no cross-process coordination, just proceed
+  if (!redis || !redisAvailable()) return true; // no Redis → no cross-process coordination, just proceed
   try {
     // Upstash returns "OK" on success, null when nx fails. Coerce defensively.
-    const result = await withTimeout(redis.set(lockKey, '1', { nx: true, ex: ttlSeconds }), 3000);
+    const result = await withTimeout(redis.set(lockKey, '1', { nx: true, ex: ttlSeconds }));
     return result !== null && result !== undefined;
   } catch (err) {
-    console.error(`[news/cache] lock acquire failed for ${lockKey}:`, err);
+    markRedisDown(err);
     return true; // fail-open: better to occasionally double-fetch than to deadlock
   }
 }
 
 async function lockHeld(lockKey: string): Promise<boolean> {
   const redis = getRedis();
-  if (!redis) return false;
+  if (!redis || !redisAvailable()) return false;
   try {
-    const v = await withTimeout(redis.get(lockKey), 3000);
+    const v = await withTimeout(redis.get(lockKey));
     return v !== null && v !== undefined;
-  } catch {
-    return true; // assume held on error so we keep waiting instead of stampeding
+  } catch (err) {
+    markRedisDown(err);
+    return false; // Redis just died: stop waiting and let the caller take over
   }
 }
 
 async function releaseLock(lockKey: string): Promise<void> {
   const redis = getRedis();
-  if (!redis) return;
+  if (!redis || !redisAvailable()) return;
   try {
-    await withTimeout(redis.del(lockKey), 3000);
+    await withTimeout(redis.del(lockKey));
   } catch (err) {
-    console.error(`[news/cache] lock release failed for ${lockKey}:`, err);
+    markRedisDown(err);
   }
 }
 

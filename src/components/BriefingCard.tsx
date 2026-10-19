@@ -200,6 +200,29 @@ export function BriefingCard({ briefing, index, onRefresh, isRefreshing }: Brief
     ));
   };
 
+  if (briefing.empty) {
+    return (
+      <div className="bg-[var(--card)] rounded-2xl border border-[var(--border)] p-6 opacity-80">
+        <h3 className="text-xl font-semibold text-[var(--muted)]">{briefing.topic}</h3>
+        <p className="text-sm text-[var(--muted)] mt-2">{briefing.summary}</p>
+        {briefing.articles?.length > 0 && (
+          <div className="mt-4">
+            <h4 className="text-xs font-semibold text-[var(--muted)] uppercase tracking-wide mb-2">Sources</h4>
+            <ul className="space-y-1 text-sm">
+              {briefing.articles.map((a, i) => (
+                <li key={i}>
+                  <a href={a.url} target="_blank" rel="noopener noreferrer" className="text-[var(--accent)] hover:underline">
+                    {a.title || a.source || a.url}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div
       className={cn(
@@ -235,9 +258,9 @@ export function BriefingCard({ briefing, index, onRefresh, isRefreshing }: Brief
                   {briefing.stories!.length} stories
                 </span>
               )}
-              {briefing.searchProvider && (
+              {briefing.model && (
                 <span className="px-1.5 py-0.5 rounded bg-[var(--card-hover)] text-[10px] uppercase tracking-wide">
-                  via {briefing.searchProvider}
+                  via {briefing.model}
                 </span>
               )}
             </div>
@@ -396,7 +419,7 @@ export function BriefingCard({ briefing, index, onRefresh, isRefreshing }: Brief
           )}
 
           {/* Legacy Summary Display (fallback if no stories) */}
-          {!hasStories && briefing.articles.length > 0 && (
+          {!hasStories && briefing.articles?.length > 0 && (
             <div className="px-6">
               <div className="border-t border-[var(--border)] pt-4">
                 <h4 className="text-sm font-medium mb-3 flex items-center gap-2">

@@ -9,7 +9,7 @@ AI-powered news briefings based on your interests. Choose topics, generate brief
 - **Frontend**: Next.js 14 (App Router), Tailwind CSS, dark theme
 - **iOS App**: Native Swift/SwiftUI with Xcode
 - **Auth**: NextAuth.js with Google OAuth (web), Google Sign-In (iOS)
-- **News Data**: Perigon News API (article search + vector/semantic search)
+- **News Data**: Brave News Search API (primary) + Exa (niche-topic fallback)
 - **AI Assembly**: OpenAI GPT-5-nano (briefing text generation)
 - **Audio**: OpenAI TTS API (with chunking for long briefings)
 - **Email**: Gmail SMTP (nodemailer) for scheduled briefings
@@ -20,7 +20,7 @@ AI-powered news briefings based on your interests. Choose topics, generate brief
 ## Features
 
 - 📰 **42 Curated Topics** across Tech, Sports, Finance, Science, Politics, Lifestyle, Entertainment
-- 🔍 **Perigon News API** for structured, high-quality article data
+- 🔍 **Brave News + Exa** for fresh, dated, sourced articles — including niche community sites
 - 🧠 **Semantic Search** for niche topics via vector search
 - 🎧 **Text-to-Speech** with 6 OpenAI voices and speed control
 - 📧 **Scheduled Emails** with daily briefing delivery
@@ -34,7 +34,7 @@ AI-powered news briefings based on your interests. Choose topics, generate brief
 - Node.js 18+
 - npm/pnpm
 - OpenAI API key
-- Perigon API key
+- Brave Search API key
 
 ### Installation
 
@@ -45,7 +45,7 @@ npm install
 
 cat > .env.local << EOF
 OPENAI_API_KEY=your_openai_key
-PERIGON_API_KEY=your_perigon_key
+BRAVE_API_KEY=your_brave_key
 KV_REST_API_URL=your_upstash_url
 KV_REST_API_TOKEN=your_upstash_token
 EOF
@@ -57,20 +57,37 @@ Visit `http://localhost:3000`.
 
 ## Environment Variables
 
-| Variable | Description | Required |
-|----------|-------------|----------|
-| `OPENAI_API_KEY` | OpenAI API key (GPT-5-nano + TTS) | Yes |
-| `PERIGON_API_KEY` | Perigon News API key | Yes |
-| `KV_REST_API_URL` | Upstash Redis REST URL | Yes |
-| `KV_REST_API_TOKEN` | Upstash Redis REST token | Yes |
-| `GOOGLE_CLIENT_ID` | Google OAuth client ID | Yes |
-| `GOOGLE_CLIENT_SECRET` | Google OAuth client secret | Yes |
-| `NEXTAUTH_SECRET` | NextAuth session secret | Yes |
-| `NEXTAUTH_URL` | App base URL | Yes |
-| `SMTP_USER` | Gmail address for sending emails | For email |
-| `SMTP_PASS` | Gmail app password | For email |
-| `NEWS_SOURCE` | `perigon` (default), `openai`, or `perplexity` | No |
-| `NEXT_PUBLIC_DEV_MODE` | `true` to enable dev mode (unlimited topics, full markdown download) | No |
+**Auth**
+- `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`
+- `GOOGLE_IOS_CLIENT_ID` (iOS only)
+- `NEXTAUTH_SECRET`
+- `NEXTAUTH_URL` (no trailing slash)
+
+**News gathering**
+- `BRAVE_API_KEY` (primary; the Free plan is 1 req/s, set `BRAVE_MIN_INTERVAL_MS=0` on a paid plan)
+- `EXA_API_KEY` (niche-topic fallback)
+
+**LLM**
+- `OPENAI_API_KEY`
+- `BRIEFING_MODEL` (default `gpt-5.4-nano`)
+- `SEARCH_PLANNER_MODEL` (default `gpt-5.4-nano`)
+
+**Storage**
+- `KV_REST_API_URL`, `KV_REST_API_TOKEN` (Upstash Redis; the app degrades to no-cache/no-schedules without it)
+
+**Email**
+- `SMTP_USER`, `SMTP_PASS`
+
+**Cron**
+- `CRON_SECRET` (required: cron routes refuse to run without it)
+
+**Payments**
+- `STRIPE_SECRET_KEY`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`, `STRIPE_WEBHOOK_SECRET`
+- `STRIPE_MONTHLY_PRICE_ID`, `STRIPE_ANNUAL_PRICE_ID`
+
+**TTS**
+- `TTS_PROVIDER` (`openai` | `google`)
+- `GOOGLE_TTS_API_KEY` (google only)
 
 ## Project Structure
 
@@ -91,10 +108,10 @@ briefing/
 │   │   ├── schedule/              # Schedule management page
 │   │   └── pricing/               # Pricing page
 │   └── lib/
-│       ├── perigon.ts             # Perigon News API client
-│       ├── topic-engine.ts        # 42 curated topics + custom topic creation
-│       ├── briefing-generator.ts  # Core pipeline: Perigon → GPT-5-nano → briefing
-│       ├── perigon-cache.ts       # Redis caching for articles & sections
+│       ├── gather.ts              # Brave News + Exa gathering, planner + relevance gate
+│       ├── briefing-pipeline.ts   # Core pipeline: gather → gpt-5.4-nano assembly → briefing
+│       ├── briefing-assembler.ts  # LLM assembly + section cache
+│       ├── briefing-cache.ts      # Redis section + schedule-day caches
 │       ├── prompts.ts             # LLM prompt templates
 │       ├── models.ts              # OpenAI model config
 │       └── filter-stories.ts      # Story deduplication & filtering
@@ -130,13 +147,13 @@ Every request prepends this URL to API paths (e.g. `/api/generate`, `/api/subscr
 
 ### Testing Against a Preview Branch
 
-When working on a feature branch (e.g. `perigon-integration`), Vercel creates an automatic preview deployment. To test the iOS app against it:
+When working on a feature branch (e.g. `my-feature`), Vercel creates an automatic preview deployment. To test the iOS app against it:
 
 1. Push the branch: `git push origin your-branch`
-2. Find the preview URL in the Vercel dashboard (e.g. `https://briefing-git-perigon-integration-jschorr2121s-projects.vercel.app`)
+2. Find the preview URL in the Vercel dashboard (e.g. `https://briefing-git-my-feature-jschorr2121s-projects.vercel.app`)
 3. Temporarily update the base URL in `AppConfig.swift`:
    ```swift
-   static let baseURL = "https://briefing-git-perigon-integration-jschorr2121s-projects.vercel.app"
+   static let baseURL = "https://briefing-git-my-feature-jschorr2121s-projects.vercel.app"
    ```
 4. Build and run in the Xcode simulator
 5. Switch back to the production URL before committing
