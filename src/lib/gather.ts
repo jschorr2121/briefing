@@ -175,6 +175,8 @@ But DROP (even if on-topic) anything that is clearly one of:
 - a press release, market-research report ("market to reach $X billion"), vendor/store blog, or sponsored content
 - a listicle or buying guide ("best X", "N picks", "explained", "what to know"), a generic evergreen explainer, or a site section/hub page
 - a betting pick, odds, or prediction-model article
+- a product review, hands-on, or spec rundown (a product LAUNCH is news; a review is not)
+- a data dashboard, statistics landing page, or agency reference page (not a dated news item)
 - a job, internship, or event-registration listing
 - an opinion column with no new facts
 
@@ -317,7 +319,11 @@ export function prepareSearchResults(raw: RawSearchResult[], limit = MAX_ARTICLE
     const t = Date.parse(a.date);
     return !Number.isNaN(t) && Date.now() - t <= FRESH_WINDOW_MS;
   };
-  return [...out.filter(isFresh), ...out.filter(a => !isFresh(a))];
+  // Live blogs last within each bucket: their extracted text is whatever post
+  // was on top at crawl time, which produced an off-headline lead in review.
+  const isLive = (a: PreparedArticle) => /\/live[-_/]|live-updates|liveblog/i.test(a.url);
+  const order = (list: PreparedArticle[]) => [...list.filter(a => !isLive(a)), ...list.filter(isLive)];
+  return [...order(out.filter(isFresh)), ...order(out.filter(a => !isFresh(a)))];
 }
 
 // ─── Article body enrichment ─────────────────────────────────────────

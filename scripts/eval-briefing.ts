@@ -31,10 +31,7 @@ function toMarkdown(name: string, who: string, briefings: Briefing[], ms: number
       for (const bl of s.bullets) lines.push(`- ${bl}`);
       lines.push('');
     });
-    if (b.articles.length) {
-      lines.push('Sources gathered: ' + b.articles.map(a => `[${a.source}](${a.url})`).join(', '), '');
-    }
-    if (b.debugInfo) lines.push(`_debug: ${b.debugInfo.cascadeStep}; queries: ${b.debugInfo.queries.map(q => q.query).join(' | ')}; ${b.debugInfo.articleCount} articles_`, '');
+    if (b.debugInfo) lines.push(`_(internal, not shown to users) gather: ${b.debugInfo.cascadeStep}; queries: ${b.debugInfo.queries.map(q => q.query).join(' | ')}; ${b.debugInfo.articleCount} articles_`, '');
   }
   return lines.join('\n');
 }

@@ -25,7 +25,7 @@ const LENGTH = {
 };
 
 const TONE = {
-  casual: 'conversational — contractions, a little wit, talk to the reader ("if you\'re following the title fight…"), never wire-service flat; but every bullet is still a hard fact',
+  casual: 'conversational — contractions, a little wit, talk to the reader. Example bullet: "Verstappen\'s now won five straight at Marina Bay, so if you\'re betting against him in Austin, good luck." Never wire-service flat; but every bullet is still a hard fact',
   professional: 'clear and direct, like a wire-service brief',
   technical: 'dense with specifics: names of models, products, methods, versions, figures, benchmarks, dates; assume an expert reader',
 };
@@ -54,7 +54,7 @@ HOW TO WRITE
   FORBIDDEN in bullets: "X reports/says/notes/highlights…", "the article/piece/story/coverage…", "underscores/signals/frames/positions…", restating the date, source, URL or publication time, "according to" framing, generic context sentences that contain no fact.
 - source: the publication's proper name (The Guardian, Yahoo Finance, World Nuclear News) — never a hostname.
 - url and date: copied exactly from the article you are citing. date is that article's own date, never today's date unless the article's date is today.
-- summary: ${L.summary}: the "so what" for this reader — the development that matters most and why, with the key number or name. Do not list the stories; do not hedge; no "the landscape is shifting".
+- summary: ${L.summary}: the "so what" for this reader — the development that matters most and why, with the key number or name. Every claim in the summary must come from a story you wrote below (never from an article you skipped). Do not list the stories; do not hedge; no "the landscape is shifting".
 - Tone: ${TONE[s.tone]}.
 
 Respond with ONLY this JSON:

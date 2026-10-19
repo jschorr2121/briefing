@@ -28,7 +28,14 @@ defaults to 1100; set 0 on a paid plan.
 ## Deploy
 Push to `master` → Vercel. Crons are in `vercel.json` (generate 11:30 UTC, send 12:00 UTC).
 
+## Iterating on content quality
+`node --env-file=.env.local --import tsx scripts/eval-briefing.ts <outDir> [persona,...]`
+runs the real pipeline for five personas (cache isolated) and writes markdown
+to review. Grade it as a user would (web-check the facts), change the prompt or
+gather rules, re-run. The Oct 19 loop and its results are in `docs/ARCHITECTURE.md`.
+
 ## Log
+- **Oct 19, 2026 (PM)** — Seven persona-graded eval rounds: article-body enrichment, verifier pass, Luna writer, stricter gate, dedupe floors; honest pricing page, vertical story list, mobile fixes. Default writer is now `gpt-5.6-luna`.
 - **Oct 19, 2026** — Rebuilt around one pipeline (Brave News + Exa fallback, gpt-5.4-nano). Deleted Perigon/agentic/legacy paths (~20k lines). Auth on paid endpoints, HTML-escaped email, cron fail-closed + no double sends, Stripe period-end fix, TTS voice list fixed, Redis circuit breaker. Live: 4-topic briefing 150s → 36s. Details in `docs/ARCHITECTURE.md`.
 - **Jul 21, 2026** — Live A/B of search APIs vs LLM web search (superseded by the Oct rebuild).
 - **Feb 4, 2026** — Hub removed, default topics, App Store prep.

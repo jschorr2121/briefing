@@ -229,10 +229,6 @@ export default function PricingPage() {
                   q: 'What happens when I hit the free limit?',
                   a: 'You\'ll see a prompt explaining the limit, which resets at midnight UTC. Your existing briefings are always accessible — you just can\'t generate new ones until the next day.',
                 },
-                {
-                  q: 'What payment methods do you accept?',
-                  a: 'We accept all major credit cards through Stripe. Your payment info is never stored on our servers.',
-                },
               ].map(({ q, a }) => (
                 <div key={q} className="bg-[var(--card)] rounded-xl p-5 border border-[var(--border)]">
                   <h4 className="font-medium mb-2">{q}</h4>

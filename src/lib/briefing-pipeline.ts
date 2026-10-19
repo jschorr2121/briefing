@@ -110,10 +110,10 @@ export async function generateBriefing(topics: TopicInput[], settings: GenerateS
   return { briefings: dedupeAcrossTopics(briefings), model };
 }
 
-/** "Sources" list leads with what the stories actually cite, then other gathered links. */
+/** "Sources" = exactly what the stories cite. Listing rejected articles advertised the junk the writer correctly skipped (every Oct 19 reviewer flagged it). */
 function citedFirst(stories: StoryCard[], articles: Article[]): Article[] {
   const cited = new Set(stories.map(s => s.url).filter(Boolean));
-  return [...articles.filter(a => cited.has(a.url)), ...articles.filter(a => !cited.has(a.url))];
+  return articles.filter(a => cited.has(a.url));
 }
 
 /**

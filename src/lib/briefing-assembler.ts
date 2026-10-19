@@ -1,7 +1,7 @@
 // LLM assembly of a briefing section from pre-fetched articles, plus the
 // per-topic section cache and issue-over-issue freshness memory.
 
-import { getAssemblyModel } from './models';
+import { getAssemblyModel, getPlannerModel } from './models';
 import { buildAssemblyPrompt, buildAssemblyUserMessage, type BriefingSettings, type PreparedArticle } from './prompts';
 import { filterRecentStories } from './filter-stories';
 import { getCached, setCached } from './news/cache';
@@ -69,15 +69,33 @@ export function cleanBullet(b: string): string | null {
   return stripped.charAt(0).toUpperCase() + stripped.slice(1);
 }
 
+/** Recover a story whose URL the model altered: best title-overlap article, if strong. */
+function recoverArticle(s: StoryCard, known: Map<string, PreparedArticle>): PreparedArticle | undefined {
+  if (s.url && known.has(s.url)) return known.get(s.url);
+  const words = (t: string) => new Set(t.toLowerCase().match(/[a-z0-9]{3,}/g) || []);
+  const h = words(s.headline || '');
+  if (h.size === 0) return undefined;
+  let best: PreparedArticle | undefined;
+  let bestScore = 0;
+  for (const a of known.values()) {
+    const t = words(a.title);
+    let overlap = 0;
+    for (const w of h) if (t.has(w)) overlap++;
+    const score = overlap / Math.min(h.size, Math.max(t.size, 1));
+    if (score > bestScore) { bestScore = score; best = a; }
+  }
+  return bestScore >= 0.5 ? best : undefined;
+}
+
 function sanitizeStory(s: StoryCard, known: Map<string, PreparedArticle>): StoryCard {
-  const article = s.url ? known.get(s.url) : undefined;
+  const article = recoverArticle(s, known);
   const bullets = (s.bullets || []).map(b => (typeof b === 'string' ? cleanBullet(b) : null)).filter((b): b is string => !!b);
   const headline = (s.headline || '').replace(OUTLET_PREFIX, '').trim();
   return {
     ...s,
     headline,
     bullets,
-    url: article ? s.url : undefined,
+    url: article?.url,
     // The article's own date beats whatever the model wrote.
     date: article?.date || s.date,
     source: s.source || article?.source,
@@ -110,6 +128,110 @@ async function callLLM(system: string, user: string): Promise<{ summary: string;
   return parseJSONResponse(text);
 }
 
+// ─── Verification pass ───────────────────────────────────────────────
+// The Oct 19 round-5 review caught "Antonelli won the Singapore Grand Prix"
+// (he was third) and two cards for one event. One cheap judge call per topic
+// checks each bullet against the cited article's text, flags unsupported
+// headlines, and flags cards that repeat an earlier card's event.
+
+interface Verdict {
+  stories: { index: number; drop?: boolean; contradiction?: boolean; duplicate?: boolean; reason?: string; badBullets?: number[] }[];
+}
+// Below this much article text the judge only saw a snippet: act on explicit
+// contradictions and duplicates, never on "not mentioned" (round-6: NBA fell
+// to one story because roundup pages had no fetched text).
+const SNIPPET_ONLY_CHARS = 600;
+
+function buildVerifyPrompt(): string {
+  return `You are a fact-checker for a news briefing. You get stories (headline + bullets) and, for each, the text of the article it cites.
+
+For each story decide:
+- "duplicate": true if the story is the same EVENT as an EARLIER story in the list (same announcement, same game, same market move). Two different events that happen to cite the same roundup article are NOT duplicates.
+- "contradiction": true if the headline or any bullet states something the article text CONTRADICTS (wrong winner, wrong number, wrong actor).
+- "drop": true if duplicate, or if the HEADLINE is contradicted or not supported by the article text, or if the article text is clearly about a different subject than the headline.
+- "badBullets": 0-based indexes of bullets that state a specific fact (number, name, outcome, quote, date) that the article text does not support or contradicts. A bullet that merely summarizes or paraphrases supported content is fine. Minor wording differences are fine. If the article text is empty or just a short snippet, only flag a bullet when it contradicts that snippet.
+- "reason": a few words.
+
+Be strict about contradictions and invented specifics, lenient about paraphrase. Respond with ONLY JSON:
+{"stories": [{"index": 0, "duplicate": false, "contradiction": false, "drop": false, "badBullets": [], "reason": "..."}, ...]}`;
+}
+
+async function verifyStories(stories: StoryCard[], known: Map<string, PreparedArticle>): Promise<StoryCard[]> {
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey || stories.length === 0) return stories;
+  const payload = stories.map((s, index) => {
+    const a = s.url ? known.get(s.url) : undefined;
+    return { index, headline: s.headline, bullets: s.bullets, articleTitle: a?.title ?? '', articleText: (a?.summary ?? '').slice(0, 2500) };
+  });
+  try {
+    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
+      signal: AbortSignal.timeout(30_000),
+      body: JSON.stringify({
+        model: getPlannerModel(),
+        response_format: { type: 'json_object' },
+        messages: [
+          { role: 'system', content: buildVerifyPrompt() },
+          { role: 'user', content: JSON.stringify(payload) },
+        ],
+      }),
+    });
+    if (!res.ok) throw new Error(`verify HTTP ${res.status}`);
+    const data = await res.json();
+    const verdict = JSON.parse(data.choices?.[0]?.message?.content ?? '{}') as Verdict;
+    if (!Array.isArray(verdict.stories)) return stories;
+    const byIndex = new Map(verdict.stories.map(v => [v.index, v]));
+    const out: StoryCard[] = [];
+    stories.forEach((s, i) => {
+      const v = byIndex.get(i);
+      const snippetOnly = (payload[i].articleText || '').length < SNIPPET_ONLY_CHARS;
+      const actionable = !snippetOnly || v?.contradiction || v?.duplicate;
+      if (v?.drop && actionable) {
+        console.log(`🧐 [Verify] Dropped "${s.headline}" — ${v.reason ?? 'unsupported or duplicate'}`);
+        return;
+      }
+      const bad = new Set(actionable ? v?.badBullets ?? [] : []);
+      const bullets = s.bullets.filter((_, bi) => !bad.has(bi));
+      if (bad.size > 0) console.log(`🧐 [Verify] Removed ${bad.size} unsupported bullet(s) from "${s.headline}"`);
+      if (bullets.length > 0) out.push({ ...s, bullets });
+    });
+    return out;
+  } catch (err) {
+    console.warn('⚠️ [Verify] Fact-check failed, keeping stories as written:', err);
+    return stories;
+  }
+}
+
+const MIN_STORIES = 2;
+
+/** After the verifier removes stories, the summary must not still refer to them. */
+async function rewriteSummary(topicName: string, summary: string, stories: StoryCard[]): Promise<string> {
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey || !summary || stories.length === 0) return summary;
+  try {
+    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
+      signal: AbortSignal.timeout(20_000),
+      body: JSON.stringify({
+        model: getPlannerModel(),
+        response_format: { type: 'json_object' },
+        messages: [
+          { role: 'system', content: `Edit a briefing summary for the topic "${topicName}" so it refers ONLY to the stories listed. Remove sentences about anything else; keep the length, tone and facts otherwise unchanged. Respond with ONLY {"summary": "..."}.` },
+          { role: 'user', content: JSON.stringify({ summary, stories: stories.map(s => ({ headline: s.headline, bullets: s.bullets })) }) },
+        ],
+      }),
+    });
+    if (!res.ok) return summary;
+    const data = await res.json();
+    const parsed = JSON.parse(data.choices?.[0]?.message?.content ?? '{}');
+    return typeof parsed.summary === 'string' && parsed.summary.trim() ? parsed.summary.trim() : summary;
+  } catch {
+    return summary;
+  }
+}
+
 /**
  * Assemble a briefing section for one topic from gathered articles.
  * Drops stale/future-dated stories, keeps only URLs that were actually
@@ -135,15 +257,39 @@ export async function assembleSection(
 
   // Fabricated-URL defense in code, not prompt: a story may only link a URL we gave it.
   const known = new Map(articles.map(a => [a.url, a] as const));
-  const stories = filterRecentStories(
-    (assembled.stories || [])
-      .map(s => sanitizeStory(s, known))
-      .filter(s => s.headline && s.bullets.length > 0)
-  );
+  const clean = (raw: StoryCard[]) =>
+    filterRecentStories(raw.map(s => sanitizeStory(s, known)).filter(s => s.headline && s.bullets.length > 0 && s.url));
+
+  const written = clean(assembled.stories || []);
+  let stories = await verifyStories(written, known);
+  let summary = assembled.summary || '';
+  if (stories.length < written.length) summary = await rewriteSummary(topicName, summary, stories);
+
+  // Story floor: the writer sometimes over-skips (round-5 review: "Health
+  // collapsed to ONE story" with 8 articles available). One retry that names
+  // what it already wrote and asks for the next most newsworthy events.
+  if (stories.length < MIN_STORIES && articles.length >= MIN_STORIES + 1) {
+    console.log(`🔁 [Assembly] Only ${stories.length} story for "${topicName}" from ${articles.length} articles — asking for more`);
+    try {
+      const retry = await callLLM(
+        system,
+        `${user}\n\nYou previously returned only ${stories.length} story (${stories.map(s => s.headline).join(' | ') || 'none'}). The reader needs at least ${MIN_STORIES + 1}. Keep those and add the next most newsworthy DISTINCT events from the articles, applying the same standards. Return the full list.`,
+      );
+      const retryWritten = clean(retry.stories || []);
+      const more = await verifyStories(retryWritten, known);
+      if (more.length > stories.length) {
+        stories = more;
+        summary = retry.summary || summary;
+        if (more.length < retryWritten.length) summary = await rewriteSummary(topicName, summary, stories);
+      }
+    } catch (err) {
+      console.warn(`⚠️ [Assembly] Retry failed for "${topicName}":`, err);
+    }
+  }
 
   const section: TopicBriefingSection = {
     topic: topicName,
-    summary: assembled.summary || '',
+    summary,
     stories,
     articles: toFrontendArticles(articles),
     generatedAt: new Date().toISOString(),

@@ -13,11 +13,16 @@ topic name ──► gather (src/lib/gather.ts)
                  4. relevance gate over titles        gpt-5.4-nano, ~300 tokens
                  5. if < 5 survive → Exa (category=news, 14-day window), same prep+gate
                  6. cache 6h per canonical topic, single-flight across instances
+                 7. fetch article body text for kept articles (8s hard budget, fail-soft)
             ──► assemble (src/lib/briefing-assembler.ts)
-                 one chat call, JSON mode, gpt-5.4-nano by default
-                 stories may only link URLs we supplied (code-level check)
+                 one chat call, JSON mode, gpt-5.6-luna by default
+                 stories may only link URLs we supplied; dates come from the article
+                 bullet guard strips "X reported that…" and date-only bullets
+                 verify pass (nano): drops contradicted headlines/bullets + duplicate events
+                 story floor: one retry if the writer returned < 2 stories
                  72h "already covered" memory so tomorrow leads with new stories
                  section cache 6h
+            ──► cross-topic dedupe (never below 2 stories per topic)
             ──► { topic, summary, stories[], articles[] }  →  web UI / email / TTS
 ```
 
@@ -43,12 +48,38 @@ So: Brave for everything, Exa only when Brave is thin, a nano relevance gate
 after each (it is what removes the Finnish classifieds and the FIFA-for-
 speedcubing matches), and the LLM web-search tool is gone entirely.
 
-Cost per fresh topic ≈ $0.010–0.014 search + $0.002 LLM. A 4-topic briefing
-with no cache hits ≈ $0.05; with the 6h topic cache and shared topics across
+Cost per fresh topic ≈ $0.010–0.014 search + ~$0.006 LLM (planner, gate,
+writer with article text, verifier). A 4-topic briefing with no cache hits ≈
+$0.07, 30–40s wall-clock; with the 6h topic cache and shared topics across
 users it is far less. At today's scale Brave's 2,000 free requests/month cover
 everything.
 
-### Assembly model: gpt-5.4-nano
+### Persona evaluation loop (Oct 19, 2026)
+
+`scripts/eval-briefing.ts` runs the real pipeline for five user personas (20
+topics) without touching the shared cache. Five reviewer agents, each playing
+one persona, read the output, fact-checked it against the web, and graded it;
+seven rounds of changes followed. What the loop found and fixed, in order of
+impact:
+
+| Round-1 defect (all five personas) | Fix |
+|---|---|
+| Week-old stories stamped with today's date | Brave `page_age` + URL-path dates, never relative `age` |
+| "source reminder:" / "date:" bullets, "NYT:" prefixes, "The article reports…" | Prompt rewrite + regex guard; writer switched to gpt-5.6-luna (meta-narration bullets 122 → 4 on the same 20 topics) |
+| Press releases, content farms, betting picks, listicles, reviews | Host blocklist + relevance-gate categories + English-text check |
+| Same event under two topics / two cards for one event | Cross-topic dedupe (2-story floor) + verifier duplicate check |
+| Bullets that restated the headline because the writer only saw a snippet | Article body text fetched for kept articles |
+| A fabricated race result | Verifier pass against the fetched text |
+| Topics collapsing to 0–1 stories after filtering | Dedupe floor + assembly retry |
+| "Sources" list advertising rejected junk | Sources = cited articles only |
+
+Persona grades r1 → r7 (1–10): Fed 4→7, Crypto 5→8, OpenAI 4→8, Boston 5→8,
+Protein 5→8, Climate 6→7. Weak spots that remain: F1/NBA when the last race or
+game is outside Brave's 7-day window; "Machine Learning Research" and
+"Mechanical Keyboards", where the news breaks on arXiv/geekhack-type sites that
+neither index carries well.
+
+### Assembly model: gpt-5.6-luna
 
 Same prompt, same 10 articles, Oct 19, 2026:
 
@@ -59,8 +90,9 @@ Same prompt, same 10 articles, Oct 19, 2026:
 | gpt-5.6-luna | 12–14s | $0.0017 | same picks, slightly nicer headlines |
 | claude-sonnet-5.5 | 13s | $0.025 | best prose and proper source names; 16× the cost |
 
-`BRIEFING_MODEL` overrides. JSON mode (`response_format: json_object`) plus a
-retry replaces the old regex-and-hope parsing.
+The persona loop then showed gpt-5.4-nano ignores "no meta-narration" rules
+that gpt-5.6-luna follows at the same price, so Luna is the writer; nano
+still runs the planner, gate and verifier. `BRIEFING_MODEL` overrides.
 
 ### Redis is optional and must never be slow
 
