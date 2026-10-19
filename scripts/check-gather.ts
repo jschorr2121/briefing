@@ -16,6 +16,8 @@ check('planner: caps at 3', parsePlannedQueries('{"queries":["a","b","c","d"]}',
 check('planner: drops non-strings', JSON.stringify(parsePlannedQueries('{"queries":["a", 42, ""]}', 't').queries) === '["a"]');
 check('planner: niche flag parsed', parsePlannedQueries('{"queries":["a"],"niche":true}', 't').niche === true);
 check('planner: niche defaults false', parsePlannedQueries('{"queries":["a"]}', 't').niche === false);
+check('planner: market + resultQuery + communitySites parsed', (() => { const p = parsePlannedQueries('{"queries":["a"],"market":true,"resultQuery":"Singapore Grand Prix result","communitySites":["https://www.geekhack.org/index.php","kbd.news"]}', 't'); return p.market && p.resultQuery === 'Singapore Grand Prix result' && JSON.stringify(p.communitySites) === '["geekhack.org","kbd.news"]'; })());
+check('planner: resultQuery null when missing', parsePlannedQueries('{"queries":["a"]}', 't').resultQuery === null);
 
 const twoDaysAgo = new Date(Date.now() - 2 * 86_400_000);
 check('date: "2 days ago" → real date', normalizeDate('2 days ago').includes(String(twoDaysAgo.getFullYear())));

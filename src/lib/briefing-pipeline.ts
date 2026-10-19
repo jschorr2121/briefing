@@ -6,6 +6,7 @@ import { assembleSection, sectionCacheId, type StoryCard, type Article } from '.
 import { getCachedSection } from './briefing-cache';
 import { getAssemblyModel } from './models';
 import { filterRecentStories } from './filter-stories';
+import { getMarketSnapshot } from './market-snapshot';
 
 export interface TopicInput {
   id?: string;
@@ -30,6 +31,8 @@ export interface Briefing {
   model: string;
   /** True when no usable coverage was found; the UI shows the summary as a notice. */
   empty?: boolean;
+  /** Market levels line ("S&P 500 7,691 (−1.5%) · …") for finance-flavored topics. */
+  snapshot?: string;
   debugInfo?: { queries: { type: string; query: string }[]; articleCount: number; cascadeStep?: string };
 }
 
@@ -85,11 +88,15 @@ export async function generateBriefing(topics: TopicInput[], settings: GenerateS
 
       try {
         console.log(`🤖 Assembling "${topic.name}" from ${gathered.articles.length} articles...`);
-        const section = await assembleSection(topic.name, gathered.articles, assemblySettings);
+        const [section, snapshot] = await Promise.all([
+          assembleSection(topic.name, gathered.articles, assemblySettings),
+          gathered.market ? getMarketSnapshot() : Promise.resolve(null),
+        ]);
         return {
           topic: topic.name,
           emoji: topic.emoji || '',
           summary: section.summary,
+          snapshot: snapshot ?? undefined,
           stories: section.stories,
           articles: includeLinks ? citedFirst(section.stories, section.articles).slice(0, 5) : [],
           generatedAt: section.generatedAt,
@@ -136,12 +143,12 @@ function dedupeAcrossTopics(briefings: Briefing[]): Briefing[] {
 /** Cron wrapper: topic-name strings in, flat briefing items out (empties dropped). */
 export async function generateBriefingsForCron(
   topicNames: string[],
-): Promise<{ topic: string; summary: string; stories: StoryCard[]; articles: Article[] }[]> {
+): Promise<{ topic: string; summary: string; snapshot?: string; stories: StoryCard[]; articles: Article[] }[]> {
   const result = await generateBriefing(
     topicNames.map(name => ({ name })),
     { briefingLength: 'medium', tone: 'professional', includeLinks: true },
   );
   return result.briefings
     .filter(b => !b.empty)
-    .map(b => ({ topic: b.topic, summary: b.summary, stories: b.stories, articles: b.articles }));
+    .map(b => ({ topic: b.topic, summary: b.summary, snapshot: b.snapshot, stories: b.stories, articles: b.articles }));
 }

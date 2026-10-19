@@ -25,7 +25,7 @@ export const PERSONAS: Record<string, { who: string; topics: string[]; length: '
 function toMarkdown(name: string, who: string, briefings: Briefing[], ms: number): string {
   const lines = [`# ${name} — ${who}`, `_Generated ${new Date().toISOString()} in ${(ms / 1000).toFixed(1)}s_`, ''];
   for (const b of briefings) {
-    lines.push(`## ${b.topic}${b.empty ? ' (EMPTY)' : ''}`, '', b.summary, '');
+    lines.push(`## ${b.topic}${b.empty ? ' (EMPTY)' : ''}`, '', ...(b.snapshot ? [`**Markets:** ${b.snapshot}`, ''] : []), b.summary, '');
     b.stories.forEach((s, i) => {
       lines.push(`### ${i + 1}. ${s.headline}`, `_${s.source ?? '?'} · ${s.date ?? 'no date'} · ${s.url ?? 'no url'}_`);
       for (const bl of s.bullets) lines.push(`- ${bl}`);

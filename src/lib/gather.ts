@@ -52,6 +52,8 @@ const FRESH_WINDOW_MS = 48 * 3_600_000;
 
 export interface ArticleSet {
   articles: PreparedArticle[];
+  /** Planner judged this a markets/economy topic → attach the market snapshot line. */
+  market?: boolean;
   debugInfo: {
     queries: { type: string; query: string }[];
     articleCount: number;
@@ -122,31 +124,39 @@ export function buildPlannerPrompt(): string {
 - Return 1-2 distinct queries covering the topic's key angles (${MAX_QUERIES} only if the topic genuinely spans that many separate angles). Each query costs money.
 - Write queries the way a news editor would: SHORT keyword phrases (2-6 words, under 60 characters) anchored on concrete entities — "Federal Reserve interest rates", "TSMC AI chips". Never long descriptive sentences: they match SEO content farms instead of news.
 - For catch-all topics ("World News", "Top Stories", "Tech"), the news API already ranks by prominence: use the plain topic phrase as the first query ("world news") and at most one more for the biggest live story you know of. Never invent abstract angles ("global conflicts ceasefires UN") — they surface think-tank and aggregator pages instead of the day's news.
-- If the topic has a recurring event (a race, game, match, earnings, central-bank meeting, model release), make one query target the MOST RECENT instance's result ("Singapore Grand Prix result", "NBA scores", "FOMC decision") so the briefing can lead with what just happened.
 - For niche topics (hobbies, industry subfields), add the community's proper names (federations, flagship sites, jargon) — the places real news for that community breaks, not retailers or review sites.
 - Include the current year in at most one query.
 
-Also classify the topic: "niche" is true when the news for this topic breaks on community/specialist sites (hobbies, fandoms, sub-fields of science or engineering, local news) rather than in mainstream outlets.
+Also return:
+- "niche": true when the news for this topic breaks on community/specialist sites (hobbies, fandoms, sub-fields of science or engineering, local news) rather than in mainstream outlets.
+- "market": true when the topic is about financial markets, investing, the economy, crypto, or central banks (a market-levels line will be attached).
+- "resultQuery": REQUIRED (not null) for any sport, league, motorsport, tournament, earnings season or central bank: a short query for the MOST RECENT completed event's result, naming the event if you know it ("Singapore Grand Prix 2026 race result", "NBA opening night scores", "FOMC decision") — it is searched with a wider date window so the briefing can lead with what just happened even if it was over a week ago. null only for topics with no recurring events.
+- "communitySites": up to 4 hostnames where this community's own news breaks (e.g. "geekhack.org", "kbd.news" for keyboards; "arxiv.org", "huggingface.co" for ML research; "worldcubeassociation.org" for cubing). Empty for mainstream topics.
 
-Respond with ONLY valid JSON: {"queries": ["...", "..."], "niche": true|false}`;
+Respond with ONLY valid JSON: {"queries": ["...", "..."], "niche": false, "market": false, "resultQuery": null, "communitySites": []}`;
 }
 
 export interface QueryPlan {
   queries: string[];
   niche: boolean;
+  market: boolean;
+  resultQuery: string | null;
+  communitySites: string[];
 }
 
 export function parsePlannedQueries(text: string, topicName: string): QueryPlan {
-  const parsed = extractJson(text) as { queries?: unknown; niche?: unknown } | null;
-  const niche = parsed?.niche === true;
-  if (parsed && Array.isArray(parsed.queries)) {
-    const queries = parsed.queries
-      .filter((q): q is string => typeof q === 'string' && q.trim().length > 0)
-      .map(q => q.trim())
-      .slice(0, MAX_QUERIES);
-    if (queries.length > 0) return { queries, niche };
-  }
-  return { queries: [topicName], niche };
+  const parsed = extractJson(text) as { queries?: unknown; niche?: unknown; market?: unknown; resultQuery?: unknown; communitySites?: unknown } | null;
+  const strings = (v: unknown, max: number) =>
+    Array.isArray(v) ? v.filter((q): q is string => typeof q === 'string' && q.trim().length > 0).map(q => q.trim()).slice(0, max) : [];
+  const plan: QueryPlan = {
+    queries: strings(parsed?.queries, MAX_QUERIES),
+    niche: parsed?.niche === true,
+    market: parsed?.market === true,
+    resultQuery: typeof parsed?.resultQuery === 'string' && parsed.resultQuery.trim() ? parsed.resultQuery.trim() : null,
+    communitySites: strings(parsed?.communitySites, 4).map(h => h.toLowerCase().replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/.*$/, '')),
+  };
+  if (plan.queries.length === 0) plan.queries = [topicName];
+  return plan;
 }
 
 async function planQueries(topicName: string): Promise<QueryPlan> {
@@ -154,7 +164,7 @@ async function planQueries(topicName: string): Promise<QueryPlan> {
     return parsePlannedQueries(await nanoJson(buildPlannerPrompt(), `Topic: ${topicName}`), topicName);
   } catch (err) {
     console.warn(`⚠️ [Gather] Query planning failed for "${topicName}", using topic as query:`, err);
-    return { queries: [topicName], niche: false };
+    return { queries: [topicName], niche: false, market: false, resultQuery: null, communitySites: [] };
   }
 }
 
@@ -394,11 +404,11 @@ async function enrichWithBodies(articles: PreparedArticle[]): Promise<PreparedAr
 
 // ─── Providers ───────────────────────────────────────────────────────
 
-async function searchBrave(query: string): Promise<RawSearchResult[]> {
+async function searchBrave(query: string, freshness: 'pd' | 'pw' | 'pm' = 'pw'): Promise<RawSearchResult[]> {
   const params = new URLSearchParams({
     q: query,
     count: String(RESULTS_PER_QUERY),
-    freshness: 'pw',
+    freshness,
     country: 'US',
     extra_snippets: 'true',
   });
@@ -428,7 +438,7 @@ async function searchBrave(query: string): Promise<RawSearchResult[]> {
   }));
 }
 
-async function searchExa(query: string): Promise<RawSearchResult[]> {
+async function searchExa(query: string, includeDomains?: string[]): Promise<RawSearchResult[]> {
   const res = await fetch('https://api.exa.ai/search', {
     method: 'POST',
     headers: { 'x-api-key': process.env.EXA_API_KEY!, 'Content-Type': 'application/json' },
@@ -436,7 +446,9 @@ async function searchExa(query: string): Promise<RawSearchResult[]> {
     body: JSON.stringify({
       query,
       type: 'auto',
-      category: 'news',
+      // Community sites (geekhack, arXiv, WCA) aren't "news" in Exa's
+      // taxonomy; drop the category when targeting them explicitly.
+      ...(includeDomains?.length ? { includeDomains } : { category: 'news' }),
       numResults: RESULTS_PER_QUERY,
       contents: { highlights: { numSentences: 2 } },
       startPublishedDate: new Date(Date.now() - EXA_LOOKBACK_DAYS * 86_400_000).toISOString(),
@@ -458,16 +470,16 @@ async function searchExa(query: string): Promise<RawSearchResult[]> {
   }));
 }
 
-async function braveAll(queries: string[]): Promise<RawSearchResult[]> {
+async function braveAll(queries: { q: string; freshness?: 'pd' | 'pw' | 'pm' }[]): Promise<RawSearchResult[]> {
   const raw: RawSearchResult[] = [];
-  for (const q of queries) {
+  for (const { q, freshness } of queries) {
     try {
-      raw.push(...(await throttledBrave(() => searchBrave(q))));
+      raw.push(...(await throttledBrave(() => searchBrave(q, freshness))));
     } catch (err) {
       if (String(err).includes('429')) {
         await sleep(1200);
         try {
-          raw.push(...(await throttledBrave(() => searchBrave(q))));
+          raw.push(...(await throttledBrave(() => searchBrave(q, freshness))));
           continue;
         } catch (retryErr) {
           err = retryErr;
@@ -480,7 +492,7 @@ async function braveAll(queries: string[]): Promise<RawSearchResult[]> {
 }
 
 async function exaAll(queries: string[]): Promise<RawSearchResult[]> {
-  const settled = await Promise.allSettled(queries.map(searchExa));
+  const settled = await Promise.allSettled(queries.map(q => searchExa(q)));
   const raw: RawSearchResult[] = [];
   settled.forEach((s, i) => {
     if (s.status === 'fulfilled') raw.push(...s.value);
@@ -491,18 +503,26 @@ async function exaAll(queries: string[]): Promise<RawSearchResult[]> {
 
 // ─── Main gather ─────────────────────────────────────────────────────
 
-async function gather(topicName: string): Promise<{ articles: PreparedArticle[]; queries: string[]; provider: string }> {
+async function gather(topicName: string): Promise<{ articles: PreparedArticle[]; queries: string[]; provider: string; market: boolean }> {
   const hasBrave = !!process.env.BRAVE_API_KEY;
   const hasExa = !!process.env.EXA_API_KEY;
   if (!hasBrave && !hasExa) throw new Error('Gathering requires BRAVE_API_KEY and/or EXA_API_KEY');
 
-  const { queries, niche } = await planQueries(topicName);
+  const plan = await planQueries(topicName);
+  const { niche, market, resultQuery, communitySites } = plan;
+  // The latest race/game/decision may be older than Brave's 7-day window
+  // (hobby review: "F1 never says who won Singapore") — widen it for that one query.
+  const braveQueries = [
+    ...plan.queries.map(q => ({ q })),
+    ...(resultQuery ? [{ q: resultQuery, freshness: 'pm' as const }] : []),
+  ];
+  const queries = braveQueries.map(b => b.q);
   let provider = '';
   let articles: PreparedArticle[] = [];
 
   if (hasBrave) {
     provider = 'brave';
-    articles = await filterRelevant(topicName, prepareSearchResults(await braveAll(queries)));
+    articles = await filterRelevant(topicName, prepareSearchResults(await braveAll(braveQueries)));
   }
 
   // Niche backstop: Exa's neural index carries the community sites a news
@@ -511,7 +531,15 @@ async function gather(topicName: string): Promise<{ articles: PreparedArticle[];
   // got 5 Brave product-PR items for "mechanical keyboards" and zero community
   // news. Brave results stay first so mainstream coverage leads.
   if (hasExa && (niche || articles.length < SPARSE_THRESHOLD)) {
-    const exaRaw = await exaAll(queries.slice(0, 2));
+    const exaRaw = await exaAll(plan.queries.slice(0, 2));
+    // Planner-named community sites get one targeted query of their own.
+    if (communitySites.length > 0) {
+      try {
+        exaRaw.push(...(await searchExa(plan.queries[0], communitySites)));
+      } catch (err) {
+        console.warn(`⚠️ [Gather] Community-site query failed for "${topicName}":`, err);
+      }
+    }
     const exaArticles = await filterRelevant(topicName, prepareSearchResults(exaRaw));
     if (exaArticles.length > 0) {
       provider = provider ? `${provider}+exa` : 'exa';
@@ -519,8 +547,8 @@ async function gather(topicName: string): Promise<{ articles: PreparedArticle[];
     }
   }
 
-  console.log(`🔎 [Gather] ${provider || 'none'}: ${queries.length} queries → ${articles.length} articles for "${topicName}"`);
-  return { articles: await enrichWithBodies(articles), queries, provider };
+  console.log(`🔎 [Gather] ${provider || 'none'}: ${queries.length} queries → ${articles.length} articles for "${topicName}"${market ? ' [market]' : ''}`);
+  return { articles: await enrichWithBodies(articles), queries, provider, market };
 }
 
 /**
@@ -529,33 +557,37 @@ async function gather(topicName: string): Promise<{ articles: PreparedArticle[];
  */
 export async function gatherArticles(topicName: string, skipCache = false): Promise<ArticleSet> {
   const cacheKey = `gather:${canonicalTopicId(topicName)}`;
-  const toSet = (articles: PreparedArticle[], queries: string[], cascadeStep: string): ArticleSet => ({
-    articles,
-    debugInfo: { queries: queries.map(q => ({ type: 'search', query: q })), articleCount: articles.length, cascadeStep },
+  type Cached = { articles: PreparedArticle[]; market: boolean };
+  const toSet = (c: Cached, queries: string[], cascadeStep: string): ArticleSet => ({
+    articles: c.articles,
+    market: c.market,
+    debugInfo: { queries: queries.map(q => ({ type: 'search', query: q })), articleCount: c.articles.length, cascadeStep },
   });
 
   if (skipCache) {
     const g = await gather(topicName);
-    return toSet(g.articles, g.queries, g.provider);
+    return toSet({ articles: g.articles, market: g.market }, g.queries, g.provider);
   }
 
   let fresh: { queries: string[]; provider: string } | null = null;
-  const articles = await fetchWithLock<PreparedArticle[]>({
+  const cached = await fetchWithLock<Cached>({
     cacheKey,
     lockKey: `${cacheKey}:lock`,
     ttlSeconds: TOPIC_TTL_SECONDS,
     work: async () => {
       const g = await gather(topicName);
       fresh = { queries: g.queries, provider: g.provider };
-      return g.articles;
+      return { articles: g.articles, market: g.market };
     },
   });
+  // Entries written before the market flag existed are plain arrays.
+  const entry: Cached = Array.isArray(cached) ? { articles: cached as PreparedArticle[], market: false } : cached;
 
   if (fresh) {
     const f = fresh as { queries: string[]; provider: string };
-    if (articles.length === 0) await setCached(cacheKey, articles, EMPTY_TTL_SECONDS);
-    return toSet(articles, f.queries, f.provider);
+    if (entry.articles.length === 0) await setCached(cacheKey, entry, EMPTY_TTL_SECONDS);
+    return toSet(entry, f.queries, f.provider);
   }
   console.log(`📦 [Gather] Cache hit for "${topicName}"`);
-  return toSet(articles, [topicName], 'cached');
+  return toSet(entry, [topicName], 'cached');
 }

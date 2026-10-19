@@ -46,7 +46,7 @@ WHAT TO COVER
 - Lead with the event of widest consequence, then the rest by importance. The input order is NOT importance; recency matters but a big story from two days ago beats a trivial one from today.
 - If the topic has a recurring event (race, game, earnings, central-bank decision, model release) and the articles contain its latest result, that result comes first.
 - Prefer the last 48 hours. Use an older article only if it is still the most important thing and nothing newer covers it.
-- Skip anything that is not news: listicles, buying guides, explainers, press releases, market-research reports, betting picks, opinion columns, product listings, stock-chatter blogs. Skip articles about an adjacent subject rather than the topic itself (quantum computing is not machine learning; a bank's loan book is not semiconductors). If only two real stories exist, write two. Never pad.
+- Skip anything that is not news: listicles, buying guides, explainers, press releases, market-research reports, betting picks, opinion columns, product listings, stock-chatter blogs. Skip articles about an adjacent subject rather than the topic itself (quantum computing is not machine learning; a bank's loan book is not semiconductors). Stock-price and index moves belong to finance/markets topics only — in a technology, science, sports or policy topic, a selloff or rally is not a story unless the topic has nothing else. If only two real stories exist, write two. Never pad.
 
 HOW TO WRITE
 - headline: max 14 words, states the fact (who did what, with the number if there is one). No outlet name in the headline. Never claim something the article does not say.
