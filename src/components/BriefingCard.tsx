@@ -235,6 +235,12 @@ export function BriefingCard({ briefing, index, onRefresh, isRefreshing }: Brief
       {/* Content */}
       {expanded && (
         <div className="pb-6">
+          {briefing.snapshot && (
+            <p className="px-6 mb-3 text-xs font-mono text-[var(--muted)] break-words">
+              <span className="font-semibold uppercase tracking-wide">Markets</span> {briefing.snapshot}
+            </p>
+          )}
+
           {/* Highlights (TL;DR) */}
           <div className="px-6 mb-5 text-[var(--muted)] leading-relaxed text-sm">
             {formatSummary(briefing.summary)}

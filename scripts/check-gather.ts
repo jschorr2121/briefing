@@ -42,6 +42,7 @@ const prepared = prepareSearchResults([
 ]);
 check('prepare: dedupe/landing/wiki/old/invalid filtered, host cap 3', prepared.map(p => p.title).join(',') === 'A,G1,G2,G3');
 check('prepare: source defaults to host', prepared[0].source === 'x.com');
+check('prepare: syndicated PR titles dropped', prepareSearchResults([{ title: 'HYTE Unveils the keeb SR65 | PR Newswire', url: 'https://wfmz.com/x/y' }]).length === 0);
 check('prepare: limit respected', prepareSearchResults(Array.from({ length: 20 }, (_, i) => ({ title: `t${i}`, url: `https://h${i}.com/p` })), 5).length === 5);
 
 // ─── assembler bullet guard ──────────────────────────────────────────

@@ -75,7 +75,20 @@ export function formatQuote(q: Quote): string {
   return `${q.label} ${value}${chg}`;
 }
 
-/** "S&P 500 7,691 (−1.5%) · Nasdaq 26,431 (−3.0%) · … · BTC $82,020 (+0.5%)", or null if nothing could be fetched. */
+/** US equity session: 9:30–16:00 ET, Mon–Fri. Good enough to label live vs close. */
+function usMarketOpen(now = new Date()): boolean {
+  const et = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }));
+  const day = et.getDay();
+  const mins = et.getHours() * 60 + et.getMinutes();
+  return day >= 1 && day <= 5 && mins >= 9 * 60 + 30 && mins < 16 * 60;
+}
+
+/**
+ * "As of 1:35 PM ET (live): S&P 500 7,691 (−1.5%) · … · BTC $82,020 (+0.5%)", or null.
+ * The % moves are versus the prior close, so during the session they are the
+ * intraday move — the finance review caught that disagreeing with articles
+ * about the previous close, hence the explicit live/close label.
+ */
 export async function getMarketSnapshot(): Promise<string | null> {
   const cached = await getCached<string>(CACHE_KEY);
   if (cached) return cached;
@@ -85,7 +98,10 @@ export async function getMarketSnapshot(): Promise<string | null> {
   ]);
   const quotes = [...yahooQuotes.filter((q): q is Quote => !!q), ...cryptoQuotes];
   if (quotes.length === 0) return null;
-  const line = quotes.map(formatQuote).join(' · ');
+  const now = new Date();
+  const time = now.toLocaleTimeString('en-US', { timeZone: 'America/New_York', hour: 'numeric', minute: '2-digit' });
+  const label = usMarketOpen(now) ? `As of ${time} ET (live, vs prior close)` : `As of ${time} ET (last close; crypto live)`;
+  const line = `${label}: ${quotes.map(formatQuote).join(' · ')}`;
   await setCached(CACHE_KEY, line, CACHE_TTL_SECONDS);
   return line;
 }

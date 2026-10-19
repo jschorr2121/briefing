@@ -18,6 +18,7 @@ export interface ScheduledBriefing {
   briefings: {
     topic: string;
     summary: string;
+    snapshot?: string;
     stories: { headline: string; bullets: string[]; source?: string; url?: string; date?: string }[];
     articles: { title: string; url: string; source: string }[];
   }[];

@@ -4,6 +4,7 @@ export interface EmailBriefing {
   topic: string;
   emoji?: string;
   summary: string;
+  snapshot?: string;
   stories?: { headline: string; bullets: string[]; source?: string; url?: string; date?: string }[];
   articles: { title: string; url: string; source: string }[];
 }
@@ -73,6 +74,7 @@ export function formatBriefingEmail(briefings: EmailBriefing[]): string {
         <h2 style="margin: 0 0 16px; font-size: 18px; color: #60a5fa; font-weight: 600;">
           ${escapeHtml(b.topic)}
         </h2>
+        ${b.snapshot ? `<p style="font-size: 11px; color: #9ca3af; margin: 0 0 12px; font-family: monospace; line-height: 1.5;">Markets ${escapeHtml(b.snapshot)}</p>` : ''}
         <p style="font-size: 11px; color: #60a5fa; margin: 0 0 10px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 500;">Highlights</p>
         <div style="color: #d1d5db; font-size: 14px;">
           <p style="margin: 0 0 10px; line-height: 1.6;">

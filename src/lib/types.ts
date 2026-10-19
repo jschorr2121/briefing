@@ -24,6 +24,7 @@ export interface Briefing {
   topic: string;
   emoji: string;
   summary: string;
+  snapshot?: string;
   stories?: StoryCard[];
   articles: Article[];
   generatedAt: string;

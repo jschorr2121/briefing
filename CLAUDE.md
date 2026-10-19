@@ -35,6 +35,7 @@ to review. Grade it as a user would (web-check the facts), change the prompt or
 gather rules, re-run. The Oct 19 loop and its results are in `docs/ARCHITECTURE.md`.
 
 ## Log
+- **Oct 19, 2026 (late)** — Rounds 8–10: market snapshot line (Yahoo + CoinGecko), month-window latest-result query, planner community sites → Exa, PR-title filter.
 - **Oct 19, 2026 (PM)** — Seven persona-graded eval rounds: article-body enrichment, verifier pass, Luna writer, stricter gate, dedupe floors; honest pricing page, vertical story list, mobile fixes. Default writer is now `gpt-5.6-luna`.
 - **Oct 19, 2026** — Rebuilt around one pipeline (Brave News + Exa fallback, gpt-5.4-nano). Deleted Perigon/agentic/legacy paths (~20k lines). Auth on paid endpoints, HTML-escaped email, cron fail-closed + no double sends, Stripe period-end fix, TTS voice list fixed, Redis circuit breaker. Live: 4-topic briefing 150s → 36s. Details in `docs/ARCHITECTURE.md`.
 - **Jul 21, 2026** — Live A/B of search APIs vs LLM web search (superseded by the Oct rebuild).

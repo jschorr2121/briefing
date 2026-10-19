@@ -114,7 +114,18 @@ export async function generateBriefing(topics: TopicInput[], settings: GenerateS
     })
   );
 
-  return { briefings: dedupeAcrossTopics(briefings), model };
+  return { briefings: snapshotOnce(dedupeAcrossTopics(briefings)), model };
+}
+
+/** The market line is briefing-wide; show it on the first markets topic only. */
+function snapshotOnce(briefings: Briefing[]): Briefing[] {
+  let shown = false;
+  return briefings.map(b => {
+    if (!b.snapshot) return b;
+    if (shown) return { ...b, snapshot: undefined };
+    shown = true;
+    return b;
+  });
 }
 
 /** "Sources" = exactly what the stories cite. Listing rejected articles advertised the junk the writer correctly skipped (every Oct 19 reviewer flagged it). */

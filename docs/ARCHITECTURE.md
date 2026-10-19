@@ -7,11 +7,13 @@ One pipeline, one switchboard of env vars, nothing speculative. This file explai
 
 ```
 topic name ──► gather (src/lib/gather.ts)
-                 1. plan 1–2 short queries           gpt-5.4-nano, ~200 tokens
-                 2. Brave News (freshness=pw)         1 req/s gate on the Free plan
+                 1. plan 1–2 short queries + flags    gpt-5.4-nano, ~200 tokens
+                    (niche? market? latest-result query? community sites?)
+                 2. Brave News (freshness=pw; the latest-result query uses pm)
                  3. prepare: validate, dedupe, 45-day cutoff, ≤3/host, no Wikipedia
                  4. relevance gate over titles        gpt-5.4-nano, ~300 tokens
-                 5. if < 5 survive → Exa (category=news, 14-day window), same prep+gate
+                 5. if niche or < 5 survive → Exa (news, 14-day) + one query on the
+                    planner's community sites (geekhack, arXiv, WCA…), ranked first
                  6. cache 6h per canonical topic, single-flight across instances
                  7. fetch article body text for kept articles (8s hard budget, fail-soft)
             ──► assemble (src/lib/briefing-assembler.ts)
@@ -23,6 +25,8 @@ topic name ──► gather (src/lib/gather.ts)
                  72h "already covered" memory so tomorrow leads with new stories
                  section cache 6h
             ──► cross-topic dedupe (never below 2 stories per topic)
+            ──► market topics get one "As of … ET: S&P 500 … · 10-yr … · BTC …" line
+                (src/lib/market-snapshot.ts: Yahoo chart endpoint + CoinGecko, 10-min cache)
             ──► { topic, summary, stories[], articles[] }  →  web UI / email / TTS
 ```
 
@@ -73,11 +77,16 @@ impact:
 | Topics collapsing to 0–1 stories after filtering | Dedupe floor + assembly retry |
 | "Sources" list advertising rejected junk | Sources = cited articles only |
 
-Persona grades r1 → r7 (1–10): Fed 4→7, Crypto 5→8, OpenAI 4→8, Boston 5→8,
-Protein 5→8, Climate 6→7. Weak spots that remain: F1/NBA when the last race or
-game is outside Brave's 7-day window; "Machine Learning Research" and
-"Mechanical Keyboards", where the news breaks on arXiv/geekhack-type sites that
-neither index carries well.
+Persona grades r1 → r7 (1–10): SMRs 6→9, Protein 5→9, Crypto 5→8, Climate
+6→8, ML Research 2→7, OpenAI 4→7, Boston 5→7, Health 5→7. Rounds 8–10 then
+added the market-snapshot line (finance readers' blocking ask), a month-window
+"latest result" query for sports/markets, and planner-named community sites
+queried on Exa and ranked first (geekhack/deskthority now reach the writer).
+
+Still weak: F1 when the planner omits the result query; Mechanical Keyboards
+(the writer still prefers product launches over forum posts); AI & Tech drifts
+to market coverage on selloff days; finance readers want Fed-funds odds and a
+2-year yield the snapshot doesn't carry.
 
 ### Assembly model: gpt-5.6-luna
 

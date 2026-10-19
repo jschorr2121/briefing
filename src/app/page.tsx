@@ -287,6 +287,7 @@ export default function Home() {
 
     for (const briefing of briefings.filter(b => !b.empty)) {
       markdown += `## ${briefing.topic}\n\n`;
+      if (briefing.snapshot) markdown += `**Markets:** ${briefing.snapshot}\n\n`;
       markdown += `${briefing.summary}\n\n`;
 
       if (briefing.articles?.length > 0) {
@@ -344,6 +345,7 @@ export default function Home() {
         md += '\n';
       }
 
+      if (briefing.snapshot) md += `**Markets:** ${briefing.snapshot}\n\n`;
       md += `${briefing.summary}\n\n`;
 
       if (briefing.stories && briefing.stories.length > 0) {

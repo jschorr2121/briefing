@@ -173,8 +173,12 @@ async function planQueries(topicName: string): Promise<QueryPlan> {
 // Exa returns Finnish classifieds for "mechanical keyboards". One tiny call
 // over titles only (~300 tokens) drops the obvious junk. Fails open.
 
-export function buildRelevancePrompt(topicName: string): string {
+export function buildRelevancePrompt(topicName: string, communitySites: string[] = []): string {
+  const communityNote = communitySites.length
+    ? `\nItems from this topic's own community sites (${communitySites.join(', ')}) are the most valuable kind of result: keep them unless clearly off-topic, even when the headline is terse or jargon (a board name, a switch name, a build log).\n`
+    : '';
   return `You are filtering news search results for an English-language briefing about: "${topicName}".
+${communityNote}
 
 You will get a numbered list of headlines with their site. Reply with the numbers to KEEP.
 Keep anything plausibly ON-TOPIC — when unsure about relevance, keep it.
@@ -202,11 +206,11 @@ export function parseKeepIndices(text: string, count: number): number[] | null {
   return [...new Set<number>(indices)];
 }
 
-async function filterRelevant(topicName: string, articles: PreparedArticle[]): Promise<PreparedArticle[]> {
+async function filterRelevant(topicName: string, articles: PreparedArticle[], communitySites: string[] = []): Promise<PreparedArticle[]> {
   if (articles.length === 0) return articles;
   try {
     const list = articles.map((a, i) => `${i + 1}. ${a.title} (${a.source})`).join('\n');
-    const kept = parseKeepIndices(await nanoJson(buildRelevancePrompt(topicName), list), articles.length);
+    const kept = parseKeepIndices(await nanoJson(buildRelevancePrompt(topicName, communitySites), list), articles.length);
     if (kept === null) return articles;
     if (kept.length < articles.length) {
       console.log(`🚧 [Gather] Relevance gate kept ${kept.length}/${articles.length} for "${topicName}"`);
@@ -295,6 +299,8 @@ export function prepareSearchResults(raw: RawSearchResult[], limit = MAX_ARTICLE
 
     const host = hostOf(r.url);
     if (BLOCKED_HOSTS.some(b => host === b || host.endsWith('.' + b))) continue;
+    // Syndicated wire copy on local-TV domains ("… | PR Newswire" on wfmz.com).
+    if (/\b(PR Newswire|GlobeNewswire|Business Wire|ACCESSWIRE|EIN Presswire)\b/i.test(r.title)) continue;
 
     // A date in the URL path is the publish date; Brave's page_age can be a
     // later crawl/update (review: label "Oct 19" on a URL ending 10/16).
@@ -532,18 +538,26 @@ async function gather(topicName: string): Promise<{ articles: PreparedArticle[];
   // news. Brave results stay first so mainstream coverage leads.
   if (hasExa && (niche || articles.length < SPARSE_THRESHOLD)) {
     const exaRaw = await exaAll(plan.queries.slice(0, 2));
-    // Planner-named community sites get one targeted query of their own.
+    // Planner-named community sites get one targeted query of their own, and
+    // their hits go FIRST in the merged list: with Brave's 10–12 product-PR
+    // items ahead of them they were falling off the 12-article cap (round 8
+    // keyboards review: "NO community-site sources" although Exa had kbd.news).
+    let communityRaw: RawSearchResult[] = [];
     if (communitySites.length > 0) {
       try {
-        exaRaw.push(...(await searchExa(plan.queries[0], communitySites)));
+        communityRaw = await searchExa(plan.queries[0], communitySites);
+        console.log(`🏘️ [Gather] ${communityRaw.length} community-site results (${communitySites.join(', ')}) for "${topicName}"`);
       } catch (err) {
         console.warn(`⚠️ [Gather] Community-site query failed for "${topicName}":`, err);
       }
     }
-    const exaArticles = await filterRelevant(topicName, prepareSearchResults(exaRaw));
+    const exaArticles = await filterRelevant(topicName, prepareSearchResults([...communityRaw, ...exaRaw]), communitySites);
     if (exaArticles.length > 0) {
       provider = provider ? `${provider}+exa` : 'exa';
-      articles = prepareSearchResults([...articles, ...exaArticles].map(a => ({ ...a, snippet: a.summary })));
+      const communityHosts = new Set(communitySites);
+      const fromCommunity = exaArticles.filter(a => communityHosts.has(hostOf(a.url)));
+      const rest = exaArticles.filter(a => !communityHosts.has(hostOf(a.url)));
+      articles = prepareSearchResults([...fromCommunity, ...articles, ...rest].map(a => ({ ...a, snippet: a.summary })), MAX_ARTICLES + 4);
     }
   }
 
