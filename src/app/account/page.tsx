@@ -245,16 +245,16 @@ function AccountContent() {
             ) : (
               <div className="space-y-4">
                 <p className="text-[var(--muted)] text-sm">
-                  You&apos;re on the free plan. Upgrade to unlock unlimited briefings, audio
-                  playback, and more.
+                  You&apos;re on the free plan (3 briefings per day). Pro, with unlimited
+                  briefings, is coming soon.
                 </p>
-                <Link
-                  href="/pricing"
-                  className="w-full py-3 rounded-xl bg-[var(--accent)] text-white font-semibold hover:bg-[var(--accent-hover)] transition-all flex items-center justify-center gap-2"
+                <button
+                  disabled
+                  className="w-full py-3 rounded-xl bg-[var(--card-hover)] text-[var(--muted)] font-semibold flex items-center justify-center gap-2 cursor-not-allowed"
                 >
                   <Zap className="w-4 h-4" />
-                  Upgrade to Pro
-                </Link>
+                  Pro coming soon
+                </button>
               </div>
             )}
           </div>

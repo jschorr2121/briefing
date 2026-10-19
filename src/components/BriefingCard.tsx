@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useRef, useEffect, useCallback } from 'react';
-import { Clock, Newspaper, ExternalLink, Copy, Share2, ChevronDown, ChevronLeft, ChevronRight, RefreshCw, Check, Link } from 'lucide-react';
+import { useState } from 'react';
+import { Clock, Newspaper, Copy } from 'lucide-react';
 import type { Briefing, StoryCard } from '@/lib/types';
-import { cn, calculateReadingTime, shareContent } from '@/lib/utils';
+import { cn, getBriefingReadingTime, shareContent } from '@/lib/utils';
 
 interface BriefingCardProps {
   briefing: Briefing;
@@ -12,22 +12,10 @@ interface BriefingCardProps {
   isRefreshing?: boolean;
 }
 
-function StoryCardComponent({ story, index, isActive }: { story: StoryCard; index: number; isActive?: boolean }) {
+function StoryCardComponent({ story, index }: { story: StoryCard; index: number }) {
   return (
-    <div 
-      className={cn(
-        "min-w-[280px] sm:min-w-[320px] max-w-[340px] sm:max-w-[380px] flex-shrink-0 snap-center",
-        "bg-gradient-to-br from-[var(--card)] to-[var(--card-hover)]",
-        "rounded-xl border p-4 sm:p-5",
-        "transition-all duration-300",
-        isActive 
-          ? "border-[var(--accent)]/50 shadow-lg shadow-[var(--accent)]/10 scale-[1.01]" 
-          : "border-[var(--border)] hover:border-[var(--accent)]/40"
-      )}
-      style={{ animationDelay: `${index * 50}ms` }}
-    >
-      {/* Story Header */}
-      <div className="flex items-start justify-between gap-3 mb-3">
+    <div className="px-6 py-5 border-t border-[var(--border)] first:border-t-0">
+      <div className="flex items-start justify-between gap-3 mb-2">
         <div className="flex items-center gap-2">
           <span className="text-xs font-bold text-[var(--accent)] bg-[var(--accent-light)] px-2 py-0.5 rounded">
             #{index + 1}
@@ -40,21 +28,17 @@ function StoryCardComponent({ story, index, isActive }: { story: StoryCard; inde
           )}
         </div>
         {story.source && (
-          <span className="text-xs px-2 py-0.5 rounded-full bg-[var(--card)] text-[var(--muted)] font-medium truncate max-w-[140px]">
+          <span className="text-xs px-2 py-0.5 rounded-full bg-[var(--card-hover)] text-[var(--muted)] font-medium truncate max-w-[140px]">
             {story.source}
           </span>
         )}
       </div>
 
-      {/* Story Header */}
-      <div className="mb-4">
-        <h4 className="font-semibold text-[var(--foreground)] leading-tight text-[15px]">
-          {story.headline}
-        </h4>
-      </div>
+      <h4 className="font-semibold text-[var(--foreground)] leading-tight text-[15px] mb-3">
+        {story.headline}
+      </h4>
 
-      {/* Bullet Points */}
-      <ul className="space-y-2.5 mb-4">
+      <ul className="space-y-2.5 mb-2">
         {story.bullets.map((bullet, i) => (
           <li key={i} className="flex items-start gap-2.5 text-sm text-[var(--muted)]">
             <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] mt-1.5 flex-shrink-0" />
@@ -63,26 +47,25 @@ function StoryCardComponent({ story, index, isActive }: { story: StoryCard; inde
         ))}
       </ul>
 
-      {/* Actions Row */}
-      <div className="flex items-center justify-between pt-2 border-t border-[var(--border)]">
-        {story.url && (
+      <div className="flex items-center justify-between">
+        {story.url ? (
           <a
             href={story.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 text-xs text-[var(--accent)] hover:text-[var(--accent-hover)] transition-colors font-medium group"
+            className="inline-flex items-center min-h-[44px] sm:min-h-0 sm:py-1 text-sm sm:text-xs text-[var(--accent)] hover:text-[var(--accent-hover)] transition-colors font-medium"
           >
-            Read more
-            <ExternalLink className="w-3 h-3 transition-transform group-hover:translate-x-0.5" />
+            Read more ↗
           </a>
-        )}
+        ) : <span />}
         <button
           onClick={async () => {
             const text = `${story.headline}\n\n${story.bullets.map(b => `• ${b}`).join('\n')}${story.url ? `\n\n${story.url}` : ''}`;
             await navigator.clipboard.writeText(text);
           }}
-          className="p-1.5 rounded-md hover:bg-[var(--card)] text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+          className="p-2.5 sm:p-1.5 min-w-[40px] min-h-[40px] sm:min-w-0 sm:min-h-0 flex items-center justify-center rounded-md hover:bg-[var(--card-hover)] text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
           title="Copy story"
+          aria-label="Copy story"
         >
           <Copy className="w-3.5 h-3.5" />
         </button>
@@ -95,46 +78,9 @@ export function BriefingCard({ briefing, index, onRefresh, isRefreshing }: Brief
   const [expanded, setExpanded] = useState(true);
   const [copied, setCopied] = useState(false);
   const [shared, setShared] = useState(false);
-  const [activeStoryIndex, setActiveStoryIndex] = useState(0);
-  const [hasScrolled, setHasScrolled] = useState(false);
-  const scrollRef = useRef<HTMLDivElement>(null);
 
-  const readingTime = calculateReadingTime(briefing.summary);
+  const readingTime = getBriefingReadingTime(briefing);
   const hasStories = briefing.stories && briefing.stories.length > 0;
-  const totalStories = briefing.stories?.length || 0;
-
-  // Track scroll position to update active story indicator
-  const handleScroll = useCallback(() => {
-    if (!scrollRef.current || !hasStories) return;
-    const container = scrollRef.current;
-    const scrollLeft = container.scrollLeft;
-    const cardWidth = 340; // min-w-[320px] + gap
-    const newIndex = Math.round(scrollLeft / cardWidth);
-    setActiveStoryIndex(Math.min(Math.max(0, newIndex), totalStories - 1));
-    if (scrollLeft > 20 && !hasScrolled) {
-      setHasScrolled(true);
-    }
-  }, [hasStories, totalStories, hasScrolled]);
-
-  // Set up scroll listener
-  useEffect(() => {
-    const container = scrollRef.current;
-    if (!container) return;
-    container.addEventListener('scroll', handleScroll, { passive: true });
-    return () => container.removeEventListener('scroll', handleScroll);
-  }, [handleScroll]);
-
-  // Keyboard navigation
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (!hasStories) return;
-    if (e.key === 'ArrowLeft') {
-      scrollCards('left');
-      e.preventDefault();
-    } else if (e.key === 'ArrowRight') {
-      scrollCards('right');
-      e.preventDefault();
-    }
-  }, [hasStories]);
 
   const copyToClipboard = async () => {
     let textToCopy = `${briefing.topic}\n\n${briefing.summary}`;
@@ -164,26 +110,6 @@ export function BriefingCard({ briefing, index, onRefresh, isRefreshing }: Brief
       setTimeout(() => setShared(false), 2000);
     }
   };
-
-  const scrollCards = useCallback((direction: 'left' | 'right') => {
-    if (scrollRef.current) {
-      const scrollAmount = 340;
-      scrollRef.current.scrollBy({
-        left: direction === 'left' ? -scrollAmount : scrollAmount,
-        behavior: 'smooth'
-      });
-    }
-  }, []);
-
-  const scrollToStory = useCallback((storyIndex: number) => {
-    if (scrollRef.current) {
-      const scrollAmount = 340 * storyIndex;
-      scrollRef.current.scrollTo({
-        left: scrollAmount,
-        behavior: 'smooth'
-      });
-    }
-  }, []);
 
   // Convert markdown-style bold to HTML
   const formatSummary = (text: string) => {
@@ -258,11 +184,6 @@ export function BriefingCard({ briefing, index, onRefresh, isRefreshing }: Brief
                   {briefing.stories!.length} stories
                 </span>
               )}
-              {briefing.model && (
-                <span className="px-1.5 py-0.5 rounded bg-[var(--card-hover)] text-[10px] uppercase tracking-wide">
-                  via {briefing.model}
-                </span>
-              )}
             </div>
           </div>
         </button>
@@ -314,107 +235,17 @@ export function BriefingCard({ briefing, index, onRefresh, isRefreshing }: Brief
       {/* Content */}
       {expanded && (
         <div className="pb-6">
-          {/* Highlights */}
-          <div className="px-6 mb-6">
-            <h4 className="text-xs font-semibold text-[var(--muted)] uppercase tracking-wide mb-3">
-              Highlights
-            </h4>
-            <div className="text-[var(--muted)] leading-relaxed text-sm">
-              {formatSummary(briefing.summary)}
-            </div>
+          {/* Highlights (TL;DR) */}
+          <div className="px-6 mb-5 text-[var(--muted)] leading-relaxed text-sm">
+            {formatSummary(briefing.summary)}
           </div>
 
-          {/* Story Cards - Horizontal Scroll */}
+          {/* Stories */}
           {hasStories && (
-            <div className="relative group" onKeyDown={handleKeyDown} tabIndex={0}>
-              {/* Story Counter */}
-              <div className="flex items-center justify-between px-6 mb-3">
-                <span className="text-xs text-[var(--muted)] font-medium">
-                  Story {activeStoryIndex + 1} of {totalStories}
-                </span>
-                <div className="flex items-center gap-2 text-xs text-[var(--muted)]">
-                  <span className="hidden sm:inline">Use</span>
-                  <kbd className="px-1.5 py-0.5 rounded bg-[var(--card-hover)] border border-[var(--border)] text-[10px] font-mono">←</kbd>
-                  <kbd className="px-1.5 py-0.5 rounded bg-[var(--card-hover)] border border-[var(--border)] text-[10px] font-mono">→</kbd>
-                  <span className="hidden sm:inline">to navigate</span>
-                </div>
-              </div>
-
-              {/* Scroll Buttons */}
-              <button
-                onClick={() => scrollCards('left')}
-                disabled={activeStoryIndex === 0}
-                className={cn(
-                  "absolute left-2 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full",
-                  "bg-[var(--background)]/95 border border-[var(--border)]",
-                  "flex items-center justify-center transition-all duration-200",
-                  activeStoryIndex === 0 
-                    ? "opacity-30 cursor-not-allowed" 
-                    : "opacity-0 group-hover:opacity-100 hover:border-[var(--accent)] hover:bg-[var(--card)]"
-                )}
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-              </button>
-              <button
-                onClick={() => scrollCards('right')}
-                disabled={activeStoryIndex === totalStories - 1}
-                className={cn(
-                  "absolute right-2 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full",
-                  "bg-[var(--background)]/95 border border-[var(--border)]",
-                  "flex items-center justify-center transition-all duration-200",
-                  activeStoryIndex === totalStories - 1
-                    ? "opacity-30 cursor-not-allowed"
-                    : "opacity-0 group-hover:opacity-100 hover:border-[var(--accent)] hover:bg-[var(--card)]"
-                )}
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
-
-              {/* Cards Container */}
-              <div
-                ref={scrollRef}
-                className="flex gap-4 overflow-x-auto px-6 py-2 scroll-smooth snap-x snap-mandatory scrollbar-thin focus:outline-none"
-                style={{ 
-                  scrollbarWidth: 'thin',
-                  msOverflowStyle: 'none',
-                }}
-              >
-                {briefing.stories!.map((story, i) => (
-                  <StoryCardComponent key={i} story={story} index={i} isActive={i === activeStoryIndex} />
-                ))}
-              </div>
-
-              {/* Interactive Scroll Indicator */}
-              <div className="flex flex-col items-center gap-2 mt-4">
-                <div className="flex items-center gap-2">
-                  {briefing.stories!.map((_, i) => (
-                    <button
-                      key={i}
-                      onClick={() => scrollToStory(i)}
-                      className={cn(
-                        "transition-all duration-300 rounded-full",
-                        i === activeStoryIndex 
-                          ? "w-6 h-2 bg-[var(--accent)]" 
-                          : "w-2 h-2 bg-[var(--border)] hover:bg-[var(--muted)]"
-                      )}
-                      aria-label={`Go to story ${i + 1}`}
-                    />
-                  ))}
-                </div>
-                {/* Mobile swipe hint - shows only on mobile and only if not scrolled */}
-                {!hasScrolled && totalStories > 1 && (
-                  <div className="sm:hidden flex items-center gap-1 text-[10px] text-[var(--muted)] animate-pulse">
-                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                    </svg>
-                    Swipe for more stories
-                  </div>
-                )}
-              </div>
+            <div className="border-t border-[var(--border)]">
+              {briefing.stories!.map((story, i) => (
+                <StoryCardComponent key={i} story={story} index={i} />
+              ))}
             </div>
           )}
 
@@ -454,7 +285,7 @@ export function BriefingCard({ briefing, index, onRefresh, isRefreshing }: Brief
           <div className="flex gap-2 mt-6 px-6">
             <button
               onClick={copyToClipboard}
-              className="px-3 py-1.5 text-sm rounded-lg bg-[var(--card-hover)] text-[var(--muted)] hover:text-[var(--foreground)] transition-colors flex items-center gap-2"
+              className="px-3 py-1.5 min-h-[36px] text-sm rounded-lg bg-[var(--card-hover)] text-[var(--muted)] hover:text-[var(--foreground)] transition-colors flex items-center gap-2"
             >
               {copied ? (
                 <>
@@ -479,7 +310,7 @@ export function BriefingCard({ briefing, index, onRefresh, isRefreshing }: Brief
             </button>
             <button
               onClick={handleShare}
-              className="px-3 py-1.5 text-sm rounded-lg bg-[var(--card-hover)] text-[var(--muted)] hover:text-[var(--foreground)] transition-colors flex items-center gap-2"
+              className="px-3 py-1.5 min-h-[36px] text-sm rounded-lg bg-[var(--card-hover)] text-[var(--muted)] hover:text-[var(--foreground)] transition-colors flex items-center gap-2"
             >
               {shared ? (
                 <>

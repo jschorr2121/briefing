@@ -109,7 +109,8 @@ export function TopicSelector({ topics, onAdd, onRemove, maxTopics }: TopicSelec
               {onRemove && (
                 <button
                   onClick={() => onRemove(topic.id)}
-                  className="p-0.5 hover:bg-white/20 rounded-full transition-colors"
+                  className="p-2 -m-1.5 sm:p-0.5 sm:m-0 min-w-8 min-h-8 sm:min-w-0 sm:min-h-0 flex items-center justify-center hover:bg-white/20 rounded-full transition-colors"
+                  aria-label={`Remove ${topic.name}`}
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>

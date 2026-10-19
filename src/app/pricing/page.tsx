@@ -18,8 +18,6 @@ import Link from 'next/link';
 import { AuthGuard } from '@/components/AuthGuard';
 import { useSubscription } from '@/hooks/useSubscription';
 
-type BillingPeriod = 'monthly' | 'annual';
-
 interface StripePrices {
   configured: boolean;
   monthlyPriceId?: string;
@@ -27,7 +25,6 @@ interface StripePrices {
 }
 
 export default function PricingPage() {
-  const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>('monthly');
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [prices, setPrices] = useState<StripePrices | null>(null);
   const { isPro, loading: subLoading } = useSubscription();
@@ -45,12 +42,10 @@ export default function PricingPage() {
   const handleCheckout = async () => {
     if (!prices?.configured) return;
 
-    const priceId = billingPeriod === 'monthly'
-      ? prices.monthlyPriceId
-      : prices.annualPriceId;
+    const priceId = prices.monthlyPriceId;
 
     if (!priceId) {
-      console.error('No price ID available for', billingPeriod);
+      console.error('No price ID available');
       return;
     }
 
@@ -77,25 +72,20 @@ export default function PricingPage() {
 
   const freeFeatures = [
     '3 briefings per day',
-    '4 topics per briefing',
-    'Web search powered news',
+    'Up to 4 topics per briefing',
+    'Audio playback (9 voices)',
+    'Email delivery & scheduled daily email',
     'Export & share',
-    'Email delivery',
     'Briefing history',
   ];
 
   const proFeatures = [
     'Everything in Free',
-    'Unlimited topics',
-    'Audio TTS playback (12 voices)',
-    'Premium news sources',
-    'Scheduled auto-delivery',
-    'Priority support',
-    'Early access to new features',
+    'Unlimited briefings per day',
   ];
 
   const stripeReady = prices?.configured && (
-    billingPeriod === 'monthly' ? prices.monthlyPriceId : prices.annualPriceId
+    prices.monthlyPriceId
   );
 
   return (
@@ -119,41 +109,14 @@ export default function PricingPage() {
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[var(--accent)]/10 text-[var(--accent)] text-sm font-medium mb-4">
               <Sparkles className="w-4 h-4" />
-              Upgrade to Pro
+              Pro coming soon
             </div>
             <h2 className="text-3xl md:text-4xl font-bold mb-3">
               Stay informed, without limits
             </h2>
             <p className="text-[var(--muted)] max-w-xl mx-auto text-lg">
-              Get unlimited AI-powered briefings, audio playback, and more.
+              Pro will remove the daily briefing limit. It isn&apos;t available to purchase yet.
             </p>
-          </div>
-
-          {/* Billing Toggle */}
-          <div className="flex items-center justify-center gap-3 mb-10">
-            <button
-              onClick={() => setBillingPeriod('monthly')}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                billingPeriod === 'monthly'
-                  ? 'bg-[var(--accent)] text-white'
-                  : 'bg-[var(--card)] text-[var(--muted)] border border-[var(--border)]'
-              }`}
-            >
-              Monthly
-            </button>
-            <button
-              onClick={() => setBillingPeriod('annual')}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all relative ${
-                billingPeriod === 'annual'
-                  ? 'bg-[var(--accent)] text-white'
-                  : 'bg-[var(--card)] text-[var(--muted)] border border-[var(--border)]'
-              }`}
-            >
-              Annual
-              <span className="absolute -top-2 -right-2 px-1.5 py-0.5 bg-[var(--success)] text-white text-[10px] rounded-full font-bold">
-                -40%
-              </span>
-            </button>
           </div>
 
           {/* Pricing Cards */}
@@ -195,7 +158,7 @@ export default function PricingPage() {
             {/* Pro Tier */}
             <div className="bg-[var(--card)] rounded-2xl border-2 border-[var(--accent)] p-8 flex flex-col relative overflow-hidden">
               <div className="absolute top-0 right-0 bg-[var(--accent)] text-white text-xs font-bold px-3 py-1 rounded-bl-lg">
-                POPULAR
+                COMING SOON
               </div>
 
               <div className="mb-6">
@@ -208,15 +171,10 @@ export default function PricingPage() {
               <div className="mb-6">
                 <div className="flex items-baseline gap-1">
                   <span className="text-4xl font-bold">
-                    ${billingPeriod === 'monthly' ? '6.99' : '4.17'}
+                    $6.99
                   </span>
                   <span className="text-[var(--muted)]">/month</span>
                 </div>
-                {billingPeriod === 'annual' && (
-                  <p className="text-sm text-[var(--muted)] mt-1">
-                    $49.99 billed annually
-                  </p>
-                )}
               </div>
 
               <ul className="space-y-3 mb-8 flex-1">
@@ -251,7 +209,7 @@ export default function PricingPage() {
                   )}
                 </button>
               ) : (
-                <div className="w-full py-3 rounded-xl bg-[var(--card-hover)] text-center text-sm text-[var(--muted)] font-medium">
+                <div aria-disabled="true" className="w-full py-3 rounded-xl bg-[var(--card-hover)] text-center text-sm text-[var(--muted)] font-medium">
                   Coming soon
                 </div>
               )}
@@ -264,16 +222,12 @@ export default function PricingPage() {
             <div className="space-y-4">
               {[
                 {
-                  q: 'Can I cancel anytime?',
-                  a: 'Yes! Cancel your subscription at any time from your account page. You\'ll keep Pro access until the end of your billing period.',
+                  q: 'When will Pro be available?',
+                  a: 'Pro isn\'t purchasable yet. Everything else in Free works today, and the only planned difference is no daily briefing limit.',
                 },
                 {
                   q: 'What happens when I hit the free limit?',
-                  a: 'You\'ll see a friendly prompt to upgrade. Your existing briefings are always accessible — you just can\'t generate new ones until the next day.',
-                },
-                {
-                  q: 'Do you offer refunds?',
-                  a: 'If you\'re not happy within the first 7 days, reach out and we\'ll refund you — no questions asked.',
+                  a: 'You\'ll see a prompt explaining the limit, which resets at midnight UTC. Your existing briefings are always accessible — you just can\'t generate new ones until the next day.',
                 },
                 {
                   q: 'What payment methods do you accept?',

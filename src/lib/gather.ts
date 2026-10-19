@@ -22,6 +22,11 @@ const RESULTS_PER_QUERY = 10;
 const MAX_QUERIES = 3;
 const MAX_AGE_DAYS = 45;
 const SNIPPET_MAX_CHARS = 400;
+// Article body text fetched for kept articles. Snippets alone gave the writer
+// nothing but the headline to restate (every Oct 19 reviewer: "bullets too
+// thin, lost the specifics"). ~1.5k chars × 12 articles ≈ 5k tokens/topic.
+const BODY_MAX_CHARS = 1500;
+const BODY_FETCH_TIMEOUT_MS = 5000;
 const MAX_PER_HOST = 3;
 // Below this many relevant articles the topic is treated as niche and Exa
 // is consulted too. Brave gave 3 for "speedcubing", 10 for mainstream topics.
@@ -31,9 +36,19 @@ const EXA_LOOKBACK_DAYS = 14;
 // Oct 2026 live runs. ponytail: a hand list; grow it from logs, swap for a
 // source-quality score if it passes ~30 entries.
 const BLOCKED_HOSTS = [
+  // reference
   'wikipedia.org', 'wikimedia.org',
-  'archyde.com', 'europesays.com', 'view.edu.pl', 'tech-insider.org',
+  // press-release wires and PR farms (the Oct 19 persona reviews flagged every one of these)
+  'globenewswire.com', 'prnewswire.com', 'businesswire.com', 'openpr.com', 'marketmediawire.com',
+  'streetinsider.com', 'einpresswire.com', 'accesswire.com', 'newsfilecorp.com',
+  // content farms / aggregators / low-trust blogs seen leading briefings
+  'archyde.com', 'europesays.com', 'view.edu.pl', 'tech-insider.org', 'bioengineer.org',
+  'globalsouthopportunities.com', 'techtimes.com', 'coinpaper.com', 'blockchainreporter.net',
+  'asumetech.com', 'tradersunion.com', 'devdiscourse.com',
+  // betting picks dressed as news
+  'sportsline.com',
 ];
+const FRESH_WINDOW_MS = 48 * 3_600_000;
 
 export interface ArticleSet {
   articles: PreparedArticle[];
@@ -107,30 +122,39 @@ export function buildPlannerPrompt(): string {
 - Return 1-2 distinct queries covering the topic's key angles (${MAX_QUERIES} only if the topic genuinely spans that many separate angles). Each query costs money.
 - Write queries the way a news editor would: SHORT keyword phrases (2-6 words, under 60 characters) anchored on concrete entities — "Federal Reserve interest rates", "TSMC AI chips". Never long descriptive sentences: they match SEO content farms instead of news.
 - For catch-all topics ("World News", "Top Stories", "Tech"), the news API already ranks by prominence: use the plain topic phrase as the first query ("world news") and at most one more for the biggest live story you know of. Never invent abstract angles ("global conflicts ceasefires UN") — they surface think-tank and aggregator pages instead of the day's news.
-- For niche topics (hobbies, industry subfields), add the community's proper names (federations, flagship sites, jargon).
+- If the topic has a recurring event (a race, game, match, earnings, central-bank meeting, model release), make one query target the MOST RECENT instance's result ("Singapore Grand Prix result", "NBA scores", "FOMC decision") so the briefing can lead with what just happened.
+- For niche topics (hobbies, industry subfields), add the community's proper names (federations, flagship sites, jargon) — the places real news for that community breaks, not retailers or review sites.
 - Include the current year in at most one query.
 
-Respond with ONLY valid JSON: {"queries": ["...", "..."]}`;
+Also classify the topic: "niche" is true when the news for this topic breaks on community/specialist sites (hobbies, fandoms, sub-fields of science or engineering, local news) rather than in mainstream outlets.
+
+Respond with ONLY valid JSON: {"queries": ["...", "..."], "niche": true|false}`;
 }
 
-export function parsePlannedQueries(text: string, topicName: string): string[] {
-  const parsed = extractJson(text) as { queries?: unknown } | null;
+export interface QueryPlan {
+  queries: string[];
+  niche: boolean;
+}
+
+export function parsePlannedQueries(text: string, topicName: string): QueryPlan {
+  const parsed = extractJson(text) as { queries?: unknown; niche?: unknown } | null;
+  const niche = parsed?.niche === true;
   if (parsed && Array.isArray(parsed.queries)) {
     const queries = parsed.queries
       .filter((q): q is string => typeof q === 'string' && q.trim().length > 0)
       .map(q => q.trim())
       .slice(0, MAX_QUERIES);
-    if (queries.length > 0) return queries;
+    if (queries.length > 0) return { queries, niche };
   }
-  return [topicName];
+  return { queries: [topicName], niche };
 }
 
-async function planQueries(topicName: string): Promise<string[]> {
+async function planQueries(topicName: string): Promise<QueryPlan> {
   try {
     return parsePlannedQueries(await nanoJson(buildPlannerPrompt(), `Topic: ${topicName}`), topicName);
   } catch (err) {
     console.warn(`⚠️ [Gather] Query planning failed for "${topicName}", using topic as query:`, err);
-    return [topicName];
+    return { queries: [topicName], niche: false };
   }
 }
 
@@ -143,12 +167,16 @@ export function buildRelevancePrompt(topicName: string): string {
   return `You are filtering news search results for an English-language briefing about: "${topicName}".
 
 You will get a numbered list of headlines with their site. Reply with the numbers to KEEP.
-Keep anything plausibly relevant to the topic — when unsure, keep it.
-Drop a headline only if it is clearly one of:
+Keep anything plausibly ON-TOPIC — when unsure about relevance, keep it.
+But DROP (even if on-topic) anything that is clearly one of:
 - about an unrelated subject that merely matched keywords
 - not in English
-- a product listing, classified ad, coupon, deal, or price-tracking page
-- a site section/hub/index page or a generic evergreen explainer rather than a dated news story
+- a product listing, classified ad, coupon, deal, price-tracking, product-reservation or crowdfunding page
+- a press release, market-research report ("market to reach $X billion"), vendor/store blog, or sponsored content
+- a listicle or buying guide ("best X", "N picks", "explained", "what to know"), a generic evergreen explainer, or a site section/hub page
+- a betting pick, odds, or prediction-model article
+- a job, internship, or event-registration listing
+- an opinion column with no new facts
 
 Respond with ONLY valid JSON: {"keep": [1, 2, ...]}`;
 }
@@ -218,6 +246,17 @@ export function normalizeDate(raw: string | undefined): string {
   return raw;
 }
 
+// The nano gate occasionally keeps a non-English page whose snippet it only
+// skimmed (a Portuguese keyboard site shipped in the Oct 19 review). Cheap
+// check: English text of any length has function words.
+const EN_FUNCTION_WORDS = /\b(the|of|and|to|in|a|for|with|on|that|is|as|at|by|from|it|its|are|was|has|have)\b/gi;
+export function looksEnglish(text: string): boolean {
+  const words = text.trim().split(/\s+/).length;
+  if (words < 8) return true; // too short to judge
+  const hits = (text.match(EN_FUNCTION_WORDS) || []).length;
+  return hits / words >= 0.08;
+}
+
 function isTooOld(dateStr: string): boolean {
   if (!dateStr) return false; // unknown dates are kept; assembly handles recency
   const t = Date.parse(dateStr);
@@ -245,8 +284,12 @@ export function prepareSearchResults(raw: RawSearchResult[], limit = MAX_ARTICLE
     const host = hostOf(r.url);
     if (BLOCKED_HOSTS.some(b => host === b || host.endsWith('.' + b))) continue;
 
-    const date = normalizeDate(r.date);
+    // A date in the URL path is the publish date; Brave's page_age can be a
+    // later crawl/update (review: label "Oct 19" on a URL ending 10/16).
+    const urlDate = pathname.match(/\/(20\d\d)[/-](\d{1,2})[/-](\d{1,2})(?:[/-]|$)/);
+    const date = normalizeDate(urlDate ? `${urlDate[1]}-${urlDate[2].padStart(2, '0')}-${urlDate[3].padStart(2, '0')}T12:00:00Z` : r.date);
     if (isTooOld(date)) continue;
+    if (!looksEnglish(`${r.title} ${r.snippet || ''}`)) continue;
 
     const urlKey = r.url.replace(/[?#].*$/, '');
     const titleKey = r.title.toLowerCase().trim();
@@ -267,6 +310,79 @@ export function prepareSearchResults(raw: RawSearchResult[], limit = MAX_ARTICLE
     });
     if (out.length >= limit) break;
   }
+  // Recency first: items from the last 48h keep their relevance order and go
+  // ahead of older ones, so the assembler's "lead with the newest important
+  // story" has the newest at the top. Unknown dates sort as old.
+  const isFresh = (a: PreparedArticle) => {
+    const t = Date.parse(a.date);
+    return !Number.isNaN(t) && Date.now() - t <= FRESH_WINDOW_MS;
+  };
+  return [...out.filter(isFresh), ...out.filter(a => !isFresh(a))];
+}
+
+// ─── Article body enrichment ─────────────────────────────────────────
+
+/** Crude but dependency-free: paragraph text from HTML, scripts/styles removed. */
+export function extractBodyText(html: string, max = BODY_MAX_CHARS): string {
+  const noScript = html.replace(/<(script|style|noscript|svg|nav|header|footer|aside)[\s\S]*?<\/\1>/gi, ' ');
+  const paras = [...noScript.matchAll(/<p[^>]*>([\s\S]*?)<\/p>/gi)]
+    .map(m => m[1].replace(/<[^>]+>/g, ' ').replace(/&nbsp;|&#160;/g, ' ').replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;|&rsquo;|&lsquo;/g, "'").replace(/\s+/g, ' ').trim())
+    .filter(t => t.length > 60); // skip nav crumbs, captions, cookie banners
+  let out = '';
+  for (const p of paras) {
+    if (out.length + p.length > max) break;
+    out += (out ? ' ' : '') + p;
+  }
+  return out;
+}
+
+async function fetchBody(url: string): Promise<string> {
+  try {
+    const res = await fetch(url, {
+      signal: AbortSignal.timeout(BODY_FETCH_TIMEOUT_MS),
+      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; BriefingBot/1.0; +https://briefing-five.vercel.app)', Accept: 'text/html' },
+      redirect: 'follow',
+    });
+    if (!res.ok || !(res.headers.get('content-type') || '').includes('text/html')) return '';
+    // Read at most ~200KB; article text is near the top of the document.
+    const reader = res.body?.getReader();
+    if (!reader) return '';
+    const chunks: Uint8Array[] = [];
+    let total = 0;
+    while (total < 200_000) {
+      const { done, value } = await reader.read();
+      if (done || !value) break;
+      chunks.push(value);
+      total += value.length;
+    }
+    reader.cancel().catch(() => undefined);
+    return extractBodyText(Buffer.concat(chunks).toString('utf8'));
+  } catch {
+    return ''; // paywalls, bot walls, timeouts: the snippet still stands
+  }
+}
+
+/** Replace snippets with article text where a page can be fetched. Parallel, fail-soft. */
+const ENRICH_BUDGET_MS = 8000;
+async function enrichWithBodies(articles: PreparedArticle[]): Promise<PreparedArticle[]> {
+  // Hard budget for the whole step: a slow-streaming page must never hold a
+  // briefing hostage (one did in the Oct 19 round-5 run). Unfinished fetches
+  // simply keep their snippet.
+  const settled: string[] = articles.map(() => '');
+  await Promise.race([
+    Promise.all(articles.map(async (a, i) => { settled[i] = await fetchBody(a.url); })),
+    new Promise<void>(r => setTimeout(r, ENRICH_BUDGET_MS)),
+  ]);
+  const bodies = settled;
+  let hits = 0;
+  const out = articles.map((a, i) => {
+    if (bodies[i].length > a.summary.length) {
+      hits++;
+      return { ...a, summary: bodies[i] };
+    }
+    return a;
+  });
+  console.log(`📄 [Gather] Article text fetched for ${hits}/${articles.length}`);
   return out;
 }
 
@@ -299,7 +415,9 @@ async function searchBrave(query: string): Promise<RawSearchResult[]> {
     title: r.title,
     url: r.url,
     source: r.meta_url?.netloc?.replace(/^www\./, ''),
-    date: r.age ?? r.page_age,
+    // page_age is the absolute publish timestamp; `age` is relative and was
+    // producing "today" for week-old pieces in the Oct 19 reviews.
+    date: r.page_age ?? r.age,
     snippet: [r.description, r.extra_snippets?.join(' ')].filter(Boolean).join(' '),
   }));
 }
@@ -372,7 +490,7 @@ async function gather(topicName: string): Promise<{ articles: PreparedArticle[];
   const hasExa = !!process.env.EXA_API_KEY;
   if (!hasBrave && !hasExa) throw new Error('Gathering requires BRAVE_API_KEY and/or EXA_API_KEY');
 
-  const queries = await planQueries(topicName);
+  const { queries, niche } = await planQueries(topicName);
   let provider = '';
   let articles: PreparedArticle[] = [];
 
@@ -382,8 +500,11 @@ async function gather(topicName: string): Promise<{ articles: PreparedArticle[];
   }
 
   // Niche backstop: Exa's neural index carries the community sites a news
-  // index misses. Brave results stay first so mainstream coverage leads.
-  if (hasExa && articles.length < SPARSE_THRESHOLD) {
+  // index misses (geekhack, WCA, speedsolving.com…). It runs when Brave is
+  // thin OR the planner flagged the topic as niche — the Oct 19 hobby review
+  // got 5 Brave product-PR items for "mechanical keyboards" and zero community
+  // news. Brave results stay first so mainstream coverage leads.
+  if (hasExa && (niche || articles.length < SPARSE_THRESHOLD)) {
     const exaRaw = await exaAll(queries.slice(0, 2));
     const exaArticles = await filterRelevant(topicName, prepareSearchResults(exaRaw));
     if (exaArticles.length > 0) {
@@ -393,7 +514,7 @@ async function gather(topicName: string): Promise<{ articles: PreparedArticle[];
   }
 
   console.log(`🔎 [Gather] ${provider || 'none'}: ${queries.length} queries → ${articles.length} articles for "${topicName}"`);
-  return { articles, queries, provider };
+  return { articles: await enrichWithBodies(articles), queries, provider };
 }
 
 /**

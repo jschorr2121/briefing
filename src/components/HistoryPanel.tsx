@@ -44,7 +44,7 @@ export function HistoryPanel({ history, onLoad, onDelete, onClear }: HistoryPane
           />
 
           {/* Panel */}
-          <div className="absolute right-0 top-full mt-2 w-80 max-h-96 overflow-auto z-50 rounded-xl bg-[var(--card)] border border-[var(--border)] shadow-xl animate-fadeIn">
+          <div className="fixed inset-x-4 top-24 max-h-[70vh] sm:absolute sm:inset-x-auto sm:right-0 sm:top-full sm:mt-2 sm:w-80 sm:max-h-96 overflow-auto z-50 rounded-xl bg-[var(--card)] border border-[var(--border)] shadow-xl animate-fadeIn">
             <div className="p-3 border-b border-[var(--border)] flex items-center justify-between sticky top-0 bg-[var(--card)]">
               <h3 className="font-semibold text-sm">Recent Briefings</h3>
               <button

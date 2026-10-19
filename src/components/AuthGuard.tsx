@@ -3,7 +3,7 @@
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { Loader2 } from 'lucide-react';
+import { Newspaper } from 'lucide-react';
 
 export function AuthGuard({ children }: { children: React.ReactNode }) {
   const { status } = useSession();
@@ -17,8 +17,10 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
 
   if (status === 'loading') {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-[var(--accent)]" />
+      <div className="min-h-screen flex flex-col items-center justify-center gap-3">
+        <Newspaper className="w-10 h-10 text-[var(--accent)]" />
+        <span className="font-semibold">Briefing</span>
+        <p className="text-sm text-[var(--muted)]">Loading…</p>
       </div>
     );
   }

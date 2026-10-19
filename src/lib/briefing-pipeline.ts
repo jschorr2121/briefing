@@ -91,7 +91,7 @@ export async function generateBriefing(topics: TopicInput[], settings: GenerateS
           emoji: topic.emoji || '',
           summary: section.summary,
           stories: section.stories,
-          articles: includeLinks ? section.articles.slice(0, 5) : [],
+          articles: includeLinks ? citedFirst(section.stories, section.articles).slice(0, 5) : [],
           generatedAt: section.generatedAt,
           model,
           debugInfo: gathered.debugInfo,
@@ -107,7 +107,30 @@ export async function generateBriefing(topics: TopicInput[], settings: GenerateS
     })
   );
 
-  return { briefings, model };
+  return { briefings: dedupeAcrossTopics(briefings), model };
+}
+
+/** "Sources" list leads with what the stories actually cite, then other gathered links. */
+function citedFirst(stories: StoryCard[], articles: Article[]): Article[] {
+  const cited = new Set(stories.map(s => s.url).filter(Boolean));
+  return [...articles.filter(a => cited.has(a.url)), ...articles.filter(a => !cited.has(a.url))];
+}
+
+/**
+ * One event gets one home: a story URL used by an earlier topic is dropped
+ * from later ones — but never below MIN_STORIES_AFTER_DEDUPE, because
+ * overlapping topics ("Finance" + "Stock Market") otherwise leave the second
+ * one empty (Oct 19 finance review: "Stock Market has a summary and no stories").
+ */
+const MIN_STORIES_AFTER_DEDUPE = 2;
+function dedupeAcrossTopics(briefings: Briefing[]): Briefing[] {
+  const used = new Set<string>();
+  return briefings.map(b => {
+    const unique = b.stories.filter(s => !s.url || !used.has(s.url));
+    const stories = unique.length >= MIN_STORIES_AFTER_DEDUPE ? unique : b.stories;
+    for (const s of stories) if (s.url) used.add(s.url);
+    return { ...b, stories };
+  });
 }
 
 /** Cron wrapper: topic-name strings in, flat briefing items out (empties dropped). */

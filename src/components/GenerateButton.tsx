@@ -17,7 +17,7 @@ export function GenerateButton({ onClick, isLoading, disabled }: GenerateButtonP
       aria-label={isLoading ? "Generating briefing..." : "Generate briefing (Ctrl+G)"}
       className={cn(
         'btn-primary px-8 py-4 rounded-xl font-semibold text-base',
-        'flex items-center gap-3',
+        'flex items-center justify-center gap-3 w-full sm:w-auto',
         disabled && 'opacity-50 cursor-not-allowed hover:transform-none hover:shadow-none'
       )}
     >

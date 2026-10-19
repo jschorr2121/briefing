@@ -16,6 +16,7 @@ import { BriefingStats } from '@/components/BriefingStats';
 import { UpgradeModal } from '@/components/UpgradeModal';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { useSubscription } from '@/hooks/useSubscription';
+import { useToast } from '@/components/Toast';
 import type { Topic, Briefing, Settings, BriefingHistory } from '@/lib/types';
 import { generateId, getTotalReadingTime } from '@/lib/utils';
 
@@ -55,7 +56,8 @@ export default function Home() {
   const voicePickerRef = useRef<HTMLDivElement>(null);
 
   // Subscription hook
-  const { isPro, isFree, canGenerate, usageCount, usageLimit, topicLimit: rawTopicLimit, refresh: refreshSub } = useSubscription();
+  const { showToast } = useToast();
+  const { loading: subLoading, subscription, isPro, isFree, canGenerate, usageCount, usageLimit, topicLimit: rawTopicLimit, refresh: refreshSub } = useSubscription();
   const tier = isPro ? 'pro' as const : 'free' as const;
   const topicLimit = DEV_MODE ? null : rawTopicLimit;
 
@@ -128,6 +130,7 @@ export default function Home() {
     onEscape: () => {
       setShowSettings(false);
       setShowUpgradeModal(false);
+      setShowEmailModal(false);
     },
   });
 
@@ -300,11 +303,13 @@ export default function Home() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `briefing-${new Date().toISOString().split('T')[0]}.md`;
+    const fileName = `briefing-${new Date().toISOString().split('T')[0]}.md`;
+    a.download = fileName;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+    showToast(`Exported ${fileName}`, 'success');
   };
 
   const downloadFullMarkdown = () => {
@@ -371,11 +376,13 @@ export default function Home() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `briefing-full-${new Date().toISOString().split('T')[0]}.md`;
+    const fileName = `briefing-full-${new Date().toISOString().split('T')[0]}.md`;
+    a.download = fileName;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+    showToast(`Exported ${fileName}`, 'success');
   };
 
   return (
@@ -399,7 +406,7 @@ export default function Home() {
         </div>
 
         {/* Free tier usage hint */}
-        {isFree && usageCount > 0 && (
+        {isFree && !subLoading && subscription && (
           <div className="text-center mb-4">
             <p className="text-xs text-[var(--muted)]">
               {usageCount}/{usageLimit} free briefings used today
@@ -422,26 +429,28 @@ export default function Home() {
         </section>
 
         {/* Actions */}
-        <div className="flex justify-center gap-3 mb-6 flex-wrap">
+        <div className="flex flex-col sm:flex-row justify-center gap-3 mb-6">
           <GenerateButton
             onClick={generateBriefing}
             isLoading={isLoading}
             disabled={!topics.some(t => t.enabled)}
           />
-          <Link
-            href="/schedule"
-            className="btn-secondary px-5 py-3 rounded-xl font-medium flex items-center gap-2"
-          >
-            <Calendar className="w-4 h-4" />
-            Schedule
-          </Link>
-          <button
-            onClick={() => setShowSettings(true)}
-            className="btn-secondary px-5 py-3 rounded-xl font-medium flex items-center gap-2"
-          >
-            <SettingsIcon className="w-4 h-4" />
-            Settings
-          </button>
+          <div className="flex gap-3">
+            <Link
+              href="/schedule"
+              className="btn-secondary flex-1 sm:flex-none justify-center px-5 py-3 rounded-xl font-medium flex items-center gap-2"
+            >
+              <Calendar className="w-4 h-4" />
+              Schedule
+            </Link>
+            <button
+              onClick={() => setShowSettings(true)}
+              className="btn-secondary flex-1 sm:flex-none justify-center px-5 py-3 rounded-xl font-medium flex items-center gap-2"
+            >
+              <SettingsIcon className="w-4 h-4" />
+              Settings
+            </button>
+          </div>
         </div>
 
         {/* Secondary Actions */}
@@ -754,6 +763,9 @@ export default function Home() {
             </h2>
             <p className="text-[var(--muted)] text-sm mb-4">
               Send this briefing to <span className="text-[var(--foreground)] font-medium">{userEmail}</span>
+            </p>
+            <p className="text-[var(--muted)] text-sm mb-4">
+              {briefings.filter(b => !b.empty).length} topics: {briefings.filter(b => !b.empty).map(b => b.topic).join(', ')}
             </p>
             <div className="flex gap-3">
               <button

@@ -48,6 +48,42 @@ function toFrontendArticles(prepared: PreparedArticle[]): Article[] {
     .map(a => ({ title: a.title, source: a.source, url: a.url, snippet: a.summary?.substring(0, 150) || undefined }));
 }
 
+// Prompt-leak and artifact guard. The Oct 19 2026 reviews found bullets like
+// "source reminder: New York Times" / "date: Oct 17, 2026", headlines prefixed
+// "NYT:", and week-old articles stamped with today's date. Cheap to catch here.
+const LEAK_BULLET = /^\s*(source( reminder)?|url( and date)?|date|published|publication date|publish date|coverage date|announcement date|report(ed|ing) date)\s*[:：]/i;
+const OUTLET_PREFIX = /^\s*[A-Z][A-Za-z0-9&.' ]{1,25}:\s+(?=[A-Z0-9'"“])/;
+
+// "The Guardian reported that X" → "X"; "...was published Oct 19, 2026." bullets dropped.
+// Only strip when the remainder is a complete clause: "… reported that X" or
+// "… reports, X". Stripping "The Information described the model as …" left
+// the fragment "As improving reasoning …" in the Oct 19 round-3 review.
+const ATTRIBUTION_LEAD = /^(?:(?:the |an? )?[A-Z][\w.'’&-]*(?: [A-Z][\w.'’&-]*){0,3}|it|the (?:article|piece|story|report|coverage|outlet)) (?:reported|reports|said|says|noted|notes|highlighted|highlights|wrote|writes|stated|states|confirmed|confirms|added|adds)(?: that\s+|,\s+)/i;
+const DATE_ONLY_BULLET = /^(?:the )?(?:report|article|piece|story|coverage|announcement|post)(?:'s)? (?:was|is) (?:published|dated|released|posted)\b|^(?:published|dated|posted|reported) (?:on )?[A-Z][a-z]{2}\.? \d/i;
+
+export function cleanBullet(b: string): string | null {
+  const t = b.trim();
+  if (!t || LEAK_BULLET.test(t) || DATE_ONLY_BULLET.test(t)) return null;
+  const stripped = t.replace(ATTRIBUTION_LEAD, '');
+  if (stripped.length < 15) return null; // nothing left once the attribution is gone
+  return stripped.charAt(0).toUpperCase() + stripped.slice(1);
+}
+
+function sanitizeStory(s: StoryCard, known: Map<string, PreparedArticle>): StoryCard {
+  const article = s.url ? known.get(s.url) : undefined;
+  const bullets = (s.bullets || []).map(b => (typeof b === 'string' ? cleanBullet(b) : null)).filter((b): b is string => !!b);
+  const headline = (s.headline || '').replace(OUTLET_PREFIX, '').trim();
+  return {
+    ...s,
+    headline,
+    bullets,
+    url: article ? s.url : undefined,
+    // The article's own date beats whatever the model wrote.
+    date: article?.date || s.date,
+    source: s.source || article?.source,
+  };
+}
+
 async function callLLM(system: string, user: string): Promise<{ summary: string; stories: StoryCard[] }> {
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) throw new Error('OPENAI_API_KEY not configured');
@@ -98,9 +134,11 @@ export async function assembleSection(
   }
 
   // Fabricated-URL defense in code, not prompt: a story may only link a URL we gave it.
-  const known = new Set(articles.map(a => a.url));
+  const known = new Map(articles.map(a => [a.url, a] as const));
   const stories = filterRecentStories(
-    (assembled.stories || []).map(s => (s.url && known.has(s.url) ? s : { ...s, url: undefined }))
+    (assembled.stories || [])
+      .map(s => sanitizeStory(s, known))
+      .filter(s => s.headline && s.bullets.length > 0)
   );
 
   const section: TopicBriefingSection = {

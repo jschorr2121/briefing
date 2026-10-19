@@ -32,8 +32,7 @@ export function UpgradeModal({ isOpen, onClose, usageCount, usageLimit }: Upgrad
           {/* Title */}
           <h2 className="text-xl font-bold mb-2">Daily Limit Reached</h2>
           <p className="text-[var(--muted)] text-sm mb-6">
-            You&apos;ve used all {usageLimit} of your free briefings today. Upgrade to Pro
-            for unlimited access.
+            You&apos;ve used all {usageLimit} of your free briefings today. Pro, which removes this limit, is coming soon.
           </p>
 
           {/* Usage indicator */}
@@ -53,12 +52,11 @@ export function UpgradeModal({ isOpen, onClose, usageCount, usageLimit }: Upgrad
           </div>
 
           {/* Benefits */}
+          <p className="text-left text-xs uppercase tracking-wide text-[var(--muted)] mb-2">Pro will include (coming soon)</p>
           <div className="text-left space-y-2 mb-6">
             {[
-              'Unlimited briefings',
-              'Unlimited topics',
-              'Audio TTS playback',
-              'Priority support',
+              'Unlimited briefings per day',
+              'Everything in Free',
             ].map((benefit) => (
               <div key={benefit} className="flex items-center gap-2 text-sm">
                 <Sparkles className="w-3.5 h-3.5 text-[var(--accent)] flex-shrink-0" />
@@ -74,7 +72,7 @@ export function UpgradeModal({ isOpen, onClose, usageCount, usageLimit }: Upgrad
               className="w-full py-3 rounded-xl bg-[var(--accent)] text-white font-semibold hover:bg-[var(--accent-hover)] transition-all flex items-center justify-center gap-2"
             >
               <Zap className="w-4 h-4" />
-              View Plans — From $4.17/mo
+              See what Pro includes
             </Link>
             <button
               onClick={onClose}

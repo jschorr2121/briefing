@@ -64,22 +64,13 @@ export async function shareContent(title: string, text: string, url?: string): P
   }
 }
 
-// Get total reading time for multiple briefings
+// Reading time for one briefing: summary + story bullets, ~200 wpm, min 1
+export function getBriefingReadingTime(b: { summary: string; stories?: { bullets: string[] }[] }): number {
+  const text = [b.summary, ...(b.stories?.flatMap((st) => st.bullets) ?? [])].join(' ');
+  return calculateReadingTime(text);
+}
+
+// Total of the per-card reading times, so the stats bar matches the cards
 export function getTotalReadingTime(briefings: { summary: string; stories?: { bullets: string[] }[] }[]): number {
-  return briefings.reduce((total, b) => {
-    // Count summary words
-    let words = b.summary.trim().split(/\s+/).length;
-    
-    // Count story bullet words
-    if (b.stories) {
-      for (const story of b.stories) {
-        for (const bullet of story.bullets) {
-          words += bullet.trim().split(/\s+/).length;
-        }
-      }
-    }
-    
-    const minutes = Math.ceil(words / 200); // 200 words per minute
-    return total + Math.max(1, minutes);
-  }, 0);
+  return briefings.reduce((total, b) => total + getBriefingReadingTime(b), 0);
 }

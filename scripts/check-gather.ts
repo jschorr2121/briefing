@@ -1,7 +1,7 @@
 // Offline sanity check for src/lib/gather.ts parsing + result preparation.
 // No network, no keys. Run with: npx tsx scripts/check-gather.ts
 
-import { parsePlannedQueries, prepareSearchResults, normalizeDate, parseKeepIndices } from '../src/lib/gather';
+import { parsePlannedQueries, prepareSearchResults, normalizeDate, parseKeepIndices, looksEnglish, extractBodyText } from '../src/lib/gather';
 
 let failures = 0;
 function check(name: string, cond: boolean) {
@@ -9,11 +9,13 @@ function check(name: string, cond: boolean) {
   if (!cond) failures++;
 }
 
-check('planner: plain JSON', JSON.stringify(parsePlannedQueries('{"queries":["a","b"]}', 't')) === '["a","b"]');
-check('planner: fenced JSON', parsePlannedQueries('```json\n{"queries":["x"]}\n```', 't')[0] === 'x');
-check('planner: garbage → topic', parsePlannedQueries('no json', 'my topic')[0] === 'my topic');
-check('planner: caps at 3', parsePlannedQueries('{"queries":["a","b","c","d"]}', 't').length === 3);
-check('planner: drops non-strings', JSON.stringify(parsePlannedQueries('{"queries":["a", 42, ""]}', 't')) === '["a"]');
+check('planner: plain JSON', JSON.stringify(parsePlannedQueries('{"queries":["a","b"]}', 't').queries) === '["a","b"]');
+check('planner: fenced JSON', parsePlannedQueries('```json\n{"queries":["x"]}\n```', 't').queries[0] === 'x');
+check('planner: garbage → topic', parsePlannedQueries('no json', 'my topic').queries[0] === 'my topic');
+check('planner: caps at 3', parsePlannedQueries('{"queries":["a","b","c","d"]}', 't').queries.length === 3);
+check('planner: drops non-strings', JSON.stringify(parsePlannedQueries('{"queries":["a", 42, ""]}', 't').queries) === '["a"]');
+check('planner: niche flag parsed', parsePlannedQueries('{"queries":["a"],"niche":true}', 't').niche === true);
+check('planner: niche defaults false', parsePlannedQueries('{"queries":["a"]}', 't').niche === false);
 
 const twoDaysAgo = new Date(Date.now() - 2 * 86_400_000);
 check('date: "2 days ago" → real date', normalizeDate('2 days ago').includes(String(twoDaysAgo.getFullYear())));
@@ -39,6 +41,23 @@ const prepared = prepareSearchResults([
 check('prepare: dedupe/landing/wiki/old/invalid filtered, host cap 3', prepared.map(p => p.title).join(',') === 'A,G1,G2,G3');
 check('prepare: source defaults to host', prepared[0].source === 'x.com');
 check('prepare: limit respected', prepareSearchResults(Array.from({ length: 20 }, (_, i) => ({ title: `t${i}`, url: `https://h${i}.com/p` })), 5).length === 5);
+
+// ─── assembler bullet guard ──────────────────────────────────────────
+import { cleanBullet } from '../src/lib/briefing-assembler';
+check('bullet: drops "source reminder:"', cleanBullet('source reminder: New York Times') === null);
+check('bullet: drops "date:"', cleanBullet('date: Oct 17, 2026') === null);
+check('bullet: drops "The report was published Oct 19, 2026."', cleanBullet('The report was published Oct 19, 2026.') === null);
+check('bullet: strips "The Guardian reported that"', cleanBullet('The Guardian reported that arrests rose to 1,800 in Paris.') === 'Arrests rose to 1,800 in Paris.');
+check('bullet: strips "AP reports," with comma', cleanBullet('AP reports, Katie Zacharia left her role after a rocky start.') === 'Katie Zacharia left her role after a rocky start.');
+check('bullet: does NOT strip "X described the model as" (would leave a fragment)', cleanBullet('The Information described the model as improving reasoning over earlier models.') === 'The Information described the model as improving reasoning over earlier models.');
+check('url date: /2026/10/16/ beats page_age', prepareSearchResults([{ title: 'T', url: 'https://x.com/2026/10/16/story', date: '2026-10-19T00:00:00Z' }])[0].date.startsWith('Oct 16'));
+check('body: paragraphs extracted, nav/script dropped', extractBodyText('<html><script>var x=1</script><nav><p>Home | News | Sports | Weather | Login</p></nav><p>The Federal Reserve held rates steady on Wednesday, with Chair Warsh saying inflation remains above target.</p><p>Short.</p><p>Markets had priced a 90% chance of no change, according to CME FedWatch data published Tuesday.</p></html>') === 'The Federal Reserve held rates steady on Wednesday, with Chair Warsh saying inflation remains above target. Markets had priced a 90% chance of no change, according to CME FedWatch data published Tuesday.');
+check('bullet: keeps plain facts', cleanBullet('Lavrov visited Tehran for the first time since the war began.') === 'Lavrov visited Tehran for the first time since the war began.');
+check('bullet: keeps sentences starting with a name + verb', cleanBullet('Nvidia acquired Modal for $1.5B.') === 'Nvidia acquired Modal for $1.5B.');
+
+check('lang: English snippet passes', looksEnglish('The Fed held rates steady on Wednesday as markets had expected, with the chair saying inflation is still too high.'));
+check('lang: Portuguese snippet dropped', !looksEnglish('Ducky apresenta novo teclado mecânico Cushion 98 com três tipos de ligação e uma autonomia anunciada de até 63 horas'));
+check('lang: short titles are not judged', looksEnglish('Ducky Cushion 98'));
 
 if (failures) { console.error(`\n${failures} check(s) failed`); process.exit(1); }
 console.log('\nAll gather checks passed');
